@@ -39,13 +39,16 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: red[500],
     },
   }));
-function EventCard() {
+function EventCard(props) {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
-  
+    const {id,} = props.info;
     const handleExpandClick = () => {
       setExpanded(!expanded);
     };
+    console.log(id);
+    console.log(props);
+    console.log(props.info);
   
     return (
       <Card className={classes.root}>
@@ -70,7 +73,7 @@ function EventCard() {
         />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            This impressive paella is a perfect party dish and a fun meal to cook together with your
+            {id}This impressive paella is a perfect party dish and a fun meal to cook together with your
             guests. Add 1 cup of frozen peas along with the mussels, if you like.
           </Typography>
         </CardContent>
