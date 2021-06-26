@@ -1,0 +1,944 @@
+swagger: "2.0"
+info:
+  description: "COMP9323-Group12: WellbeingBridge"
+  version: "1.0.0"
+  title: "WellbeingBridge"
+host: "127.0.0.1:5000"
+basePath: "/v1"
+schemes:
+- "https"
+- "http"
+tags:
+- name: "auth"
+  description: "Authetication Services (one email can only register as one type of user)"
+- name: "event"
+  description: "Operations about events"
+- name: "organization"
+  description: "Operations about organization information"
+- name: "profile"
+  description: "Operations about user profile"
+- name: "popular"
+  description: "Operations about Homepage popular recommendation"
+- name: "search"
+  description: "search function"
+
+consumes:
+- "application/json"
+produces:
+- "application/json"
+
+
+paths:
+
+  /signup/user:
+    post:
+      tags:
+      - "auth"
+      summary: New individual user registration
+      description: "All parameters are required, email must be unique. Name and password limitation need to be confirmed by backend Team."
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/userRegister'
+      responses:
+        200:
+         description: Success
+         schema:
+          type: object
+          properties:
+            userId:
+              type: integer
+              example: 1
+            token:
+              type: "string"
+              example: "token"
+        400:
+          description: Missing name/password
+        403: 
+          description: Exist email
+          schema:
+            type: object
+            properties:
+              message:
+                type: "string"
+                example: "email already used as individual"
+                
+  /signup/organization:
+    post:
+      tags:
+      - "auth"
+      summary: New organization user registration
+      description: "All parameters are required, email must be unique. Username and password limitation need to be confirmed by backend Team. To register as an organization user, must provide  information including organization name, contact and short introduction. username can be differ from organization name (Some organization name might be long)"
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/organizationRegister'
+      responses:
+        200:
+         description: Success
+         schema:
+          type: object
+          properties:
+            userId:
+              type: integer
+              example: 1
+            token:
+              type: "string"
+              example: "string"
+        400:
+          description: Missing name/password
+        403: 
+          description: Exist email
+          schema:
+            type: object
+            properties:
+              message:
+                type: "string"
+                example: "email already used as organization"
+
+  /login:
+    post:
+      tags:
+      - "auth"
+      summary: Exist individual user and organization user Login
+      description: "This is used to authenticate a verified account created through signup. Returns a auth token which should be passed in subsequent calls to the api to verify the user."
+      parameters:
+      - in: "body"
+        name: "payload"
+        required: true
+        schema: 
+          type: object
+          properties:
+            email:
+              type: "string"
+              example: "meishichen1106@gmail.com"
+            password:
+              type: "string"
+              example: "123456"
+      responses:
+        200:
+         description: Success
+         schema:
+          type: object
+          properties:
+            userId:
+              type: integer
+              example: 1
+            usergroup:
+              type: "string"
+              example: "individual/organization"
+            token:
+              type: "string"
+              example: "string"
+        400:
+          description: Missing Username/Password
+        403: 
+          description: Invalid Username/Password
+          schema:
+            type: object
+            properties:
+              message:
+                type: "string"
+                example: "email not signup as individual/organization"
+                
+  /logout:
+    get:
+      tags:
+      - "auth"
+      summary: "Logs out current logged in user session"
+      description: "Change status from 'loged' to  'nologed' or make token expired" 
+      operationId: "logoutUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  
+  /event:
+    post:
+      tags:
+      - "event"
+      summary: "Publish the details of event."
+      description: "Organization could publish the details of event"
+      parameters:
+      - name: "Authority"
+        in: header
+        description: "The token"
+        required: true
+        type: "string"
+      - name: "Event"
+        in: "body"
+        description: "Event details"
+        required: true
+        schema:
+         $ref: '#/definitions/eventDetails'
+      responses:
+        "200":
+          description: "Created"
+        "400":
+          description: "Invalid input"
+        "403":
+          description: "Forbbiden! Wrong token"
+  
+  /event/{eventid}/summary:
+    get:
+      tags:
+      - "event"
+      summary: get the summary of an event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "ID of event to return"
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/eventSummary'
+        403:
+          description: Forbbiden! Wrong token
+
+        404:
+          description: Not Found
+          
+  /event/{eventid}:
+    get:
+      tags:
+      - "event"
+      summary: get the details of an event
+      description: "return all the details about an event, with recommendation (a list of eventId)"
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "ID of event to return"
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/eventDetails'
+        403:
+          description: Forbbiden! Wrong token
+
+        404:
+          description: Not Found
+
+    put:
+      tags:
+      - "event"
+      summary: "Edit the details of an event"
+      description: "Organization could update the info of event"
+      parameters:
+      - in: header
+        name: Authorization
+        type: string
+      - name: "eventid"
+        in: "path"
+        description: "ID of event that needs to be updated"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "Event"
+        in: "body"
+        description: "Event details"
+        required: true
+        schema:
+         $ref: '#/definitions/eventDetails'
+      responses:
+        200:
+          description: OK
+        403:
+          description: Forbbiden! Wrong token
+        405:
+          description: "Invalid input"
+
+    delete:
+      tags:
+      - "event"
+      summary: "Delete an event"
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "ID of event to delete"
+          required: true
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbidden! Wrong token"
+        404:
+          description: "Event not found"
+          
+  /event/{eventid}/like:
+    put:
+      tags:
+      - "event"
+      description: "Individual users on the platform are able to express their interest in an event by liking it."
+      summary: like an event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "the event id"
+          required: true
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+          
+  /event/{eventid}/unlike:
+    put:
+      tags:
+      - "event"
+      description: "Unlike an event"
+      summary: unlike an event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "the event id"
+          required: true
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+          
+  /event/{eventid}/book:
+    put:
+      tags:
+      - "event"
+      description: "Book an event"
+      summary: Book an event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "the event id"
+          required: true
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+  
+  /event/{eventid}/unbook:
+    put:
+      tags:
+      - "event"
+      description: "UnBook an event"
+      summary: UnBook an event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "the event id"
+          required: true
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+          
+  
+      
+  /organization/{userId}/summary:
+    get:
+      tags:
+      - organization
+      summary: "get the summary of an organization"
+      description: "use oId to get the summary of organization info"
+      parameters:
+      - name: "Authority"
+        in: header
+        description: "The token"
+        type: "string"
+      - in: path
+        name: userId
+        type: integer
+        format: "int32"
+        description: "the organization userid"
+        required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/organizationSummary'
+        403:
+          description: Forbbiden! Wrong token
+
+        404:
+          description: Not Found
+          
+  /organization/{userId}:
+    get:
+      tags:
+      - organization
+      summary: "get the details of an organization"
+      description: "full details of an organization"
+      parameters:
+      - name: "Authority"
+        in: header
+        description: "The token"
+        type: "string"
+      - in: path
+        name: userId
+        type: integer
+        format: "int32"
+        description: "the organization userid"
+        required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/organizationDetails'
+        403:
+          description: Forbbiden! Wrong token
+
+        404:
+          description: Not Found
+    put:
+      tags:
+      - organization
+      summary: "update the details of an organization"
+      parameters:
+      - name: "Authority"
+        in: header
+        description: "The token"
+        type: "string"
+      - in: path
+        name: userId
+        type: integer
+        format: "int32"
+        description: "the organization userid"
+        required: true
+      - name: "Event"
+        in: "body"
+        description: "Organization details"
+        required: true
+        schema:
+         $ref: '#/definitions/organizationDetails'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: "Invalid input"
+        "403":
+          description: "Forbbiden! Wrong token"
+          
+  /organization/profile/{userId}:
+    get:
+      tags:
+      - profile
+      summary: get the profile information of an organizational user
+      description: "Get the profile of an organizational user, including organization name, email address and event it has published"
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: userId
+          type: integer
+          format: "int32"
+          description: "the organization userid"
+          required: true
+      responses: 
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/organizationProfile'
+        404:
+          description: "not found"
+    put:
+      tags:
+      - profile
+      summary: update the profile information of an organizational user
+      description: "Get"
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: userId
+          type: integer
+          format: "int32"
+          description: "the organization userid"
+          required: true
+        - in: body
+          name: payload
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: "string"
+                example: "HeadSpace"
+              password:
+                type: "string"
+                example: "123456"
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          description: "Invalid input"
+        "403":
+          description: "Forbbiden! Wrong token"
+        
+  /user/profile/{userId}:
+    get:
+      tags:
+      - profile
+      summary: get the profile information of an individual user
+      description: ""
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: userId
+          type: integer
+          format: "int32"
+          description: "the user id"
+          required: true
+      responses: 
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/userProfile'
+        404:
+          description: "not found"
+          
+    put:
+      tags:
+      - profile
+      summary: update the profile information of an individual user
+      description: "user can change their username or password"
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: userId
+          type: integer
+          format: "int32"
+          description: "the user id"
+          required: true
+        - in: body
+          name: payload
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: "string"
+                example: "Sharon"
+              password:
+                type: "string"
+                example: "123456"
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+  
+  /popular/organizations:
+    get:
+      tags:
+      - popular
+      summary: get popular organization recommendation 
+      description: "Maybe ranked by number of event or total number of event likes / event booked number, return a list of organizationId (organization's userId)"
+      responses: 
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              organizationId:
+                $ref: '#/definitions/ArrayOfInt'
+        404:
+          description: "not found"
+          
+  /popular/events:
+    get:
+      tags:
+      - popular
+      summary: get popular event recommendation 
+      description: "Maybe ranked by number of likes or number of booked, return a list of eventId"
+      responses: 
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              eventId:
+                $ref: '#/definitions/ArrayOfInt'
+        404:
+          description: "not found"
+      
+  
+  /search/organization:
+    get:
+      tags:
+      - search
+      summary: search organization function
+      description: "Individual users are able to find organization info they are interested in based on any combination of the following: name, type(s), API return a list of organizationId that are sorted by Alphabetic"
+      parameters:
+        - in: query
+          name: name
+          type: string
+          description:  Name of organization 
+        - in: query
+          name: type
+          type: string
+          description: type of organization
+      responses: 
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              organizationId:
+                $ref: '#/definitions/ArrayOfInt'
+        404:
+          description: "not found"
+
+  /search/event:
+    get:
+      tags:
+      - search
+      summary: search event function
+      description: "Individual users are able to find events they are interested in based on any combination of the following: keyword of eventname, event format(s), date(a range of time), location(online or one postcode), API return a list of eventId that are sorted according to user's preference"
+      parameters:
+        - in: query
+          name: eventname
+          type: string
+          description: Name of event
+        - in: query
+          name: category
+          type: string
+          description: category of event
+        - in: query
+          name: location
+          type: string
+          description: preferred location
+        - in: query
+          name: date
+          type: string
+          description: preferred date of event
+        - in: query
+          name: sort
+          type: string
+          description: preferred order of event
+      responses: 
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              eventId:
+                $ref: '#/definitions/ArrayOfInt'
+        404:
+          description: "not found"
+
+definitions:
+
+  ArrayOfInt:
+    type: array
+    items:
+      type: integer
+    example: [1, 2, 3]
+    
+  eventFormat:
+    type: string
+    enum:
+     - Class
+     - Conference
+     - Festival
+     - Party
+     - Convention
+     - Expo
+     - Gala
+     - Game
+     - Networking
+     - Performance
+     - Race
+     - Seminar
+     - Tournament
+     - Tour
+  
+  organizationType:
+    type: string
+    enum: 
+     - Youth
+     - Disability and carers
+     - Serniors
+     - Family and domestic violence
+     - Education
+     - Employment
+     - Body health
+     - Mental health
+     - Money
+     - Legal services
+
+     
+  
+  userRegister:
+    type: object
+    properties:
+      username:
+        type: "string"
+        example: "Sharon/HeadSpace"
+      email:
+        type: "string"
+        example: "meishichen1106@gmail.com"
+      password:
+        type: "string"
+        example: "123456"
+      usergroup:
+        type: "string"
+        example: "individual"
+        
+  userProfile:
+    type: object
+    properties:
+      userId:
+        type: integer
+        example: 1
+      username:
+        type: "string"
+        example: "Sharon"
+      email:
+        type: "string"
+      likedEvent:
+        $ref: "#/definitions/ArrayOfInt"
+      bookedEvent:
+        $ref: "#/definitions/ArrayOfInt"
+        
+  organizationRegister:
+    type: object
+    properties:
+      username:
+        type: "string"
+        example: "headspace"
+      email:
+        type: "string"
+        example: "headspaceashfield@newhorizons.net.au"
+      password:
+        type: "string"
+        example: "123456"
+      usergroup:
+        type: "string"
+        example: "organization"
+      organizationName:
+        type: "string"
+        example: "HeadSpace"
+      organizationType:
+        $ref: '#/definitions/organizationType'
+      contact:
+        type: "string"
+        example: "headspaceashfield@newhorizons.net.au"
+      introduction:
+        type: "string"
+        example: "The Centre is open to assist young people with health advice and support and information, around a range of matters including: caring for others, stress, relationships, employment and depression"
+
+  organizationProfile:
+    type: object
+    properties:
+      userId:
+        type: integer
+        example: 2
+      username:
+        type: "string"
+        example: "HeadSpace"
+      email:
+        type: "string"
+        example: "headspaceashfield@newhorizons.net.au"
+      publishedEvent:
+        $ref: "#/definitions/ArrayOfInt"
+  
+  eventSummary:
+    type: "object"
+    properties:
+      eventId:
+        type: integer
+        example: 1
+      thumbnail:
+        type: "string"
+        example: "image link"
+      name:
+        type: "string"
+        description: "The name of event"
+        example: "Community Yoga Class"
+      date:
+        type: "string"
+        format: "date-time"
+        example: ""
+      location:
+        type: object
+        properties:
+          postcode:
+            type: "string"
+            example: "2131"
+          suburb:
+            type: "string"
+            example: "Ashfield NSW"
+  
+  
+
+  eventDetails:
+    type: "object"
+    properties:
+      eventId:
+        type: "integer"
+        example: 1
+      eventName:
+        type: "string"
+        description: "The name of event"
+        example: "Community Yoga Class"
+      thumbnail:
+        type: "string"
+        description: "image link"
+        example: "image link"
+      format:
+        $ref: '#/definitions/eventFormat'
+      location:
+        type: object
+        properties:
+          postcode:
+            type: integer
+            example: "2131"
+          suburb:
+            type: "string"
+            example: "Ashfield NSW"
+          street:
+            type: "string"
+            example: "Parramatta Road and Orpington Street"
+          venue:
+            type: "string"
+            example: "Ashfield Park"
+      date:
+        type: "string"
+        format: "date-time"
+        example: ""
+      details:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
+      recommendation:
+        $ref: '#/definitions/ArrayOfInt'
+      
+
+
+  organizationSummary:
+    type: "object"
+    properties:
+      userId:
+        type: "integer"
+        example: 2
+      organizationType:
+        type: "string"
+        example: "Youth"
+      organizationName:
+        type: "string"
+        example: "HeadSpace"
+      logo:
+        type: "string"
+        description: "logo of the organization"
+        example: "image link"
+      introduction:
+        type: "string"
+        example: "The Centre is open to assist young people with health advice and support and information, around a range of matters including: caring for others, stress, relationships, employment and depression"
+
+      
+  organizationDetails:
+    type: "object"
+    properties:
+      userId:
+        type: "integer"
+        example: 2
+      organizationName:
+        type: "string"
+        example: "HeadSpace"
+      organizationType:
+        $ref: '#/definitions/organizationType'
+      logo:
+        type: "string"
+        description: "logo of the organization"
+        example: "image link"
+      contact:
+        type: "string"
+        example: "headspace@newhorizons.net.au"
+      introduction:
+        type: "string"
+        example: "The Centre is open to assist young people with health advice and support and information, around a range of matters including: caring for others, stress, relationships, employment and depression"
+      video:
+        type: "string"
+        example: "video link"
+      serviceList:
+        type: array
+        items:
+          type: "string"
+        example: ["mental health counselling", "education support", "employment support", "alcohol and other drug services"]
+      websiteLink:
+        type: "string"
+        example: 'https://headspace.org.au/headspace-centres/ashfield/'
+      otherEvents:
+        $ref: '#/definitions/ArrayOfInt'
+  
