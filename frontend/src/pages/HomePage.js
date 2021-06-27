@@ -15,7 +15,6 @@ function HomePage() {
   }
   return (
     <div>
-      HomePage
       <NavBar/>
       <NewsCarousel />
       <OrganizationAllType/>
