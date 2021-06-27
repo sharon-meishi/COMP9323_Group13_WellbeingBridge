@@ -2,6 +2,7 @@ import React from 'react';
 import EventCard from '../components/EventCard';
 import NewsCarousel from '../components/HomePage/NewsCarousel'
 import OrganizationAllType from '../components/HomePage/OrganizationAllType'
+import NavBar from "../components/NavBar";
 function HomePage() {
   let mock_eventcard_info = {
     "id": '123',
@@ -14,6 +15,7 @@ function HomePage() {
   return (
     <div>
       HomePage
+      <NavBar/>
       <NewsCarousel />
       <OrganizationAllType/>
       <EventCard info = {mock_eventcard_info}></EventCard>

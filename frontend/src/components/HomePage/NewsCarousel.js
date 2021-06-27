@@ -83,6 +83,7 @@ function NewsCarousel() {
                   <Link
                     href='https://covid-vaccine.healthdirect.gov.au/eligibility'
                     color='inherit'
+                    underline='always'
                   >
                     Book your COVID-19 vaccination
                   </Link>
@@ -91,6 +92,7 @@ function NewsCarousel() {
                   <Link
                     href='https://www.health.gov.au/news/health-alerts/novel-coronavirus-2019-ncov-health-alert/coronavirus-covid-19-current-situation-and-case-numbers'
                     color='inherit'
+                    underline='always'
                   >
                     COVID-19 current situation and case numbers
                   </Link>
@@ -99,6 +101,7 @@ function NewsCarousel() {
                   <Link
                     href='https://www.health.gov.au/news/health-alerts/novel-coronavirus-2019-ncov-health-alert/how-to-protect-yourself-and-others-from-coronavirus-covid-19'
                     color='inherit'
+                    underline='always'
                   >
                     How to protect yourself?
                   </Link>
@@ -119,6 +122,7 @@ function NewsCarousel() {
                   <Link
                     href='https://screening.mhanational.org/screening-tools/'
                     color='inherit'
+                    underline='always'
                   >
                     Take a mental health test
                   </Link>
@@ -127,6 +131,7 @@ function NewsCarousel() {
                   <Link
                     href='https://www.beyondblue.org.au/the-facts/anxiety-and-depression-checklist-k10'
                     color='inherit'
+                    underline='always'
                   >
                     Anxiety and depression checklist
                   </Link>
@@ -135,6 +140,7 @@ function NewsCarousel() {
                   <Link
                     href='https://www.healthline.com/health/stress/how-to-relax#takeaway'
                     color='inherit'
+                    underline='always'
                   >
                     How to relax: tips for chiling out
                   </Link>
@@ -156,6 +162,7 @@ function NewsCarousel() {
                   <Link
                     href='https://covid-vaccine.healthdirect.gov.au/eligibility'
                     color='inherit'
+                    underline='always'
                   >
                     Book your COVID-19 vaccination
                   </Link>
@@ -164,6 +171,7 @@ function NewsCarousel() {
                   <Link
                     href='https://www.health.gov.au/news/health-alerts/novel-coronavirus-2019-ncov-health-alert/coronavirus-covid-19-current-situation-and-case-numbers'
                     color='inherit'
+                    underline='always'
                   >
                     COVID-19 current situation and case numbers
                   </Link>
@@ -172,6 +180,7 @@ function NewsCarousel() {
                   <Link
                     href='https://www.health.gov.au/news/health-alerts/novel-coronavirus-2019-ncov-health-alert/how-to-protect-yourself-and-others-from-coronavirus-covid-19'
                     color='inherit'
+                    underline='always'
                   >
                     How to protect yourself?
                   </Link>
