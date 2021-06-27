@@ -1,9 +1,8 @@
 import React from 'react';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import OrganizationAvatar from './OrganizationAvatar'
 import youth from '../../Assets/OrganizationType/youth.jpeg';
 import senior from '../../Assets/OrganizationType/senior.jpeg';
@@ -15,6 +14,7 @@ import education from '../../Assets/OrganizationType/education.jpeg';
 import employment from '../../Assets/OrganizationType/employment.jpeg';
 import money from '../../Assets/OrganizationType/money.jpeg';
 import legal from '../../Assets/OrganizationType/legal.jpeg';
+import HomePageButton from '../HomePageButton'
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -54,21 +54,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StyledButton = withStyles({
-  root: {
-    background: '#216991',
-    fontSize: '16px',
-    '&:hover': {
-      background: '#FFF',
-      color:'#216991'
-    }
-  },
-  label: {
-    textTransform: 'none',
-  },
-
-})(Button)
-
 function OrganizationAllType() {
   const classes = useStyles();
   
@@ -79,9 +64,7 @@ function OrganizationAllType() {
           <Typography variant='h5' align='left' className={classes.titleStyle}>
             What type of organization you are looking for?
           </Typography>
-          <StyledButton variant='contained' color='primary'>
-            Find an Organization
-          </StyledButton>
+          <HomePageButton text='Find an Organization'/>
         </Box>
         <Grid item xs={12} className={classes.row}>
           <OrganizationAvatar alt='youth' src={youth} title='Youth'></OrganizationAvatar>
