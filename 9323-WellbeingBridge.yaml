@@ -29,7 +29,6 @@ produces:
 
 
 paths:
-
   /signup/user:
     post:
       tags:
@@ -83,7 +82,7 @@ paths:
          schema:
           type: object
           properties:
-            userId:
+            oId:
               type: integer
               example: 1
             token:
@@ -177,7 +176,7 @@ paths:
         description: "Event details"
         required: true
         schema:
-         $ref: '#/definitions/eventDetails'
+         $ref: '#/definitions/eventUpload'
       responses:
         "200":
           description: "Created"
@@ -222,7 +221,6 @@ paths:
         - in: header
           name: Authorization
           type: string
-          required: true
         - in: path
           name: eventid
           type: integer
@@ -249,6 +247,7 @@ paths:
       - in: header
         name: Authorization
         type: string
+        required: true
       - name: "eventid"
         in: "path"
         description: "ID of event that needs to be updated"
@@ -260,7 +259,7 @@ paths:
         description: "Event details"
         required: true
         schema:
-         $ref: '#/definitions/eventDetails'
+         $ref: '#/definitions/eventUpdate'
       responses:
         200:
           description: OK
@@ -292,7 +291,7 @@ paths:
         404:
           description: "Event not found"
           
-  /event/{eventid}/like:
+  /event/{eventid}/favourite:
     put:
       tags:
       - "event"
@@ -317,7 +316,7 @@ paths:
         404:
           description: "Event not found"
           
-  /event/{eventid}/unlike:
+  /event/{eventid}/unfavourite:
     put:
       tags:
       - "event"
@@ -392,9 +391,7 @@ paths:
         404:
           description: "Event not found"
           
-  
-      
-  /organization/{userId}/summary:
+  /organization/{oId}/summary:
     get:
       tags:
       - organization
@@ -406,7 +403,7 @@ paths:
         description: "The token"
         type: "string"
       - in: path
-        name: userId
+        name: oId
         type: integer
         format: "int32"
         description: "the organization userid"
@@ -422,7 +419,7 @@ paths:
         404:
           description: Not Found
           
-  /organization/{userId}:
+  /organization/{oId}:
     get:
       tags:
       - organization
@@ -434,10 +431,10 @@ paths:
         description: "The token"
         type: "string"
       - in: path
-        name: userId
+        name: oId
         type: integer
         format: "int32"
-        description: "the organization userid"
+        description: "the organization id"
         required: true
       responses:
         200:
@@ -458,11 +455,12 @@ paths:
         in: header
         description: "The token"
         type: "string"
+        required: true
       - in: path
-        name: userId
+        name: oId
         type: integer
         format: "int32"
-        description: "the organization userid"
+        description: "the organization id"
         required: true
       - name: "Event"
         in: "body"
@@ -478,7 +476,7 @@ paths:
         "403":
           description: "Forbbiden! Wrong token"
           
-  /organization/profile/{userId}:
+  /organization/profile/{oId}:
     get:
       tags:
       - profile
@@ -488,12 +486,11 @@ paths:
         - in: header
           name: Authorization
           type: string
-          required: true
         - in: path
-          name: userId
+          name: oId
           type: integer
           format: "int32"
-          description: "the organization userid"
+          description: "the organization id"
           required: true
       responses: 
         200:
@@ -513,10 +510,10 @@ paths:
           type: string
           required: true
         - in: path
-          name: userId
+          name: oId
           type: integer
           format: "int32"
-          description: "the organization userid"
+          description: "the organization id"
           required: true
         - in: body
           name: payload
@@ -524,7 +521,7 @@ paths:
           schema:
             type: object
             properties:
-              username:
+              organizationName:
                 type: "string"
                 example: "HeadSpace"
               password:
@@ -585,7 +582,7 @@ paths:
           schema:
             type: object
             properties:
-              username:
+              nickname:
                 type: "string"
                 example: "Sharon"
               password:
@@ -599,23 +596,6 @@ paths:
         404:
           description: "Event not found"
   
-  /popular/organizations:
-    get:
-      tags:
-      - popular
-      summary: get popular organization recommendation 
-      description: "Maybe ranked by number of event or total number of event likes / event booked number, return a list of organizationId (organization's userId)"
-      responses: 
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              organizationId:
-                $ref: '#/definitions/ArrayOfInt'
-        404:
-          description: "not found"
-          
   /popular/events:
     get:
       tags:
@@ -633,7 +613,6 @@ paths:
         404:
           description: "not found"
       
-  
   /search/organization:
     get:
       tags:
@@ -729,8 +708,8 @@ definitions:
     enum: 
      - Youth
      - Disability and carers
-     - Serniors
-     - Family and domestic violence
+     - Senior
+     - Family
      - Education
      - Employment
      - Body health
@@ -738,14 +717,12 @@ definitions:
      - Money
      - Legal services
 
-     
-  
   userRegister:
     type: object
     properties:
-      username:
+      nickname:
         type: "string"
-        example: "Sharon/HeadSpace"
+        example: "Sharon"
       email:
         type: "string"
         example: "meishichen1106@gmail.com"
@@ -762,12 +739,12 @@ definitions:
       userId:
         type: integer
         example: 1
-      username:
+      nickname:
         type: "string"
         example: "Sharon"
       email:
         type: "string"
-      likedEvent:
+      favouritedEvent:
         $ref: "#/definitions/ArrayOfInt"
       bookedEvent:
         $ref: "#/definitions/ArrayOfInt"
@@ -775,9 +752,9 @@ definitions:
   organizationRegister:
     type: object
     properties:
-      username:
+      organizationName:
         type: "string"
-        example: "headspace"
+        example: "HeadSpace"
       email:
         type: "string"
         example: "headspaceashfield@newhorizons.net.au"
@@ -787,9 +764,6 @@ definitions:
       usergroup:
         type: "string"
         example: "organization"
-      organizationName:
-        type: "string"
-        example: "HeadSpace"
       organizationType:
         $ref: '#/definitions/organizationType'
       contact:
@@ -802,10 +776,10 @@ definitions:
   organizationProfile:
     type: object
     properties:
-      userId:
+      oId:
         type: integer
         example: 2
-      username:
+      organizationName:
         type: "string"
         example: "HeadSpace"
       email:
@@ -814,6 +788,85 @@ definitions:
       publishedEvent:
         $ref: "#/definitions/ArrayOfInt"
   
+  eventUpload:
+    type: "object"
+    properties:
+      oId:
+        type: integer
+        example: 2
+      eventName:
+        type: "string"
+        description: "The name of event"
+        example: "Community Yoga Class"
+      thumbnail:
+        type: "string"
+        description: "image link"
+        example: "image link"
+      format:
+        $ref: '#/definitions/eventFormat'
+      location:
+        type: object
+        properties:
+          postcode:
+            type: integer
+            example: "2131"
+          suburb:
+            type: "string"
+            example: "Ashfield NSW"
+          street:
+            type: "string"
+            example: "Parramatta Road and Orpington Street"
+          venue:
+            type: "string"
+            example: "Ashfield Park"
+      date:
+        type: "string"
+        format: "date-time"
+        example: ""
+      details:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
+      recommendation:
+        $ref: '#/definitions/ArrayOfInt'
+  
+  eventUpdate:
+    type: "object"
+    properties:
+      eventId:
+        type: "integer"
+        example: 1
+      eventName:
+        type: "string"
+        description: "The name of event"
+        example: "Community Yoga Class"
+      thumbnail:
+        type: "string"
+        description: "image link"
+        example: "image link"
+      format:
+        $ref: '#/definitions/eventFormat'
+      location:
+        type: object
+        properties:
+          postcode:
+            type: integer
+            example: "2131"
+          suburb:
+            type: "string"
+            example: "Ashfield NSW"
+          street:
+            type: "string"
+            example: "Parramatta Road and Orpington Street"
+          venue:
+            type: "string"
+            example: "Ashfield Park"
+      date:
+        type: "string"
+        format: "date-time"
+        example: ""
+      details:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
   eventSummary:
     type: "object"
     properties:
@@ -840,8 +893,9 @@ definitions:
           suburb:
             type: "string"
             example: "Ashfield NSW"
-  
-  
+      favourite:
+        type: boolean
+        example: true
 
   eventDetails:
     type: "object"
@@ -883,21 +937,27 @@ definitions:
         example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
       recommendation:
         $ref: '#/definitions/ArrayOfInt'
+      favourite:
+        type: boolean
+        example: true
+      book:
+        type: boolean
+        example: true
       
 
 
   organizationSummary:
     type: "object"
     properties:
-      userId:
+      oId:
         type: "integer"
         example: 2
-      organizationType:
-        type: "string"
-        example: "Youth"
       organizationName:
         type: "string"
         example: "HeadSpace"
+      organizationType:
+        type: "string"
+        example: "Youth"
       logo:
         type: "string"
         description: "logo of the organization"
@@ -910,7 +970,7 @@ definitions:
   organizationDetails:
     type: "object"
     properties:
-      userId:
+      oId:
         type: "integer"
         example: 2
       organizationName:
