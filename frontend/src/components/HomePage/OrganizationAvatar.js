@@ -13,8 +13,8 @@ const useStyles = makeStyles((theme) => ({
     padding: '8px',
   },
   avatarStyle: {
-    width: theme.spacing(8),
-    height: theme.spacing(8),
+    width: theme.spacing(9),
+    height: theme.spacing(9),
     marginBottom: theme.spacing(1)
   },
   linkStyle: {

@@ -1,8 +1,6 @@
 import React from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
-import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -73,7 +71,7 @@ const StyledButton = withStyles({
 
 function OrganizationAllType() {
   const classes = useStyles();
-  const preventDefault = (event) => event.preventDefault();
+  
   return (
     <Box className={classes.box}>
       <Grid container className={classes.root}>
