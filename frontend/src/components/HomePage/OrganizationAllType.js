@@ -1,0 +1,105 @@
+import React from 'react';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import OrganizationAvatar from './OrganizationAvatar'
+import youth from '../../Assets/OrganizationType/youth.jpeg';
+import senior from '../../Assets/OrganizationType/senior.jpeg';
+import family from '../../Assets/OrganizationType/family.jpeg';
+import mental_health from '../../Assets/OrganizationType/mental_health.jpeg';
+import body_health from '../../Assets/OrganizationType/body_health.jpeg';
+import disability_and_carers from '../../Assets/OrganizationType/disability_and_carers.jpeg'
+import education from '../../Assets/OrganizationType/education.jpeg';
+import employment from '../../Assets/OrganizationType/employment.jpeg';
+import money from '../../Assets/OrganizationType/money.jpeg';
+import legal from '../../Assets/OrganizationType/legal.jpeg';
+
+const useStyles = makeStyles((theme) => ({
+  box: {
+    backgroundColor: '#C5EDE9',
+  },
+  root: {
+    flexGrow: 1,
+    width: '100%',
+    margin: 'auto',
+    justifyContent: 'center'
+  },
+  item: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '8px'
+  },
+  row: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: '16px',
+    paddingTop: '16px',
+  },
+  title: {
+    width: '70%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '16px',
+  },
+  titleStyle: {
+    textDecoration: 'underline',
+    fontFamily: `'Noto', 'Roboto'`,
+    fontWeight: '600'
+  },
+}));
+
+const StyledButton = withStyles({
+  root: {
+    background: '#216991',
+    fontSize: '16px',
+    '&:hover': {
+      background: '#FFF',
+      color:'#216991'
+    }
+  },
+  label: {
+    textTransform: 'none',
+  },
+
+})(Button)
+
+function OrganizationAllType() {
+  const classes = useStyles();
+  
+  return (
+    <Box className={classes.box}>
+      <Grid container className={classes.root}>
+        <Box className={classes.title}>
+          <Typography variant='h5' align='left' className={classes.titleStyle}>
+            What type of organization you are looking for?
+          </Typography>
+          <StyledButton variant='contained' color='primary'>
+            Find an Organization
+          </StyledButton>
+        </Box>
+        <Grid item xs={12} className={classes.row}>
+          <OrganizationAvatar alt='youth' src={youth} title='Youth'></OrganizationAvatar>
+          <OrganizationAvatar alt='senior' src={senior} title='Senior'></OrganizationAvatar>
+          <OrganizationAvatar alt='family' src={family} title='Family'></OrganizationAvatar>
+          <OrganizationAvatar alt='mental_health' src={mental_health} title='Mental Health'></OrganizationAvatar>
+          <OrganizationAvatar alt='body_health' src={body_health} title='Body Health'></OrganizationAvatar>
+        </Grid>
+        <Grid item xs={12} className={classes.row}>
+        <OrganizationAvatar alt='disability_and_carers' src={disability_and_carers} title='Disability and Carers'></OrganizationAvatar>
+          <OrganizationAvatar alt='education' src={education} title='Education'></OrganizationAvatar>
+          <OrganizationAvatar alt='employment' src={employment} title='Employment'></OrganizationAvatar>
+          <OrganizationAvatar alt='money' src={money} title='Money'></OrganizationAvatar>
+          <OrganizationAvatar alt='legal' src={legal} title='Legal'></OrganizationAvatar>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+}
+
+export default OrganizationAllType;
