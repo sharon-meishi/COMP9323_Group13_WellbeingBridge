@@ -5,14 +5,14 @@ import icon from '../Assets/WellbeingBridgeLogo.png';
 import { FormControl, MenuItem, Select, InputBase } from '@material-ui/core';
 import HomePageButton from './HomePageButton';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
   title: {
-    height: '40px',
     backgroundColor: '#C5EDE9',
     paddingTop: '15px',
+    paddingBottom: '15px',
     fontFamily: 'Noto Sans',
     fontSize: '20px',
     fontWeight: 400,
@@ -36,6 +36,7 @@ const useStyles = makeStyles(() => ({
   leftBox: {
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap'
   },
   searchBox: {
     border: '2px solid #E5E5E5',
@@ -46,12 +47,16 @@ const useStyles = makeStyles(() => ({
     borderRadius: '5px'
   },
   select: {
-    width: '150px',
+    width: '130px',
   },
   input: {
     borderLeft: 'solid rgba(0, 0, 0, 0.18)',
-    width: '250px',
     paddingLeft: '5px',
+    width: '250px',
+    [theme.breakpoints.down('sm')]:{
+        fontSize: '5px',
+        width:'150px'
+    }
   },
   search: {
     marginTop: '5px',

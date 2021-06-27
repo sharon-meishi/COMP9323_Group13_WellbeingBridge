@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
   titleStyle: {
     textDecoration: 'underline',
-    fontFamily: `'Noto', 'Roboto'`,
+    fontFamily: `'Noto Sans', 'Roboto'`,
     fontWeight: '600'
   },
 }));
