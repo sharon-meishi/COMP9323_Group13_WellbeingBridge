@@ -1,8 +1,9 @@
 import React from 'react';
-import EventCard from '../components/EventCard';
+import NavBar from "../components/NavBar";
 import NewsCarousel from '../components/HomePage/NewsCarousel'
 import OrganizationAllType from '../components/HomePage/OrganizationAllType'
-import NavBar from "../components/NavBar";
+import EventCard from '../components/EventCard';
+
 function HomePage() {
   let mock_eventcard_info = {
     "id": '123',
@@ -18,7 +19,7 @@ function HomePage() {
       <NavBar/>
       <NewsCarousel />
       <OrganizationAllType/>
-      <EventCard info = {mock_eventcard_info}></EventCard>
+      <EventCard info = {mock_eventcard_info}/>
     </div>
   )
 }
