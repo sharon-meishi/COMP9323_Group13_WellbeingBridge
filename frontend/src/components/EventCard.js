@@ -42,14 +42,21 @@ const useStyles = makeStyles((theme) => ({
 function EventCard(props) {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
-    const {id,} = props.info;
+    // const {id,} = props.info;
     const handleExpandClick = () => {
       setExpanded(!expanded);
     };
-    console.log(id);
+    // console.log(id);
     console.log(props);
-    console.log(props.info);
-  
+    // console.log(props.info);
+    let mock_eventcard_info = {
+      "id": '123',
+      "Event name": "string",
+      "Location": "string",
+      "Date": "2021-06-25T11:27:02.565Z",
+      "status": "Ongoing",
+      "Details": "string"
+    }
     return (
       <Card className={classes.root}>
         <CardHeader
@@ -73,7 +80,7 @@ function EventCard(props) {
         />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            {id}This impressive paella is a perfect party dish and a fun meal to cook together with your
+            {mock_eventcard_info.id}This impressive paella is a perfect party dish and a fun meal to cook together with your
             guests. Add 1 cup of frozen peas along with the mussels, if you like.
           </Typography>
         </CardContent>
