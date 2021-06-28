@@ -822,12 +822,16 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
+      time:
+        type: "string"
+        example: "11:00 AM to 12:00 PM"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       details:
         type: "string"
-        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
-      recommendation:
-        $ref: '#/definitions/ArrayOfInt'
+        example: "Inner West Council and Fuel Personal Transformations have joined together to bring local residents community classes in the park!All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
   
   eventUpdate:
     type: "object"
@@ -863,10 +867,17 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
+      time:
+        type: "string"
+        example: "11:00 AM to 12:00 PM"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       details:
         type: "string"
         example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
+        
   eventSummary:
     type: "object"
     properties:
@@ -883,7 +894,7 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
       location:
         type: object
         properties:
@@ -893,6 +904,9 @@ definitions:
           suburb:
             type: "string"
             example: "Ashfield NSW"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       favourite:
         type: boolean
         example: true
@@ -931,18 +945,24 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
+      time:
+        type: "string"
+        example: "11:00 AM to 12:00 PM"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       details:
         type: "string"
         example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
       recommendation:
         $ref: '#/definitions/ArrayOfInt'
+      bookedUser:
+        $ref: '#/definitions/ArrayOfInt'
       favourite:
         type: boolean
         example: true
-      book:
-        type: boolean
-        example: true
+
       
 
 
