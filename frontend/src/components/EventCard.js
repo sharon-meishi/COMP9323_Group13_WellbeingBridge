@@ -8,9 +8,10 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 // import Collapse from '@material-ui/core/Collapse';
 // import Avatar from '@material-ui/core/Avatar';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
+// import { red } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -33,12 +34,42 @@ const useStyles = makeStyles((theme) => ({
         duration: theme.transitions.duration.shortest,
       }),
     },
-    expandOpen: {
-      transform: 'rotate(180deg)',
+    title:{
+      fontSize:"1.2rem",
+      // paddingRight:"1%",
+      width:"65%",
+      textDecoration:"underline",
+      // color:"textSecondary",
     },
-    avatar: {
-      backgroundColor: red[500],
+    location:{
+      fontSize:"0.9rem",
+      justifyContent:"end",
+      paddingTop:"9%",
+      width:"35%",
+      // color:"textSecondary",
+
     },
+    // expandOpen: {
+    //   transform: 'rotate(180deg)',
+    // },
+    date:{
+      fontSize:"0.7rem",
+    },
+    detail:{
+      height:"10%",
+    },
+    // avatar: {
+    //   backgroundColor: red[500],
+    // },
+    actions:{
+      display:"flex",
+    },
+    view:{
+      paddingLeft:"30%",
+      color:"#3a89c2",
+      textDecoration:"underline",
+
+    }
   }));
 function EventCard(props) {
     const classes = useStyles();
@@ -53,50 +84,39 @@ function EventCard(props) {
 
     return (
       <Card className={classes.root}>
-        {/* <CardHeader
-          avatar={
-            <Avatar aria-label="recipe" className={classes.avatar}>
-              R
-            </Avatar>
-          }
-          action={
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
-            </IconButton>
-          }
-          title="Shrimp and Chorizo Paella"
-          subheader="September 14, 2016"
-        /> */}
         <CardMedia
           className={classes.media}
           image={SamplePic}
           title="Paella dish"
         />
         <CardContent>
-          <Typography variant="h6" color="textSecondary" component="p">
-          {name}
-          </Typography>          
-          <Typography variant="body1" color="textSecondary" component="p">
-          {location.suburb}
+          <Grid container direction="row">
+            <Typography className={classes.title}  >
+              {name}
+            </Typography>          
+            <Typography className={classes.location}  >
+              {location.suburb}
+            </Typography>
+          </Grid>
+          <Typography  className={classes.date} color="textSecondary">
+            29, June 2021
           </Typography>
+          <Grid className={classes.detail}>
+            <Typography   color="textSecondary">
+              Aimed at all levels of fitness and age groups, the classes will be gentle...
+            </Typography>
+          </Grid>
         </CardContent>
-        <CardActions disableSpacing>
+        <CardActions className={classes.actions} disableSpacing className={classes.actions}>
           <IconButton aria-label="add to favorites">
             <FavoriteIcon />
           </IconButton>
           <IconButton aria-label="share">
             <ShareIcon />
           </IconButton>
-
-          {/* <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: expanded,
-            })}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-          </IconButton> */}
+          <Typography className={classes.view}>
+            view Details
+          </Typography>
         </CardActions>
       </Card>
     );
