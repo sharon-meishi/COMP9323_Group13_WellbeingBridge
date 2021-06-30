@@ -37,8 +37,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBottom: '16px',
-    paddingTop: '16px',
+    padding: '16px 16px',
   },
   title: {
     width: '70%',
@@ -50,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
   titleStyle: {
     textDecoration: 'underline',
     fontFamily: `'Noto Sans', 'Roboto'`,
-    fontWeight: '600'
+    fontWeight: '500',
+    fontSize: '1.8rem'
   },
 }));
 
@@ -61,7 +61,7 @@ function OrganizationAllType() {
     <Box className={classes.box}>
       <Grid container className={classes.root}>
         <Box className={classes.title}>
-          <Typography variant='h5' align='left' className={classes.titleStyle}>
+          <Typography className={classes.titleStyle}>
             What type of organization you are looking for?
           </Typography>
           <HomePageButton text='Find an Organization'/>
