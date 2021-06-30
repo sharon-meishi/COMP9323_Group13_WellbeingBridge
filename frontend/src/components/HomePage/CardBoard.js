@@ -19,6 +19,8 @@ const useStyles = makeStyles({
     // justifyContent:'space-between',
     // backgroundColor:'black',
     // margin: '20px',
+    fontFamily: `'Noto Sans', 'Roboto'`,
+    fontWeight: '500',
     textDecoration: 'underline',
     padding: '1% 0 0 0',
   },
