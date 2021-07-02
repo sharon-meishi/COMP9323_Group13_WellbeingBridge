@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import icon from '../Assets/WellbeingBridgeLogo.png';
 import { FormControl, MenuItem, Select, InputBase } from '@material-ui/core';
 import HomePageButton from './HomePageButton';
+import LoginModal from './LoginModal';
+import RegisterModal from './RegisterModal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   leftBox: {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   searchBox: {
     border: '2px solid #E5E5E5',
@@ -44,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     marginLeft: '10px',
-    borderRadius: '5px'
+    borderRadius: '5px',
   },
   select: {
     width: '130px',
@@ -53,14 +55,14 @@ const useStyles = makeStyles((theme) => ({
     borderLeft: 'solid rgba(0, 0, 0, 0.18)',
     paddingLeft: '5px',
     width: '250px',
-    [theme.breakpoints.down('sm')]:{
-        fontSize: '5px',
-        width:'150px'
-    }
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '5px',
+      width: '150px',
+    },
   },
   search: {
     marginTop: '5px',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   button: {
     marginRight: '20px',
@@ -69,12 +71,34 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NavBar() {
   const classes = useStyles();
+
   const [type, settype] = React.useState('organization');
   const handleChange = (event) => {
     settype(event.target.value);
   };
+
+  const [openLogin, setOpenLogin] = useState(false);
+  const [openRegister, setOpenRegister] = useState(false);
+  const handleClickOpen = () => {
+    setOpenLogin(true);
+  };
+
   return (
     <div className={classes.root}>
+      {openLogin ? (
+        <LoginModal
+          open={openLogin}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
+      {openRegister ? (
+        <RegisterModal
+          open={openRegister}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
       <div className={classes.title}>
         Want to list your organization and events? Apply here!
       </div>
@@ -92,10 +116,10 @@ export default function NavBar() {
               className={classes.input}
               placeholder={'Find event or organization...'}
             />
-              <SearchIcon className={classes.search} />
+            <SearchIcon className={classes.search} />
           </div>
         </div>
-        <HomePageButton text='LOGIN' />
+        <HomePageButton text='LOGIN' onClick={handleClickOpen} />
       </div>
     </div>
   );
