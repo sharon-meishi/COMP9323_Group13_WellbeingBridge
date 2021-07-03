@@ -13,8 +13,7 @@ from datetime import datetime
 import os
 import matplotlib.pyplot as plt
 import time
-
-
+import pymysql
 
 app = Flask(__name__)
 api = Api(app, title='comme on', description='hello')
@@ -25,24 +24,6 @@ api = Api(app, title='comme on', description='hello')
 token_secret='goodgoodstudy,daydayup'
 time_max=60
 refresh_time=120
-
-
-# SALT = 'iv%x6xo7l7_u9bf_u!9#g#m*)*=ej@bek5)(@u3kh*72+unjv='
-# def create_token():
-#     # 构造header
-#     headers = {
-#         'typ': 'jwt',
-#         'alg': 'HS256'
-#     }
-#     # 构造payload
-#     payload = {
-#         'user_id': 1, # 自定义用户ID
-#         'username': 'yhz', # 自定义用户名
-#         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5) # 超时时间
-#     }
-#     result = jwt.encode(payload=payload, key=SALT, algorithm="HS256", headers=headers).decode('utf-8')
-#     return result
-
 
 get_user = api.parser()
 get_user.add_argument('username', type=str, default='wyw@123.com', location="args")
@@ -62,28 +43,35 @@ class get(Resource):
             password = request.args.get('password')
             # token = request.headers["token"]
             # data = jwt.decode(token, token_secret, algorithms=['HS256'])
+            if username == "" or password == "":
+                return jsonify({'code': 400, 'message': "Missing email or password"})
             code=login(username,password)
             return code
 
-
-
-
-    
 def login(username,password):
+    sql_login_u= f"SELECT UserId, Password FROM User WHERE Email = '{username}';"
+    sql_login_o= f"SELECT OrganizationId, Password FROM Organization WHERE Email = '{username}';"
+    result_u=use_db(sql_login_u)
+    result_o=use_db(sql_login_o)
+    tag='string'
+    password_final=0
+    if len(result_u)>0:
+        group_id=result_u[0][0]
+        password_final=result_u[0][1]
+        tag='individual'
+    elif len(result_o)>0:
+        group_id=result_o[0][0]
+        password_final=result_o[0][1]
+        tag='organization'
     
-    sql_login= f"SELECT Password FROM User WHERE Email = '{username}';"
-    createdb()
-    con = sqlite3.connect('9323.db')
-    cur = con.cursor()
-    cur.execute(sql_login)
-    password_s = cur.fetchall()
-    password_final = password_s[0]
     if password == password_final:
-        return 200
+        token=createtoken(username)
+        return jsonify({'code': 200, "userId": group_id,"usergroup":tag,'token':token})
+    else:
+        return jsonify({'code': 400, 'message': "Wrong email or password"})
 
 def verify_front():
     pass
-
 
 def createtoken(Email):
     payload={
@@ -95,26 +83,21 @@ def createtoken(Email):
     token = jwt.encode(payload, token_secret, algorithm='HS256')
     return token
 
-
-
-
-def createdb():
-    con = sqlite3.connect('9323.db')
+def use_db(string):
+    con = pymysql.connect(host='localhost',
+                            port=3306,
+                            user='root',
+                            password='abcd',
+                            db='wellbeing',
+                            charset='utf8')
     cur = con.cursor()
-    cur.execute('''CREATE TABLE IF NOT EXISTS User (
-                UserID INTEGER NOT NULL PRIMARY KEY , 
-                NickName VARCHAR(255) NOT NULL,
-                Email VARCHAR(255) NOT NULL,
-                Password VARCHAR(255) NOT NULL,
-                EventId VARCHAR(255) NULL,
-                FavouriteId VARCHAR(255) NULL)''')  # There must be brackets inside
-    
-    intsert_data=(1,'root','wyw@123.com','a123','1','2')
-    sql_string = 'INSERT OR REPLACE INTO User VALUES(?,?,?,?,?,?)'
-    con.execute(sql_string, intsert_data)
+    cur.execute(string)
+    result = cur.fetchall()
     con.commit()  # Perform previous database operations
     con.close()  # Remember to turn it off after running
-
-
+    return result
+    #fake data
+    #INSERT INTO User (UserId,NickName,Email,Password,FavouriteId) VALUES (1,'root','wyw@123.com','a123','2');
+    
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
