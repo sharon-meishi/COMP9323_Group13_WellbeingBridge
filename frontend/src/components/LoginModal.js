@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -13,7 +14,7 @@ import LoginIcon from '../Assets/LoginIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
 
 function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
 const useStyles = makeStyles({
@@ -28,13 +29,13 @@ const useStyles = makeStyles({
     alignItems: 'center',
     textAlign: 'center',
   },
-  formStyle:{
+  formStyle: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    width: '100%'
+    width: '100%',
   },
 
   topStyle: {
@@ -45,25 +46,24 @@ const useStyles = makeStyles({
     fontWeight: '500',
     margin: '10px 0',
   },
-  textFieldStyle:{
-    width:'70%'
+  textFieldStyle: {
+    width: '70%',
   },
   buttonStyle: {
     fontSize: '16px',
     marginTop: '20px',
   },
-  linkStyle:{
+  linkStyle: {
     fontFamily: `'Noto Sans', 'Roboto'`,
     fontWeight: '400',
-  }
+  },
 });
 
 function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const preventDefault = (event) => event.preventDefault();
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [stateCode, setstateCode] = useState(0);
 
@@ -71,10 +71,9 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     setOpenLogin(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(email, password)
-  }
+  const loginHandeler = (data) => {
+    console.log(data);
+  };
 
   useEffect(() => {
     if (stateCode === 200) {
@@ -101,33 +100,51 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
           </Typography>
           <DialogContentText>Log in to your account</DialogContentText>
         </Box>
-        {errorMsg ? <Alert severity="error">{errorMsg}</Alert> : null}
-        <form className={classes.formStyle} onSubmit={handleSubmit}>
+        {errorMsg ? <Alert severity='error'>{errorMsg}</Alert> : null}
+        <form className={classes.formStyle} onSubmit={handleSubmit(loginHandeler)}>
           <TextField
+            {...register('email', {
+              required: true,
+              pattern:
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i,
+            })}
             autoFocus
             margin='normal'
             id='email'
             label='Email Address'
             type='email'
             variant='outlined'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             className={classes.textFieldStyle}
             required
           />
+          {errors?.emailRegister?.type === 'required' && (
+            <error>This field is required</error>
+          )}
+          {errors?.emailRegister?.type === 'pattern' && (
+            <error>Invalid email input</error>
+          )}
           <TextField
+          {...register("password", {
+            required: true
+          })}
             autoFocus
             margin='normal'
             id='password'
             label='Password'
             type='password'
             variant='outlined'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             className={classes.textFieldStyle}
             required
           />
-          <Button type='submit' variant='contained' color='primary' className={classes.buttonStyle}>
+          {errors?.password?.type === 'required' && (
+            <error>This field is required</error>
+          )}
+          <Button
+            type='submit'
+            variant='contained'
+            color='primary'
+            className={classes.buttonStyle}
+          >
             Submit
           </Button>
         </form>
@@ -143,7 +160,7 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
           >
             Register here!
           </Link>
-          <Box m={1}> 
+          <Box m={1}>
             <Link
               href='#'
               onClick={preventDefault}
