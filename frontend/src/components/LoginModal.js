@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -6,7 +7,6 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
@@ -52,8 +52,10 @@ const useStyles = makeStyles({
   buttonStyle: {
     fontSize: '16px',
     marginTop: '20px',
+    marginBottom: '10px'
   },
   linkStyle: {
+    fontSize: '13px',
     fontFamily: `'Noto Sans', 'Roboto'`,
     fontWeight: '400',
   },
@@ -61,8 +63,15 @@ const useStyles = makeStyles({
 
 function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
+  const history = useHistory();
+
   const preventDefault = (event) => event.preventDefault();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   const [errorMsg, setErrorMsg] = useState('');
   const [stateCode, setstateCode] = useState(0);
@@ -73,6 +82,20 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
 
   const loginHandeler = (data) => {
     console.log(data);
+  };
+
+  const handleSwitch = (event) => {
+    event.preventDefault();
+    reset();
+    setOpenLogin(false); 
+    setOpenRegister(true)
+  }
+
+  const toOrganizationApplyPage = (event) => {
+    event.preventDefault();
+    reset();
+    setOpenLogin(false);
+    history.push('/organization/apply');
   };
 
   useEffect(() => {
@@ -101,7 +124,10 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
           <DialogContentText>Log in to your account</DialogContentText>
         </Box>
         {errorMsg ? <Alert severity='error'>{errorMsg}</Alert> : null}
-        <form className={classes.formStyle} onSubmit={handleSubmit(loginHandeler)}>
+        <form
+          className={classes.formStyle}
+          onSubmit={handleSubmit(loginHandeler)}
+        >
           <TextField
             {...register('email', {
               required: true,
@@ -124,9 +150,9 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             <error>Invalid email input</error>
           )}
           <TextField
-          {...register("password", {
-            required: true
-          })}
+            {...register('password', {
+              required: true,
+            })}
             autoFocus
             margin='normal'
             id='password'
@@ -147,31 +173,29 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
           >
             Submit
           </Button>
-        </form>
-      </DialogContent>
-      <DialogActions className={classes.flexStyle}>
-        <Box m={1} className={classes.linkStyle}>
-          Don't have an account?
-          <Link
-            href='#'
-            onClick={preventDefault}
-            color='inherit'
-            underline='always'
-          >
-            Register here!
-          </Link>
-          <Box m={1}>
+          <Box m={1} className={classes.linkStyle}>
+            Don't have an account?
             <Link
               href='#'
-              onClick={preventDefault}
+              onClick={handleSwitch}
               color='inherit'
               underline='always'
             >
-              Or apply here to list your organization and events!
+              Register here!
             </Link>
+            <Box m={1}>
+              <Link
+                href='#'
+                onClick={toOrganizationApplyPage}
+                color='inherit'
+                underline='always'
+              >
+                Or apply here to list your organization and events!
+              </Link>
+            </Box>
           </Box>
-        </Box>
-      </DialogActions>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

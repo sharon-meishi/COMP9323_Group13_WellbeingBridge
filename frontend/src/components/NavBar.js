@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import icon from '../Assets/WellbeingBridgeLogo.png';
-import { FormControl, MenuItem, Select, InputBase } from '@material-ui/core';
+import {
+  FormControl,
+  MenuItem,
+  Select,
+  InputBase,
+  Button,
+  Avatar,
+  Link,
+  Box
+} from '@material-ui/core';
 import HomePageButton from './HomePageButton';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
@@ -18,14 +28,11 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Noto Sans',
     fontSize: '20px',
     fontWeight: 400,
-    textDecoration: 'underline',
     textAlign: 'center',
   },
   image: {
     width: '200px',
     height: '40px',
-    backgroundImage: `url(${icon})`,
-    backgroundRepeat: 'no-repeat',
   },
   border: {
     borderBottom: 'solid rgba(0, 0, 0, 0.1)',
@@ -34,11 +41,13 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px 50px 10px 50px',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
+    alignItems: 'center'
   },
   leftBox: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
+    alignItems: 'center'
   },
   searchBox: {
     border: '2px solid #E5E5E5',
@@ -71,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NavBar() {
   const classes = useStyles();
+  const history = useHistory();
 
   const [type, settype] = React.useState('organization');
   const handleChange = (event) => {
@@ -81,6 +91,15 @@ export default function NavBar() {
   const [openRegister, setOpenRegister] = useState(false);
   const handleClickOpen = () => {
     setOpenLogin(true);
+  };
+
+  const toOrganizationApplyPage = (event) => {
+    event.preventDefault();
+    history.push('/organization/apply');
+  };
+
+  const toHomePage = () => {
+    history.push('/home');
   };
 
   return (
@@ -99,12 +118,21 @@ export default function NavBar() {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
-      <div className={classes.title}>
-        Want to list your organization and events? Apply here!
-      </div>
+      <Box className={classes.title}>
+        <Link href='#' onClick={toOrganizationApplyPage} underline='always' color='inherit'>
+          Want to list your organization and events? Apply here!
+        </Link>
+      </Box>
+
       <div className={classes.border}>
         <div className={classes.leftBox}>
-          <div className={classes.image} />
+          <Button onClick={toHomePage}>
+            <Avatar
+              alt='WellbeingBridgeLogo'
+              src={icon}
+              className={classes.image}
+            />
+          </Button>
           <div className={classes.searchBox}>
             <FormControl className={classes.select}>
               <Select value={type} onChange={handleChange} defaultValue={type}>
