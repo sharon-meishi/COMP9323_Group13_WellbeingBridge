@@ -27,7 +27,7 @@ def create_database():
         database='wellbeing',
         charset='utf8'
     )
-    c=db.cursor()
+    c = db.cursor()
     user_table = '''
     CREATE TABLE IF NOT EXISTS `User` (
   `UserId` int NOT NULL AUTO_INCREMENT,
@@ -38,7 +38,7 @@ def create_database():
   PRIMARY KEY (`UserId`)
 )
     '''
-    organization_table='''CREATE TABLE IF NOT EXISTS `Organization` (
+    organization_table = '''CREATE TABLE IF NOT EXISTS `Organization` (
   `OrganizationId` int NOT NULL AUTO_INCREMENT,
   `Email` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
@@ -52,7 +52,7 @@ def create_database():
   `WebsiteLink` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`OrganizationId`))
     '''
-    event_table='''
+    event_table = '''
     CREATE TABLE IF NOT EXISTS `Event` (
   `EventId` int NOT NULL,
   `OrganizationId` int NOT NULL,
@@ -72,7 +72,7 @@ def create_database():
   PRIMARY KEY (`EventId`)
 )
     '''
-    booking_table='''
+    booking_table = '''
     CREATE TABLE IF NOT EXISTS `Booking` (
   `BookingId` int NOT NULL AUTO_INCREMENT,
   `EventId` int NOT NULL,
@@ -104,9 +104,17 @@ def sql_command(command):
     return result
 
 
+user_model = api.model("user", {
+    "nickname": fields.String,
+    "email": fields.String,
+    "password": fields.String
+})
+
+
 # individual user's sign up
 @api.route('/signup/user', doc={"description": "new individual user registration"})
 class IndividualRegister(Resource):
+    @api.expect(user_model)
     def post(self):
         data = json.loads(request.get_data())
         nickname = data['nickname']
@@ -125,9 +133,20 @@ class IndividualRegister(Resource):
                 return jsonify({'code': 200, 'message': "Success register", 'nickname': nickname})
 
 
+organization_model = api.model("organization", {
+    "organizationName": fields.String,
+    "email": fields.String,
+    "password": fields.String,
+    "organizationType": fields.String,
+    "contact": fields.String,
+    "introduction": fields.String
+})
+
+
 # organization user's sign up
 @api.route('/signup/organization', doc={"description": "new organization user registration"})
 class OrganizationRegister(Resource):
+    @api.expect(organization_model)
     def post(self):
         data = json.loads(request.get_data())
         organization_name = data['organizationName']
@@ -151,13 +170,19 @@ class OrganizationRegister(Resource):
                 return jsonify({'code': 200, 'message': "Success register"})
 
 
+login_model = api.model("login", {
+    "email": fields.String,
+    "password": fields.String
+})
+
+
 @api.route('/login')
-@api.doc(params={'username': 'your name', 'password': 'an number'})
 class Login(Resource):
     @api.response(200, 'OK')
     @api.response(400, 'Bad Request')
     @api.response(404, 'Not Found')
     @api.response(201, 'Created')
+    @api.expect(login_model)
     def post(self):
         data = json.loads(request.get_data())
         email = data['email']
