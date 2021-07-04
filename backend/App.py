@@ -11,6 +11,10 @@ import jwt
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
 
+# token_secret = 'goodgoodstudy,daydayup'
+# time_max = 60
+# refresh_time = 120
+
 
 # create tables in database
 def create_database():
@@ -83,6 +87,8 @@ def create_database():
     c.execute(user_table)
     c.execute(organization_table)
     c.execute(event_table)
+    c.execute(booking_table)
+    c.close()
 
     return True
 
@@ -102,6 +108,17 @@ def sql_command(command):
     db.commit()
     db.close()
     return result
+
+
+# def createtoken(Email):
+#     payload = {
+#         'uid': Email,
+#         'iss': 'comp9323',
+#         'exp': 'something',
+#         'sub': 'project'
+#     }
+#     token = jwt.encode(payload, token_secret, algorithm='HS256')
+#     return token
 
 
 user_model = api.model("user", {
