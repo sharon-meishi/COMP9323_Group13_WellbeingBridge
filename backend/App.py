@@ -107,8 +107,7 @@ def sql_command(command):
 user_model = api.model("user", {
     "nickname": fields.String,
     "email": fields.String,
-    "password": fields.String,
-    "usergroup": fields.String
+    "password": fields.String
 })
 
 
@@ -138,7 +137,6 @@ organization_model = api.model("organization", {
     "organizationName": fields.String,
     "email": fields.String,
     "password": fields.String,
-    "usergroup": fields.String,
     "organizationType": fields.String,
     "contact": fields.String,
     "introduction": fields.String
