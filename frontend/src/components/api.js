@@ -16,10 +16,9 @@ export const loginRequest = async (data) => {
         'content-Type': 'application/json',
       },
     });
-    return res.data;
+    return [res.status, res.data];
   } catch (error) {
-    console.log('error', error);
-    return error;
+    return [error.response.status,error.response.data.message];
   }
 };
 

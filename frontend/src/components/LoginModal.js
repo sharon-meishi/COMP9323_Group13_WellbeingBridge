@@ -66,7 +66,6 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const history = useHistory();
 
-  const preventDefault = (event) => event.preventDefault();
   const {
     register,
     handleSubmit,
@@ -75,7 +74,6 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   } = useForm();
 
   const [errorMsg, setErrorMsg] = useState('');
-  const [stateCode, setstateCode] = useState(0);
 
   const handleClose = () => {
     setOpenLogin(false);
@@ -84,7 +82,15 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   const loginHandeler = async (data) => {
     console.log(data);
     const res = await loginRequest(data)
-    console.log(res);
+    if (res[0] === 200){
+      console.log('login success')
+      console.log(res)
+      sessionStorage.setItem('token', res[1].token);
+      sessionStorage.setItem('userId', res[1].usergroup);
+      sessionStorage.setItem('usergroup', res[1].individual)
+    } else {
+      setErrorMsg(res[1])
+    }
 
   };
 
@@ -102,11 +108,6 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     history.push('/organization/apply');
   };
 
-  useEffect(() => {
-    if (stateCode === 200) {
-      console.log('login success');
-    }
-  }, [stateCode]);
 
   return (
     <Dialog
