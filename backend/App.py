@@ -5,12 +5,13 @@ from flask import Flask, request, jsonify
 from flask_restx import Resource, Api, fields
 import pymysql
 import json
+from flask_cors import CORS
 from datetime import datetime, timedelta
 import jwt
 
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
-
+CORS(app)
 
 # token_secret = 'goodgoodstudy,daydayup'
 # time_max = 60
