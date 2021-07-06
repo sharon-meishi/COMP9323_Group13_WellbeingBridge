@@ -12,6 +12,11 @@ app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
 
 
+# token_secret = 'goodgoodstudy,daydayup'
+# time_max = 60
+# refresh_time = 120
+
+
 # create tables in database
 def create_database():
     conn = pymysql.connect(host='localhost',
@@ -83,6 +88,8 @@ def create_database():
     c.execute(user_table)
     c.execute(organization_table)
     c.execute(event_table)
+    c.execute(booking_table)
+    c.close()
 
     return True
 
@@ -221,6 +228,44 @@ class GetPopularEvent(Resource):
     def get(self):
         querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
         return sql_command(querry_string), 200
+
+
+parser = api.parser()
+parser.add_argument('token', type=str, required=True)
+parser.add_argument('eventid', type=str, required=True)
+
+
+@api.route("/event/{eventid}/summary", doc={"description": "get the summary of event"})
+@api.doc(parser=parser)
+class event(Resource):
+    def get(self):
+        token = parser.parse_args()['token']
+        email = decode_token(token)['email']
+        eventid = parser.parse_args()['eventid']
+        event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Suburb, Introduction FROM Event WHERE EventId='{eventid}';"
+        result = sql_command(event_sql)
+        user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
+        if_favourite = sql_command(user_sql)
+        favouriteid = list(if_favourite[0])[0]
+        if str(eventid) in favouriteid.split(","):
+            favourite = True
+        else:
+            favourite = False
+        if result:
+            # location = {"postcode": result[0][4], "suburb": result[0][5]}
+            result_output = {"eventId": result[0][0],
+                             "thumbnail": result[0][1],
+                             "name": result[0][2],
+                             "date": result[0][3],
+                             "location": {
+                                 "postcode": result[0][4],
+                                 "suburb": result[0][5]
+                             },
+                             "introduction": result[0][6],
+                             "favourite": favourite}
+            return result_output, 200
+        else:
+            return {"message": "Not Found"}, 404
 
 
 if __name__ == "__main__":
