@@ -128,16 +128,26 @@ class IndividualRegister(Resource):
         email = data['email']
         password = data['password']
         if nickname == "" or email == "" or password == "":
-            return jsonify({'code': 400, 'message': "Missing nickname or email or password"})
+            output = {
+                "message": "Missing nickname or email or password"
+            }
+            return output, 400
         else:
             sql = f"SELECT * FROM User WHERE Email='{email}';"
             if sql_command(sql):
-                return jsonify({'code': 403, 'message': "email already used as individual"})
+                output = {
+                    "message": "email already used as individual"
+                }
+                return output, 403
             else:
                 userid = 0
                 sql = "INSERT INTO User VALUES ({},'{}', '{}', '{}', NULL);".format(userid, nickname, email, password)
                 sql_command(sql)
-                return jsonify({'code': 200, 'message': "Success register", 'nickname': nickname})
+                output = {
+                    "message": "Success register",
+                    "nickname": nickname
+                }
+                return output, 200
 
 
 organization_model = api.model("organization", {
@@ -163,18 +173,27 @@ class OrganizationRegister(Resource):
         introduction = data['introduction']
         contact = data['contact']
         if email == "" or password == "" or organization_name == "" or organization_type == "" or contact == "":
-            return jsonify({'code': 400, 'message': "Missing information"})
+            output = {
+                "message": "Missing information"
+            }
+            return output, 400
         else:
             sql = f"SELECT * FROM Organization WHERE Email='{email}';"
             if sql_command(sql):
-                return jsonify({'code': 403, 'message': "email already used as organization"})
+                output={
+                    "message": "email already used as organization"
+                }
+                return output, 403
             else:
                 organization_id = 0
                 sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}','{}','{}',NULL,NULL,NULL,NULL);". \
                     format(organization_id, email, password, organization_name, organization_type, contact,
                            introduction)
                 sql_command(sql)
-                return jsonify({'code': 200, 'message': "Success register"})
+                output={
+                    "message": "Success register"
+                }
+                return output, 200
 
 
 login_model = api.model("login", {
@@ -195,7 +214,10 @@ class Login(Resource):
         email = data['email']
         password = data['password']
         if email == "" or password == "":
-            return jsonify({'code': 400, 'message': "Missing email or password"})
+            output={
+                "message":"Missing email or password"
+            }
+            return output, 400
         code = login(email, password)
         return code
 
@@ -218,9 +240,17 @@ def login(username, password):
 
     if password == password_final:
         token = encode_token(username, tag)
-        return jsonify({'code': 200, "userId": group_id, "usergroup": tag, 'token': token})
+        output={
+            "userId": group_id,
+            "usergroup": tag,
+            "token": token
+        }
+        return output, 200
     else:
-        return jsonify({'code': 400, 'message': "Wrong email or password"})
+        output={
+            "message": "Wrong email or password"
+        }
+        return output, 400
 
 
 @api.route('/popular/events')
@@ -265,7 +295,10 @@ class event(Resource):
                              "favourite": favourite}
             return result_output, 200
         else:
-            return {"message": "Not Found"}, 404
+            output={
+                "message":"Not Found"
+            }
+            return output, 404
 
 
 if __name__ == "__main__":
