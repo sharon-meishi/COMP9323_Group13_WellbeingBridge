@@ -12,6 +12,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
 import LoginIcon from '../Assets/LoginIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
+import { loginRequest } from './api'
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -80,8 +81,11 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     setOpenLogin(false);
   };
 
-  const loginHandeler = (data) => {
+  const loginHandeler = async (data) => {
     console.log(data);
+    const res = await loginRequest(data)
+    console.log(res);
+
   };
 
   const handleSwitch = (event) => {
