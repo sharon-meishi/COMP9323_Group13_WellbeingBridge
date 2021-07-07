@@ -1,7 +1,7 @@
 # COMP9323_Group13_WellbeingBridge
 Group project of COMP9323
 
-# Backend 
+# Backend (Inside backend folder)
 
 ## Installation
 
@@ -31,6 +31,22 @@ python3 app.py
 ```
 
 ## Notes
-* Server running on 127.0.0.0/8000
+* Server running on 127.0.0.1/8000
 * To specify running port, in file **app.py** replace `app.run(debug=True)` by `app.run(debug=True, port=XXXX)` where `XXXX` is your prefer
 port number
+
+# Frontend (Inside frontend folder)
+
+1. 
+```
+yarn install
+```
+
+2.
+```
+yarn staty
+```
+
+## Notes
+* Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
