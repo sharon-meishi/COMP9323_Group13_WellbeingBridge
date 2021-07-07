@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
+import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +14,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
 import RegisterIcon from '../Assets/RegisterIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
+import { registerRequest } from './api';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -66,23 +68,35 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const history = useHistory();
 
-  const preventDefault = (event) => event.preventDefault();
+  const context = useContext(AppContext);
+
   const {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm();
 
   const [errorMsg, setErrorMsg] = useState('');
-  const [stateCode, setstateCode] = useState(0);
 
   const handleClose = () => {
     setOpenRegister(false);
   };
 
-  const loginHandeler = (data) => {
+  const registerHandeler = async (data) => {
     console.log(data);
+    const res = await registerRequest(data);
+    if (res[0] === 200) {
+      console.log('register success');
+      handleClose()
+      console.log(res);
+      setErrorMsg('');
+      context.setIsLoginState(true);
+      context.setUserType('individual');
+    } else {
+      setErrorMsg(res[1]);
+    }
   };
 
   const handleSwitch = (event) => {
@@ -98,12 +112,6 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
     setOpenRegister(false);
     history.push('/organization/apply');
   };
-
-  useEffect(() => {
-    if (stateCode === 200) {
-      console.log('login success');
-    }
-  }, [stateCode]);
 
   return (
     <Dialog
@@ -127,10 +135,10 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
         {errorMsg ? <Alert severity='error'>{errorMsg}</Alert> : null}
         <form
           className={classes.formStyle}
-          onSubmit={handleSubmit(loginHandeler)}
+          onSubmit={handleSubmit(registerHandeler)}
         >
           <TextField
-            {...register('Nickname', {
+            {...register('nickname', {
               required: true,
             })}
             autoFocus
@@ -142,7 +150,7 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             className={classes.textFieldStyle}
             required
           />
-          {errors?.Nickname?.type === 'required' && (
+          {errors?.nickname?.type === 'required' && (
             <error>This field is required</error>
           )}
           <TextField
@@ -160,12 +168,9 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             className={classes.textFieldStyle}
             required
           />
-          {errors?.emailRegister?.type === 'required' && (
-            <error>This field is required</error>
-          )}
-          {errors?.emailRegister?.type === 'pattern' && (
-            <error>Invalid email input</error>
-          )}
+          {errors?.emailRegister?.type === 'required' &&
+            'This field is required'}
+          {errors?.emailRegister?.type === 'pattern' && 'Invalid email input'}
           <TextField
             {...register('password', {
               required: true,
@@ -179,8 +184,28 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             className={classes.textFieldStyle}
             required
           />
-          {errors?.password?.type === 'required' && (
-            <error>This field is required</error>
+          {errors?.password?.type === 'required' && 'This field is required'}
+          <TextField
+            {...register('passwordConfirmation', {
+              required: true,
+              validate: {
+                matchesPreviousPassword: (value) => {
+                  const { password } = getValues();
+                  return password === value || 'Passwords should match';
+                },
+              },
+            })}
+            autoFocus
+            margin='normal'
+            id='passwordConfirm'
+            label='Confirm Password'
+            type='password'
+            variant='outlined'
+            className={classes.textFieldStyle}
+            required
+          />
+          {errors?.passwordConfirmation && (
+            <div>{errors.passwordConfirmation.message}</div>
           )}
           <Button
             type='submit'

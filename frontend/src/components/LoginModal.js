@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
+import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,6 +13,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
 import LoginIcon from '../Assets/LoginIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
+import { loginRequest } from './api'
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -65,7 +67,8 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const history = useHistory();
 
-  const preventDefault = (event) => event.preventDefault();
+  const context = useContext(AppContext);
+
   const {
     register,
     handleSubmit,
@@ -74,14 +77,28 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   } = useForm();
 
   const [errorMsg, setErrorMsg] = useState('');
-  const [stateCode, setstateCode] = useState(0);
 
   const handleClose = () => {
     setOpenLogin(false);
   };
 
-  const loginHandeler = (data) => {
+  const loginHandeler = async (data) => {
     console.log(data);
+    const res = await loginRequest(data)
+    if (res[0] === 200){
+      console.log('login success')
+      handleClose()
+      console.log(res)
+      setErrorMsg('')
+      sessionStorage.setItem('token', res[1].token);
+      sessionStorage.setItem('userId', res[1].userId);
+      sessionStorage.setItem('usergroup', res[1].usergroup)
+      context.setIsLoginState(true)
+      context.setUserType(res[1].usergroup); 
+    } else {
+      setErrorMsg(res[1])
+    }
+
   };
 
   const handleSwitch = (event) => {
@@ -98,11 +115,6 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     history.push('/organization/apply');
   };
 
-  useEffect(() => {
-    if (stateCode === 200) {
-      console.log('login success');
-    }
-  }, [stateCode]);
 
   return (
     <Dialog
@@ -144,10 +156,10 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.emailRegister?.type === 'required' && (
-            <error>This field is required</error>
+              "This field is required"
           )}
           {errors?.emailRegister?.type === 'pattern' && (
-            <error>Invalid email input</error>
+            "Invalid email input"
           )}
           <TextField
             {...register('password', {
@@ -163,7 +175,7 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.password?.type === 'required' && (
-            <error>This field is required</error>
+            "This field is required"
           )}
           <Button
             type='submit'

@@ -1,19 +1,20 @@
 import React from 'react';
-import NavBar from "../components/NavBar";
-import NewsCarousel from '../components/HomePage/NewsCarousel'
-import OrganizationAllType from '../components/HomePage/OrganizationAllType'
+import NavBar from '../components/NavBar';
+import NewsCarousel from '../components/HomePage/NewsCarousel';
+import BackToTop from '../components/BackToTop';
+import OrganizationAllType from '../components/HomePage/OrganizationAllType';
 import CardBoard from '../components/HomePage/CardBoard';
 
 function HomePage() {
-
   return (
-    <div>
-      <NavBar/>
+    <>
+      <BackToTop showBelow={250} />
+      <NavBar />
       <NewsCarousel />
-      <OrganizationAllType/>
+      <OrganizationAllType />
       <CardBoard />
-    </div>
-  )
+    </>
+  );
 }
 
-export default HomePage
+export default HomePage;

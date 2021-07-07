@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AppContext } from '../utils/store';
+import ProfileMenu from './ProfileMenu';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
@@ -81,6 +83,9 @@ const useStyles = makeStyles((theme) => ({
 export default function NavBar() {
   const classes = useStyles();
   const history = useHistory();
+  
+  const context = useContext(AppContext);
+
 
   const [type, settype] = React.useState('organization');
   const handleChange = (event) => {
@@ -147,7 +152,13 @@ export default function NavBar() {
             <SearchIcon className={classes.search} />
           </div>
         </div>
+        {context.isLoginState ? (
+          null
+        ):
         <HomePageButton text='LOGIN' onClick={handleClickOpen} />
+        }
+        {context.isLoginState ? <ProfileMenu nickname={sessionStorage.getItem('nickname')}/>: null}
+        
       </div>
     </div>
   );
