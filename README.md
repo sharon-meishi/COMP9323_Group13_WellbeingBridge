@@ -44,7 +44,7 @@ yarn install
 
 2.
 ```
-yarn staty
+yarn start
 ```
 
 ## Notes
