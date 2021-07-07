@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
+import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core/styles';
@@ -66,6 +67,8 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const history = useHistory();
 
+  const context = useContext(AppContext);
+
   const {
     register,
     handleSubmit,
@@ -84,11 +87,14 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     const res = await loginRequest(data)
     if (res[0] === 200){
       console.log('login success')
+      handleClose()
       console.log(res)
       setErrorMsg('')
       sessionStorage.setItem('token', res[1].token);
       sessionStorage.setItem('userId', res[1].userId);
       sessionStorage.setItem('usergroup', res[1].usergroup)
+      context.setIsLoginState(true)
+      context.setUserType(res[1].usergroup); 
     } else {
       setErrorMsg(res[1])
     }
