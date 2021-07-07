@@ -1,5 +1,3 @@
-import os
-
 from jwt_token import encode_token, decode_token
 from flask import Flask, request, jsonify
 from flask_restx import Resource, Api, fields
@@ -12,10 +10,6 @@ import jwt
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
 CORS(app)
-
-# token_secret = 'goodgoodstudy,daydayup'
-# time_max = 60
-# refresh_time = 120
 
 
 # create tables in database
@@ -181,7 +175,7 @@ class OrganizationRegister(Resource):
         else:
             sql = f"SELECT * FROM Organization WHERE Email='{email}';"
             if sql_command(sql):
-                output={
+                output = {
                     "message": "email already used as organization"
                 }
                 return output, 403
@@ -191,7 +185,7 @@ class OrganizationRegister(Resource):
                     format(organization_id, email, password, organization_name, organization_type, contact,
                            introduction)
                 sql_command(sql)
-                output={
+                output = {
                     "message": "Success register"
                 }
                 return output, 200
@@ -215,8 +209,8 @@ class Login(Resource):
         email = data['email']
         password = data['password']
         if email == "" or password == "":
-            output={
-                "message":"Missing email or password"
+            output = {
+                "message": "Missing email or password"
             }
             return output, 400
         code = login(email, password)
@@ -241,14 +235,14 @@ def login(username, password):
 
     if password == password_final:
         token = encode_token(username, tag)
-        output={
+        output = {
             "userId": group_id,
             "usergroup": tag,
             "token": token
         }
         return output, 200
     else:
-        output={
+        output = {
             "message": "Wrong email or password"
         }
         return output, 400
@@ -262,7 +256,7 @@ class GetPopularEvent(Resource):
 
 
 parser = api.parser()
-parser.add_argument('token', type=str, required=True)
+parser.add_argument('token', type=str)
 parser.add_argument('eventid', type=str, required=True)
 
 
@@ -270,35 +264,39 @@ parser.add_argument('eventid', type=str, required=True)
 @api.doc(parser=parser)
 class event(Resource):
     def get(self):
-        token = parser.parse_args()['token']
-        email = decode_token(token)['email']
         eventid = parser.parse_args()['eventid']
         event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Suburb, Introduction FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
-        user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
-        if_favourite = sql_command(user_sql)
-        favouriteid = list(if_favourite[0])[0]
-        if str(eventid) in favouriteid.split(","):
-            favourite = True
-        else:
+
+        token = parser.parse_args()['token']
+        if token is None:
             favourite = False
+        else:
+            email = decode_token(token)['email']
+            user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
+            if_favourite = sql_command(user_sql)
+            favouriteid = list(if_favourite[0])[0]
+            if str(eventid) in favouriteid.split(","):
+                favourite = True
+            else:
+                favourite = False
         if result:
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
-                             "thumbnail": result[0][1],
-                             "name": result[0][2],
-                             "date": result[0][3],
-                             "location": {
-                                 "postcode": result[0][4],
-                                 "suburb": result[0][5]
-                             },
-                             "introduction": result[0][6],
-                             "favourite": favourite}
+                                 "thumbnail": result[0][1],
+                                 "name": result[0][2],
+                                 "date": result[0][3],
+                                 "location": {
+                                     "postcode": result[0][4],
+                                     "suburb": result[0][5]
+                                 },
+                                 "introduction": result[0][6],
+                                 "favourite": favourite}
             return result_output, 200
         else:
-            output={
-                "message":"Not Found"
-            }
+            output = {
+                    "message": "Not Found"
+                }
             return output, 404
 
 
