@@ -13,6 +13,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
 import RegisterIcon from '../Assets/RegisterIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
+import { registerRequest } from './api'
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -66,11 +67,11 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const history = useHistory();
 
-  const preventDefault = (event) => event.preventDefault();
   const {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm();
 
@@ -81,8 +82,16 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
     setOpenRegister(false);
   };
 
-  const loginHandeler = (data) => {
+  const registerHandeler = async(data) => {
     console.log(data);
+    const res = await registerRequest(data)
+    if (res[0] === 200){
+      console.log('register success')
+      console.log(res)
+      setErrorMsg('')
+    } else {
+      setErrorMsg(res[1])
+    }
   };
 
   const handleSwitch = (event) => {
@@ -127,10 +136,10 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
         {errorMsg ? <Alert severity='error'>{errorMsg}</Alert> : null}
         <form
           className={classes.formStyle}
-          onSubmit={handleSubmit(loginHandeler)}
+          onSubmit={handleSubmit(registerHandeler)}
         >
           <TextField
-            {...register('Nickname', {
+            {...register('nickname', {
               required: true,
             })}
             autoFocus
@@ -142,7 +151,7 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             className={classes.textFieldStyle}
             required
           />
-          {errors?.Nickname?.type === 'required' && (
+          {errors?.nickname?.type === 'required' && (
             <error>This field is required</error>
           )}
           <TextField
@@ -161,10 +170,10 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.emailRegister?.type === 'required' && (
-            <error>This field is required</error>
+            "This field is required"
           )}
           {errors?.emailRegister?.type === 'pattern' && (
-            <error>Invalid email input</error>
+            "Invalid email input"
           )}
           <TextField
             {...register('password', {
@@ -180,7 +189,30 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.password?.type === 'required' && (
-            <error>This field is required</error>
+            "This field is required"
+          )}
+          <TextField
+            {...register('passwordConfirmation', {
+              required: true,
+              validate: {
+                matchesPreviousPassword: (value) =>{
+                  const { password } = getValues();
+                  return password === value || "Passwords should match"; 
+                }
+              }
+            })}
+            autoFocus
+            margin='normal'
+            id='passwordConfirm'
+            label='Confirm Password'
+            type='password'
+            variant='outlined'
+            className={classes.textFieldStyle}
+            required
+          />
+          
+          {errors?.passwordConfirmation && (
+            `${errors.passwordConfirmation.message}`
           )}
           <Button
             type='submit'

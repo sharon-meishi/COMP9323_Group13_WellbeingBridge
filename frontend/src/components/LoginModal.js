@@ -85,9 +85,10 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     if (res[0] === 200){
       console.log('login success')
       console.log(res)
+      setErrorMsg('')
       sessionStorage.setItem('token', res[1].token);
-      sessionStorage.setItem('userId', res[1].usergroup);
-      sessionStorage.setItem('usergroup', res[1].individual)
+      sessionStorage.setItem('userId', res[1].userId);
+      sessionStorage.setItem('usergroup', res[1].usergroup)
     } else {
       setErrorMsg(res[1])
     }
@@ -149,10 +150,10 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.emailRegister?.type === 'required' && (
-            <error>This field is required</error>
+              "This field is required"
           )}
           {errors?.emailRegister?.type === 'pattern' && (
-            <error>Invalid email input</error>
+            "Invalid email input"
           )}
           <TextField
             {...register('password', {
@@ -168,7 +169,7 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.password?.type === 'required' && (
-            <error>This field is required</error>
+            "This field is required"
           )}
           <Button
             type='submit'

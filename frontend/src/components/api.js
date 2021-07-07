@@ -22,20 +22,21 @@ export const loginRequest = async (data) => {
   }
 };
 
-export const registerRequest = async (email, password) => {
-  const url = baseUrl + '/login';
-  const loginBody = {
-    email: email,
-    password: password,
+export const registerRequest = async (data) => {
+  const url = baseUrl + '/signup/user';
+  const signupBody = {
+    nickname: data.nickname,
+    email: data.email,
+    password: data.nickname
   };
   try {
-    const res = await axios.post(url, loginBody, {
+    const res = await axios.post(url, signupBody, {
       headers: {
         'content-Type': 'application/json',
       },
     });
-    return res.data;
+    return [res.status, res.data];
   } catch (error) {
-    return error;
+    return [error.response.status,error.response.data.message];;
   }
 };
