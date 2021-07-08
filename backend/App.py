@@ -138,9 +138,14 @@ class IndividualRegister(Resource):
                 userid = 0
                 sql = "INSERT INTO User VALUES ({},'{}', '{}', '{}', NULL);".format(userid, nickname, email, password)
                 sql_command(sql)
+                select_sql = f"SELECT UserId FROM User WHERE Email='{email}';"
+                id=sql_command(select_sql)[0][0]
+                token=encode_token(email,"individual")
                 output = {
                     "message": "Success register",
-                    "nickname": nickname
+                    "nickname": nickname,
+                    "userid":id,
+                    "token":token
                 }
                 return output, 200
 
@@ -185,8 +190,14 @@ class OrganizationRegister(Resource):
                     format(organization_id, email, password, organization_name, organization_type, contact,
                            introduction)
                 sql_command(sql)
+                select_sql = f"SELECT OrganizationId FROM Organization WHERE Email='{email}';"
+                id=sql_command(select_sql)[0][0]
+                token=encode_token(email,"organization")
                 output = {
-                    "message": "Success register"
+                    "message": "Success register",
+                    "email":email,
+                    "organizationid":id,
+                    "token":token
                 }
                 return output, 200
 
