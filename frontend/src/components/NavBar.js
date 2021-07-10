@@ -43,13 +43,19 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px 50px 10px 50px',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
-    alignItems: 'center'
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    },
   },
   leftBox: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'center'
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    },
   },
   searchBox: {
     border: '2px solid #E5E5E5',

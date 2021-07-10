@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import {AppContext} from './utils/store';
+import { AppContext } from './utils/store';
 import HomePage from './pages/HomePage';
 import OrganizationApplyPage from './pages/OrganizationApplyPage';
+import EventDetailsPage from './pages/EventDetailsPage'
+import { ThemeProvider } from '@material-ui/core/styles';
+import Theme from './components/theme';
 
 function App() {
   const [isLoginState, setIsLoginState] = React.useState(
@@ -19,18 +22,20 @@ function App() {
     setUserType,
   };
   return (
-    <AppContext.Provider value={store}>
-      <Redirect to='/home' />
-      <Switch>
-        <Route exact path='/home' component={HomePage} />
-        <Route exact path='/home/:eventid' component={HomePage} />
-        <Route
-          exact
-          path='/organization/apply'
-          component={OrganizationApplyPage}
-        />
-      </Switch>
-    </AppContext.Provider>
+    <ThemeProvider>
+      <AppContext.Provider value={store}>
+        <Switch>
+          <Route exact path='/home' component={HomePage} />
+          <Route exact path='/:eventid' component={EventDetailsPage} />
+          <Route
+            exact
+            path='/organization/apply'
+            component={OrganizationApplyPage}
+          />
+          <Redirect to='/home' />
+        </Switch>
+      </AppContext.Provider>
+    </ThemeProvider>
   );
 }
 

@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 const StyledButton = withStyles({
   root: {
     background: '#216991',
-    fontSize: '16px',
+    fontSize: '13px',
     '&:hover': {
       background: '#FFF',
       color: '#216991',
