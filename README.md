@@ -43,7 +43,7 @@ source env/bin/activate
 pip3 install -r requirements.txt
 ```
 
-## Database initialization
+## Database initialization(First time and everytime you want to reset database)
 ```shell
 python3 initialize_database.py
 ```
