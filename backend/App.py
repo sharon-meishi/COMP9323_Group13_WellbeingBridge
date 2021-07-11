@@ -109,7 +109,7 @@ class OrganizationRegister(Resource):
                 return output, 403
             else:
                 organization_id = 0
-                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}','{}','{}',NULL,NULL,NULL,NULL,NULL,NULL);". \
+                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}','{}','{}',NULL,NULL,NULL,NULL);". \
                     format(organization_id, email, password, organization_name, organization_type, contact,
                            introduction)
                 sql_command(sql)
@@ -189,11 +189,13 @@ class GetPopularEvent(Resource):
         return sql_command(querry_string), 200
 
 
-token_parser = api.parser()
-token_parser.add_argument('Authorization', type=str, location='headers')
+parser = api.parser()
+parser.add_argument('token', type=str)
+parser.add_argument('eventid', type=str, required=True)
 
 token_parser = api.parser()
 token_parser.add_argument('Authorization', type=str, location='headers')
+
 
 @api.route("/event/<int:eventid>/summary", doc={"description": "get the summary of event"})
 @api.doc(parser=token_parser)
