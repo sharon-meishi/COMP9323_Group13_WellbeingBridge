@@ -11,9 +11,7 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
-import MuiAlert from '@material-ui/lab/Alert';
 import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete'
-import TestAuto from '../components/TestAuto'
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -274,7 +272,7 @@ function EventEditPage(props) {
               <label>Postcode and Suburb</label>
               <Controller 
               render={({field}) => (
-                <TestAuto 
+                <PostalCodeAutoComplete 
                 field={field}
                 />
               )}

@@ -113,6 +113,10 @@ export default function NavBar() {
     history.push('/home');
   };
 
+  const toCreateEvent = () => {
+    history.push('/event/create')
+  }
+
 
   return (
     <div className={classes.root}>
@@ -164,7 +168,11 @@ export default function NavBar() {
         ):
         <HomePageButton text='LOGIN' onClick={handleClickOpen} />
         }
+        <Box display='flex' alignItems='center'>
+        {sessionStorage.getItem('usergroup') === 'organization' ? <HomePageButton text='NEW EVENT' onClick={toCreateEvent}/> : null}
         {context.isLoginState ? <ProfileMenu />: null}
+        </Box>
+
         
       </div>
     </div>
