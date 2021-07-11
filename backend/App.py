@@ -214,8 +214,8 @@ class event(Resource):
             if if_favourite is None or if_favourite=='':
                 favourite = False
             else:
-                favouriteid = list(if_favourite[0])[0]
-                if str(eventid) in favouriteid.split(","):
+                # favouriteid = list(if_favourite[0])[0]
+                if str(eventid) in if_favourite.split(","):
                     favourite = True
                 else:
                     favourite = False
@@ -451,8 +451,8 @@ class GetEventbyId(Resource):
             if if_favourite is None or if_favourite=='':
                 favourite = False
             else:
-                favouriteid = list(if_favourite[0])[0]
-                if str(eventid) in favouriteid.split(","):
+                # favouriteid = list(if_favourite[0])[0]
+                if str(eventid) in if_favourite.split(","):
                     favourite = True
                 else:
                     favourite = False
