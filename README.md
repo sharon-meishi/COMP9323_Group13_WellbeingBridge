@@ -1,5 +1,5 @@
-# COMP9323_Group13_WellbeingBridge
-Group project of COMP9323
+# User guide for COMP9323 Group13 Project WellbeingBridge 
+
 
 # Database Server
 
