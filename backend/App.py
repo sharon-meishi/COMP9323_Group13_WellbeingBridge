@@ -6,11 +6,11 @@ import json
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import jwt
+from initialize_database import create_database
 
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
 CORS(app)
-
 
 def sql_command(command):
     db = pymysql.connect(
@@ -538,7 +538,6 @@ class GetEventbyId(Resource):
                 "message": "Success"
             }
         return output, 200
-
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=8000, debug=True)
