@@ -1,6 +1,7 @@
 # create tables in database
 import pymysql
 
+
 def create_database():
     conn = pymysql.connect(host='localhost',
                            user='root',
@@ -42,7 +43,7 @@ def create_database():
   `otherEvents` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`OrganizationId`));'''
 
-    insert_organization='''INSERT INTO Organization (OrganizationId,Email,Password,OrganizationName,OrganizationType,
+    insert_organization = '''INSERT INTO Organization (OrganizationId,Email,Password,OrganizationName,OrganizationType,
     Logo,Contact,Introduction,Details,VideoUrl,ServiceList,WebsiteLink,otherEvents) 
     VALUES (0, "wellbeing@org.com", 
     "abcd", "HeadSpace", "Youth","https://sydneynorthhealthnetwork.org.au/wp-content/uploads/2016/04/Headspace-logo
@@ -90,31 +91,27 @@ def create_database():
   `Time` varchar(255) NOT NULL,
   `Introduction` TEXT DEFAULT NULL,
   `Details` TEXT DEFAULT NULL,
-  `Recommendation` TEXT DEFAULT NULL,
-  `BookedUser` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`EventId`))
     '''
 
     insert_event = '''
     INSERT INTO Event
   (EventId,EventName,OrganizationId,OrganizationName,Thumbnail,Format,Postcode,Suburb,Street,
-  venue,Date,Time,Introduction,Details,Recommendation,BookedUser)
+  venue,Date,Time,Introduction,Details)
 VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
 "https://www.indianyoga.school/public/uploads/gallery/kids-yoga-ttc.jpg","Class",
 2131,"Ashfield NSW","Parramatta Road and Orpington Street","Ashfield Park",
 "14-07-2021",
 "11:00 AM to 12:00 PM",
  "Aimed at kids between 5 to 12, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. ",
- "Kids must attend with parents. All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!",
-'1,2,3','1,2,3'),
+ "Kids must attend with parents. All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"),
 
 (0,"Tai Chi for seniors",2,"My Aged Care" ,
 "https://www.greatseniorliving.com/assets/img/tai-chi-for-seniors-pin-@1X.jpg","Class",
 2039,"Rozelle NSW","608 Darling Street","Hannaford Community Centre",
 "20-07-2021","10:00 AM to 11:00 AM",
  "Traditional Yang Style Tai Chi for seniors with particular focus on the 85 forms.",
- "Health benefits are derived from the Tai Chi's slow, gentle and tranquil movements which enable harmony in mind and body, improved mobility, suppleness and mental alertness. Bookings essential. ",
-'1,2,3','1,2,3'),
+ "Health benefits are derived from the Tai Chi's slow, gentle and tranquil movements which enable harmony in mind and body, improved mobility, suppleness and mental alertness. Bookings essential. "),
 
 (0,"Youth - #TrueDreamersTour2021",3,"House to Grow" ,
 "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F137085143%2F307439946789%2F1%2Foriginal.20210531-025831?w=800&auto=format%2Ccompress&q=75&sharp=10&rect=1%2C78%2C1250%2C625&s=3d6e67be19885a5a9411e28685a3bf0a",
@@ -122,8 +119,7 @@ VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
 2204,"Marrickville NSW","142 Addison Road","142 Addison Rd","01-08-2021","11:00 AM to 3:00 PM",
  "A half day of activity that challenges young people to engage with wellbeing and make new connections in a friendly and fun environment.",
  "# TrueDreamersTour2021 event promises a half day of activity that challenges young people to engage with health and make new connections in a friendly and fun environment. including
-              Inspirational stories from internaitonal students; Documentary internaional students in Australia; Round table with experts in health and education; Yoga and meditation activity; Live Music; Gift vouchers",
-'1,2,3','1,2,3');
+              Inspirational stories from internaitonal students; Documentary internaional students in Australia; Round table with experts in health and education; Yoga and meditation activity; Live Music; Gift vouchers");
     '''
 
     booking_table = '''
@@ -134,7 +130,7 @@ VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
   PRIMARY KEY (`BookingId`)
 )
     '''
-    comment_table='''
+    comment_table = '''
     CREATE TABLE IF NOT EXISTS `Comment` (
   `id` int NOT NULL AUTO_INCREMENT,
   `userid` int DEFAULT NULL,
@@ -145,9 +141,9 @@ VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
   PRIMARY KEY (`id`)
 )
     '''
-    insert_comment='''
+    insert_comment = '''
     INSERT INTO `Comment` VALUES (0, 3, 'Cecilia', 1, 'That is great', '2021-07-08 21:51:26'),
-    (2, 4, 'Nick', 1, 'That is awsome!', '2021-07-08 21:51:30');
+    (0, 4, 'Nick', 1, 'That is awsome!', '2021-07-08 21:51:30');
     '''
     c.execute(user_table)
     c.execute(organization_table)
@@ -165,3 +161,6 @@ VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
 
     return True
 
+
+if __name__ == "__main__":
+    create_database()

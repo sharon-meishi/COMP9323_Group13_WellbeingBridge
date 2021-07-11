@@ -40,16 +40,22 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: 'solid rgba(0, 0, 0, 0.1)',
     display: 'flex',
     flexDirection: 'row',
-    padding: '10px 50px 10px 50px',
+    padding: '10px 10px 10px 30px',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
-    alignItems: 'center'
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    },
   },
   leftBox: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'center'
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    },
   },
   searchBox: {
     border: '2px solid #E5E5E5',
@@ -107,6 +113,7 @@ export default function NavBar() {
     history.push('/home');
   };
 
+
   return (
     <div className={classes.root}>
       {openLogin ? (
@@ -157,7 +164,7 @@ export default function NavBar() {
         ):
         <HomePageButton text='LOGIN' onClick={handleClickOpen} />
         }
-        {context.isLoginState ? <ProfileMenu nickname={sessionStorage.getItem('nickname')}/>: null}
+        {context.isLoginState ? <ProfileMenu />: null}
         
       </div>
     </div>
