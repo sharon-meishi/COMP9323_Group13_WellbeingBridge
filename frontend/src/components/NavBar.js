@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: 'solid rgba(0, 0, 0, 0.1)',
     display: 'flex',
     flexDirection: 'row',
-    padding: '10px 50px 10px 50px',
+    padding: '10px 10px 10px 30px',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     alignItems: 'center',
@@ -112,6 +112,7 @@ export default function NavBar() {
   const toHomePage = () => {
     history.push('/home');
   };
+
 
   return (
     <div className={classes.root}>

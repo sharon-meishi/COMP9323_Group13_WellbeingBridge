@@ -109,7 +109,7 @@ class OrganizationRegister(Resource):
                 return output, 403
             else:
                 organization_id = 0
-                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}','{}','{}',NULL,NULL,NULL,NULL);". \
+                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}','{}','{}',NULL,NULL,NULL,NULL,NULL,NULL);". \
                     format(organization_id, email, password, organization_name, organization_type, contact,
                            introduction)
                 sql_command(sql)
@@ -276,8 +276,7 @@ class PublishEvent(Resource):
             org_email = user_info['email']
             org_sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email = '{org_email}';"
             org_result = sql_command(org_sql)[0]
-            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}'," \
-                  "NULL,NULL);". \
+            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
                 format(data['eventName'], org_result[0], org_result[1], data['thumbnail'], data['format'],
                        data['location']['postcode'], data['location']['suburb'],
                        data['location']['street'], data['location']['venue'], data['date'], data['time'],

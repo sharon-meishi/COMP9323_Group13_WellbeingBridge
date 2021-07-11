@@ -86,6 +86,7 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     console.log(data);
     const res = await loginRequest(data)
     if (res[0] === 200){
+      reset();
       console.log('login success')
       handleClose()
       console.log(res)
@@ -94,7 +95,7 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
       sessionStorage.setItem('userId', res[1].userId);
       sessionStorage.setItem('usergroup', res[1].usergroup)
       context.setIsLoginState(true)
-      context.setUserType(res[1].usergroup); 
+      // context.setUserType(res[1].usergroup); 
     } else {
       setErrorMsg(res[1])
     }

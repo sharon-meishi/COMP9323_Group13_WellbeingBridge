@@ -33,7 +33,6 @@ function ProfileMenu({nickname}) {
         onClick={handleClick}
       >
         {/* <Avatar>{nickname.charAt(0)}</Avatar> */}
-        <Avatar></Avatar>
       </Button>
       <Menu
         id='simple-menu'

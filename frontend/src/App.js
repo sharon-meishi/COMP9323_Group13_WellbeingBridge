@@ -4,6 +4,7 @@ import { AppContext } from './utils/store';
 import HomePage from './pages/HomePage';
 import OrganizationApplyPage from './pages/OrganizationApplyPage';
 import EventDetailsPage from './pages/EventDetailsPage'
+import EventEditPage from './pages/EventEditPage'
 import { ThemeProvider } from '@material-ui/core/styles';
 import Theme from './components/theme';
 
@@ -22,15 +23,20 @@ function App() {
     setUserType,
   };
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={Theme}>
       <AppContext.Provider value={store}>
         <Switch>
           <Route exact path='/home' component={HomePage} />
-          <Route exact path='/:eventid' component={EventDetailsPage} />
+          <Route exact path='/:eventId' component={EventDetailsPage} />
           <Route
             exact
             path='/organization/apply'
             component={OrganizationApplyPage}
+          />
+          <Route 
+          exact
+          path={['/event/create', '/event/edit/:eventId']}
+          component={EventEditPage}
           />
           <Redirect to='/home' />
         </Switch>

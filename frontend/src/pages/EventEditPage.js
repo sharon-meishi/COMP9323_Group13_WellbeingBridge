@@ -12,6 +12,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
 import MuiAlert from '@material-ui/lab/Alert';
+import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete'
+import TestAuto from '../components/TestAuto'
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -27,14 +29,20 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   titleStyle: {
-    textAlign: 'center',
+    fontSize: '40px',
     fontWeight: '500',
-    textDecoration: 'underline',
     color: '#26A69A',
   },
   centerStyle: {
-    marginTop: '5px',
-    textAlign: 'center',
+    fontSize: '12px',
+    fontWeight: '700',
+  },
+  halfStyle: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    paddingTop: '15px',
+    width:'45%'
   },
   formStyle: {
     display: 'flex',
@@ -61,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function OrganizationApplyPage() {
+function EventEditPage(props) {
   const classes = useStyles();
   const context = useContext(AppContext);
 
@@ -73,16 +81,16 @@ function OrganizationApplyPage() {
     formState: { errors },
   } = useForm();
 
+  const eventId = props.match.params.eventId;
   const [errorMsg, setErrorMsg] = useState('');
 
   const onSubmit = async (data) => {
     console.log(data);
-  }
+  };
 
   useEffect(() => {
     reset();
-
-  }, [])
+  }, []);
 
   return (
     <>
@@ -91,32 +99,31 @@ function OrganizationApplyPage() {
         <Grid
           item
           xs={10}
-          sm={8}
-          md={6}
-          lg={5}
-          xl={3}
+          sm={10}
+          md={8}
+          lg={7}
+          xl={6}
           className={classes.GridStyle}
         >
           <Typography variant='h5' className={classes.titleStyle}>
-            Register your organization
+            {eventId ? 'Edit your event' : 'Create a new event'}
           </Typography>
+          <hr />
           <Typography className={classes.centerStyle}>
-            (All fields are required)
+            All fields are required unless stated
           </Typography>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className={classes.formStyle}
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
             <Typography className={classes.subtitleStyle}>
-              Organization Information:
+              Event Information:
             </Typography>
-            <section className={classes.formStyle}>
-              <label>Organization Name:</label>
+            <Box display='flex' width='100%' justifyContent='space-between'>
+            <section className={classes.halfStyle}>
+              <label>Event Name:</label>
               <Controller
                 render={({ field }) => (
                   <TextField
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     variant='outlined'
@@ -124,80 +131,75 @@ function OrganizationApplyPage() {
                     margin='dense'
                   />
                 )}
-                defaultValue=''
-                name='OrganizationName'
+                name='EventName'
                 control={control}
                 rules={{ required: true }}
               />
-              {errors?.OrganizationName?.type === 'required' && (
+              {errors?.EventName?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
             </section>
 
-            <section className={classes.formStyle}>
-              <label>Organization Type:</label>
+            <section className={classes.halfStyle}>
+              <label>Event Format:</label>
               <Controller
                 render={({ field }) => {
                   return (
                     <Select
-                    defaultValue="" 
-                      value={field.value}
+                      value={field.value || ''}
                       onChange={field.onChange}
                       ref={field.ref}
                       variant='outlined'
                       className={classes.selectStyle}
                     >
-                      <MenuItem value='Youth'>Youth</MenuItem>
-                      <MenuItem value='Disability and carers'>
-                        Disability and carers
-                      </MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
-                      <MenuItem value='Family'>Family</MenuItem>
-                      <MenuItem value='Education'>Education</MenuItem>
-                      <MenuItem value='Employment'>Employment</MenuItem>
-                      <MenuItem value='Body health'>Body health</MenuItem>
-                      <MenuItem value='Mental health'>Mental health</MenuItem>
-                      <MenuItem value='Money'>Money</MenuItem>
-                      <MenuItem value='Legal services'>Legal services</MenuItem>
+                      <MenuItem value='Class'>Class</MenuItem>
+                      <MenuItem value='Conference'>Conference</MenuItem>
+                      <MenuItem value='Festival'>Festival</MenuItem>
+                      <MenuItem value='Party'>Party</MenuItem>
+                      <MenuItem value='Expo'>Expo</MenuItem>
+                      <MenuItem value='Game'>Game</MenuItem>
+                      <MenuItem value='Networking'>Networking</MenuItem>
+                      <MenuItem value='Race'>Race</MenuItem>
+                      <MenuItem value='Seminar'>Seminar</MenuItem>
+                      <MenuItem value='Tour'>Tour</MenuItem>
                     </Select>
                   );
                 }}
-                name='OrganizationType'
+                name='EventFormat'
                 control={control}
                 rules={{ required: true }}
               />
-              {errors?.OrganizationType?.type === 'required' && (
+              {errors?.EventFormat?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
             </section>
+            </Box>
 
             <section className={classes.formStyle}>
               <label>
-                Organization Introduction (Less than 200 characters):
+                Event Introduction (Less than 200 characters):
               </label>
               <Controller
                 render={({ field }) => (
                   <TextField
-                    id='outlined-multiline-static'
                     multiline
                     rows={5}
                     variant='outlined'
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     size='small'
                     margin='dense'
                   />
                 )}
-                defaultValue=''
-                name='OrganizationIntroduction'
+                name='EventIntroduction'
                 control={control}
                 rules={{ required: true, maxLength: 200 }}
               />
-              {errors?.OrganizationIntroduction?.type === 'required' && (
+              {errors?.EventIntroduction?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
-              {errors?.OrganizationIntroduction?.type === 'maxLength' && (
+              {errors?.EventIntroduction?.type === 'maxLength' && (
                 <Alert severity='error'>
                   This field should be less than 200 characters.
                 </Alert>
@@ -205,108 +207,85 @@ function OrganizationApplyPage() {
             </section>
 
             <section className={classes.formStyle}>
-              <label>Contact:</label>
+              <label>
+                Event Details:
+              </label>
               <Controller
                 render={({ field }) => (
                   <TextField
-                    value={field.value}
+                    multiline
+                    rows={5}
+                    variant='outlined'
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
-                    variant='outlined'
                     size='small'
                     margin='dense'
                   />
                 )}
-                defaultValue=''
-                name='Contact'
+                name='EventDetails'
                 control={control}
-                rules={{ required: true }}
+                rules={{ required: true}}
               />
-              {errors?.Contact?.type === 'required' && (
+              {errors?.EventDetails?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
             </section>
 
             <Typography className={classes.subtitleStyle}>
-              Account Information:
+              Date and Time
             </Typography>
 
             <section className={classes.formStyle}>
-              <label>Email:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    type='email'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                defaultValue=''
-                name='Email'
-                control={control}
-                rules={{ required: true }}
-              />
-              {errors?.Email?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
+              <label>Event start date:</label>
             </section>
 
             <section className={classes.formStyle}>
-              <label>Password:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    type='password'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                defaultValue=''
-                name='Password'
-                control={control}
-                rules={{ required: true }}
-              />
+              <label>Event start time:</label>
             </section>
 
             <section className={classes.formStyle}>
-              <label>Confirm Password:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    type='password'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                defaultValue=''
-                name='ConfirmPassword'
-                control={control}
-                rules={{
-                  required: true,
-                  validate: {
-                    matchesPreviousPassword: (value) => {
-                      const { Password } = getValues();
-                      return Password === value || 'Passwords should match';
-                    },
-                  },
-                }}
-              />
-              {errors?.ConfirmPassword && (
-                <Alert severity='error'>Passwords should match</Alert>
-              )}
+              <label>Event end date:</label>
             </section>
+
+            <section className={classes.formStyle}>
+              <label>Event end time:</label>
+            </section>
+
+
+            <Typography className={classes.subtitleStyle}>
+              Location Information:
+            </Typography>
+
+            <section className={classes.formStyle}>
+              <label>Online Event</label>
+            </section>
+
+
+            <section className={classes.formStyle}>
+              <label>Venue name</label>
+            </section>
+
+            <section className={classes.formStyle}>
+              <label>Street address</label>
+            </section>
+
+            <section className={classes.formStyle}>
+              <label>Postcode and Suburb</label>
+              <Controller 
+              render={({field}) => (
+                <TestAuto 
+                field={field}
+                />
+              )}
+              name='Postcode-Suburb'
+              control={control}
+              rules={{ required: true }}
+              />
+
+                
+            </section>
+
 
             <Button
               type='submit'
@@ -323,4 +302,4 @@ function OrganizationApplyPage() {
   );
 }
 
-export default OrganizationApplyPage;
+export default EventEditPage;

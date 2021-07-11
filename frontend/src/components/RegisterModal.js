@@ -88,12 +88,17 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
     console.log(data);
     const res = await registerRequest(data);
     if (res[0] === 200) {
+      reset();
       console.log('register success');
       handleClose()
       console.log(res);
       setErrorMsg('');
+      sessionStorage.setItem('token', res[1].token);
+      sessionStorage.setItem('nickname', data.nickname)
+      sessionStorage.setItem('userId', res[1].userId);
+      sessionStorage.setItem('usergroup', 'individual')
       context.setIsLoginState(true);
-      context.setUserType('individual');
+      // context.setUserType('individual');
     } else {
       setErrorMsg(res[1]);
     }
