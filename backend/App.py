@@ -209,16 +209,20 @@ class event(Resource):
             favourite = False
         else:
             email = decode_token(token)['email']
-            user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
-            if_favourite = sql_command(user_sql)[0][0]
-            if if_favourite is None or if_favourite=='':
-                favourite = False
+            type = decode_token(token)['type']
+            if type=='organization':
+                favourite=False
             else:
-                # favouriteid = list(if_favourite[0])[0]
-                if str(eventid) in if_favourite.split(","):
-                    favourite = True
-                else:
+                user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
+                if_favourite = sql_command(user_sql)[0][0]
+                if if_favourite is None:
                     favourite = False
+                else:
+                    # favouriteid = list(if_favourite[0])[0]
+                    if str(eventid) in if_favourite.split(","):
+                        favourite = True
+                    else:
+                        favourite = False
         if result:
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
@@ -438,24 +442,29 @@ class GetEventbyId(Resource):
             favourite = False
         else:
             email = decode_token(token)['email']
-            user_sql = f"SELECT Userid FROM User WHERE Email='{email}';"
-            userid = sql_command(user_sql)[0][0]
-            booking_sql = f"SELECT * FROM Booking WHERE UserId={userid} and EventId={eventid};"
-            booking_result = sql_command(booking_sql)
-            if len(booking_result) == 0:
+            type = decode_token(token)['type']
+            if type == 'organization':
                 booked = False
-            else:
-                booked = True
-            user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
-            if_favourite = sql_command(user_sql)[0][0]
-            if if_favourite is None or if_favourite=='':
                 favourite = False
             else:
-                # favouriteid = list(if_favourite[0])[0]
-                if str(eventid) in if_favourite.split(","):
-                    favourite = True
+                user_sql = f"SELECT Userid FROM User WHERE Email='{email}';"
+                userid = sql_command(user_sql)[0][0]
+                booking_sql = f"SELECT * FROM Booking WHERE UserId={userid} and EventId={eventid};"
+                booking_result = sql_command(booking_sql)
+                if len(booking_result) == 0:
+                    booked = False
                 else:
+                    booked = True
+                user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
+                if_favourite = sql_command(user_sql)[0][0]
+                if if_favourite is None:
                     favourite = False
+                else:
+                    # favouriteid = list(if_favourite[0])[0]
+                    if str(eventid) in if_favourite.split(","):
+                        favourite = True
+                    else:
+                        favourite = False
         comment_sql = f"SELECT * FROM Comment WHERE eventid={eventid};"
         comments = []
 
