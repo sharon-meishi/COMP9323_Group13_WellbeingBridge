@@ -6,11 +6,11 @@ import json
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import jwt
-from initialize_database import create_database
 
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
 CORS(app)
+
 
 def sql_command(command):
     db = pymysql.connect(
@@ -193,27 +193,32 @@ parser = api.parser()
 parser.add_argument('token', type=str)
 parser.add_argument('eventid', type=str, required=True)
 
+token_parser = api.parser()
+token_parser.add_argument('Authorization', type=str, location='headers')
 
-@api.route("/event/{eventid}/summary", doc={"description": "get the summary of event"})
-@api.doc(parser=parser)
+
+@api.route("/event/<int:eventid>/summary", doc={"description": "get the summary of event"})
+@api.doc(parser=token_parser)
 class event(Resource):
-    def get(self):
-        eventid = parser.parse_args()['eventid']
+    def get(self, eventid):
+        token = token_parser.parse_args()['Authorization']
         event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Suburb, Introduction FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
 
-        token = parser.parse_args()['token']
         if token is None:
             favourite = False
         else:
             email = decode_token(token)['email']
             user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
-            if_favourite = sql_command(user_sql)
-            favouriteid = list(if_favourite[0])[0]
-            if str(eventid) in favouriteid.split(","):
-                favourite = True
-            else:
+            if_favourite = sql_command(user_sql)[0][0]
+            if if_favourite is None or if_favourite=='':
                 favourite = False
+            else:
+                favouriteid = list(if_favourite[0])[0]
+                if str(eventid) in favouriteid.split(","):
+                    favourite = True
+                else:
+                    favourite = False
         if result:
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
@@ -233,6 +238,7 @@ class event(Resource):
             }
             return output, 404
 
+
 def get_user_id_by_token(token):
     user_email = decode_token(token)['email']
     sql_user_id = f"SELECT UserId FROM User WHERE Email = '{user_email}';"
@@ -243,7 +249,7 @@ def get_user_id_by_token(token):
         return None
 
 
-@api.route("/event/{eventid}/favourite", doc={"description":"like an event"})
+@api.route("/event/{eventid}/favourite", doc={"description": "like an event"})
 @api.doc(parser=parser)
 class favourite(Resource):
     def put(self):
@@ -261,7 +267,7 @@ class favourite(Resource):
 
         if curr_favourite_id:
             ids = curr_favourite_id.split(',')
-            if any([id_==event_id for id_ in ids]):
+            if any([id_ == event_id for id_ in ids]):
                 output = {
                     "message": "Internal Error: event is already favourited."
                 }
@@ -276,7 +282,7 @@ class favourite(Resource):
         return {'favourite_id': favourite_id}, 200
 
 
-@api.route("/event/{eventid}/unfavourite", doc={"description":"unlike an event"})
+@api.route("/event/{eventid}/unfavourite", doc={"description": "unlike an event"})
 @api.doc(parser=parser)
 class unfavourite(Resource):
     def put(self):
@@ -303,7 +309,7 @@ class unfavourite(Resource):
             ids = curr_favourite_id.split(',')
             for i, id_ in enumerate(ids):
                 if id_ == event_id:
-                    new_favorate_id = ids[:i] + ids[i+1:]
+                    new_favorate_id = ids[:i] + ids[i + 1:]
                     break
             if new_favorate_id or (not new_favorate_id and len(ids) == 1):
                 new_favorate_id = ','.join(new_favorate_id)
@@ -317,7 +323,7 @@ class unfavourite(Resource):
                 return output, 500
 
 
-@api.route("/event/{eventid}/book", doc={"description":"Book an event"})
+@api.route("/event/{eventid}/book", doc={"description": "Book an event"})
 @api.doc(parser=parser)
 class book(Resource):
     def put(self):
@@ -339,10 +345,10 @@ class book(Resource):
             sql = "INSERT INTO Booking VALUES (NULL, '{}', '{}');".format(event_id, user_id)
             sql_command(sql)
             output = {"message": "new event is booked."}
-        return output, 200 
+        return output, 200
 
 
-@api.route("/event/{eventid}/unbook", doc={"description":"Unook an event"})
+@api.route("/event/{eventid}/unbook", doc={"description": "Unook an event"})
 @api.doc(parser=parser)
 class unbook(Resource):
     def put(self):
@@ -364,7 +370,7 @@ class unbook(Resource):
             sql = f"DELETE FROM Booking WHERE UserId = '{user_id}' AND EventId = '{event_id}';"
             sql_command(sql)
             output = {"message": "event is unbooked."}
-        return output, 200 
+        return output, 200
 
 
 location_model = api.model("location", {
@@ -384,19 +390,14 @@ event_model = api.model("event", {
     "details": fields.String
 })
 
-token_parser = api.parser()
-token_parser.add_argument('token', type=str)
-
 
 @api.route("/event", doc={"description": "publish details of an event"})
 @api.doc(parser=token_parser)
 class PublishEvent(Resource):
     @api.expect(event_model)
     def post(self):
-        print("ok")
         data = json.loads(request.get_data())
-        print(data)
-        token = token_parser.parse_args()['token']
+        token = token_parser.parse_args()['Authorization']
         if token is None:
             output = {
                 "message": "Invalid input"
@@ -404,7 +405,6 @@ class PublishEvent(Resource):
             return output, 400
         user_info = decode_token(token)
         user_type = user_info['type']
-        print(user_type)
         if user_type != 'organization':
             output = {
                 "message": "Cannot access.Wrong token!"
@@ -414,13 +414,11 @@ class PublishEvent(Resource):
             org_email = user_info['email']
             org_sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email = '{org_email}';"
             org_result = sql_command(org_sql)[0]
-            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}'," \
-                  "NULL,NULL);". \
+            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
                 format(data['eventName'], org_result[0], org_result[1], data['thumbnail'], data['format'],
                        data['location']['postcode'], data['location']['suburb'],
                        data['location']['street'], data['location']['venue'], data['date'], data['time'],
                        data['introduction'], data['details'])
-            print(sql)
             sql_command(sql)
             output = {
                 "message": "success"
@@ -428,12 +426,11 @@ class PublishEvent(Resource):
         return output, 200
 
 
-@api.route("/event/{eventid}", doc={"description": "get details of an event"})
-@api.doc(parser=parser)
+@api.route("/event/<int:eventid>", doc={"description": "get details of an event"})
+@api.doc(parser=token_parser)
 class GetEventbyId(Resource):
-    def get(self):
-        token = parser.parse_args()['token']
-        eventid = parser.parse_args()['eventid']
+    def get(self, eventid):
+        token = token_parser.parse_args()['Authorization']
         event_sql = f"SELECT * FROM Event WHERE EventId={eventid};"
         event_info = sql_command(event_sql)[0]
         if token is None:
@@ -443,17 +440,22 @@ class GetEventbyId(Resource):
             email = decode_token(token)['email']
             user_sql = f"SELECT Userid FROM User WHERE Email='{email}';"
             userid = sql_command(user_sql)[0][0]
-            if str(userid) in event_info[15].split(","):
-                booked = True
-            else:
+            booking_sql = f"SELECT * FROM Booking WHERE UserId={userid} and EventId={eventid};"
+            booking_result = sql_command(booking_sql)
+            if len(booking_result) == 0:
                 booked = False
-            user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
-            if_favourite = sql_command(user_sql)
-            favouriteid = list(if_favourite[0])[0]
-            if str(eventid) in favouriteid.split(","):
-                favourite = True
             else:
+                booked = True
+            user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
+            if_favourite = sql_command(user_sql)[0][0]
+            if if_favourite is None or if_favourite=='':
                 favourite = False
+            else:
+                favouriteid = list(if_favourite[0])[0]
+                if str(eventid) in favouriteid.split(","):
+                    favourite = True
+                else:
+                    favourite = False
         comment_sql = f"SELECT * FROM Comment WHERE eventid={eventid};"
         comments = []
 
@@ -467,6 +469,18 @@ class GetEventbyId(Resource):
             comment_temp['comment'] = data[4]
             # comment_temp = json.dumps(comment_temp)
             comments.append(comment_temp)
+        book_sql = f"SELECT UserId FROM Booking WHERE EventId={eventid};"
+        booked_userid = sql_command(book_sql)
+        booked_event_user = []
+        for i in booked_userid:
+            booked_event_user.append(i[0])
+
+        other_event_sql = f"SELECT * FROM Event WHERE OrganizationId={event_info[2]} and EventId!={eventid};"
+        other_event = sql_command(other_event_sql)
+        recommendation = []
+        if len(other_event) != 0:
+            for j in range(len(other_event)):
+                recommendation.append(other_event[j][0])
         output = {
             "eventId": eventid,
             "eventName": event_info[1],
@@ -485,18 +499,18 @@ class GetEventbyId(Resource):
             "introduction": event_info[12],
             "details": event_info[13],
             "comments": comments,
-            "recommendation": list(map(int, event_info[14].split(","))),
-            "bookedUser": list(map(int, event_info[15].split(","))),
+            "recommendation": recommendation,
+            "bookedUser": booked_event_user,
             "booked": booked,
             "favourite": favourite
         }
         return output
 
     @api.expect(event_model)
-    def put(self):
+    def put(self, eventid):
         data = api.payload
-        token = parser.parse_args()['token']
-        eventid = parser.parse_args()['eventid']
+        token = token_parser.parse_args()['Authorization']
+
         if token is None:
             output = {
                 "message": "bad request!"
@@ -516,6 +530,6 @@ class GetEventbyId(Resource):
             }
         return output, 200
 
+
 if __name__ == "__main__":
-    create_database()
-    app.run(host='127.0.0.1', port=8000, debug=True,use_reloader=False)
+    app.run(host='127.0.0.1', port=8000, debug=True)
