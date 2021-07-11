@@ -164,7 +164,7 @@ export default function NavBar() {
         ):
         <HomePageButton text='LOGIN' onClick={handleClickOpen} />
         }
-        {context.isLoginState ? <ProfileMenu nickname={sessionStorage.getItem('nickname')}/>: null}
+        {context.isLoginState ? <ProfileMenu />: null}
         
       </div>
     </div>

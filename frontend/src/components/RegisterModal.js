@@ -91,11 +91,10 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
       reset();
       console.log('register success');
       handleClose()
-      console.log(res);
       setErrorMsg('');
       sessionStorage.setItem('token', res[1].token);
-      sessionStorage.setItem('nickname', data.nickname)
-      sessionStorage.setItem('userId', res[1].userId);
+      sessionStorage.setItem('name', data.nickname)
+      sessionStorage.setItem('id', res[1].userId);
       sessionStorage.setItem('usergroup', 'individual')
       context.setIsLoginState(true);
       // context.setUserType('individual');

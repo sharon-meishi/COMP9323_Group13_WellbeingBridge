@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { AppContext } from '../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -12,6 +12,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
 import MuiAlert from '@material-ui/lab/Alert';
+import { organizationApplyRequest } from '../components/api'
+
+function FetchAlert(props) {
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -63,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
 
 function OrganizationApplyPage() {
   const classes = useStyles();
+  const history = useHistory();
   const context = useContext(AppContext);
 
   const {
@@ -77,6 +83,20 @@ function OrganizationApplyPage() {
 
   const onSubmit = async (data) => {
     console.log(data);
+    const res = await organizationApplyRequest(data)
+    if (res[0] === 200){
+      reset();
+      console.log('apply success')
+      setErrorMsg('')
+      sessionStorage.setItem('token', res[1].token);
+      sessionStorage.setItem('id', res[1].organizationid);
+      sessionStorage.setItem('name', data.OrganizationName);
+      sessionStorage.setItem('usergroup', 'organization');
+      context.setIsLoginState(true);
+      history.push('/home');
+    } else {
+      setErrorMsg(res[1])
+    }
   }
 
   useEffect(() => {
@@ -97,6 +117,7 @@ function OrganizationApplyPage() {
           xl={3}
           className={classes.GridStyle}
         >
+          {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert>:null}
           <Typography variant='h5' className={classes.titleStyle}>
             Register your organization
           </Typography>
@@ -116,7 +137,7 @@ function OrganizationApplyPage() {
               <Controller
                 render={({ field }) => (
                   <TextField
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     variant='outlined'
@@ -124,7 +145,6 @@ function OrganizationApplyPage() {
                     margin='dense'
                   />
                 )}
-                defaultValue=''
                 name='OrganizationName'
                 control={control}
                 rules={{ required: true }}
@@ -140,8 +160,7 @@ function OrganizationApplyPage() {
                 render={({ field }) => {
                   return (
                     <Select
-                    defaultValue="" 
-                      value={field.value}
+                      value={field.value || ''}
                       onChange={field.onChange}
                       ref={field.ref}
                       variant='outlined'
@@ -178,18 +197,17 @@ function OrganizationApplyPage() {
               <Controller
                 render={({ field }) => (
                   <TextField
-                    id='outlined-multiline-static'
+                    id='OrganizationIntroduction'
                     multiline
                     rows={5}
                     variant='outlined'
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     size='small'
                     margin='dense'
                   />
                 )}
-                defaultValue=''
                 name='OrganizationIntroduction'
                 control={control}
                 rules={{ required: true, maxLength: 200 }}
@@ -209,7 +227,7 @@ function OrganizationApplyPage() {
               <Controller
                 render={({ field }) => (
                   <TextField
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     variant='outlined'
@@ -236,7 +254,7 @@ function OrganizationApplyPage() {
               <Controller
                 render={({ field }) => (
                   <TextField
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     variant='outlined'
@@ -245,7 +263,6 @@ function OrganizationApplyPage() {
                     margin='dense'
                   />
                 )}
-                defaultValue=''
                 name='Email'
                 control={control}
                 rules={{ required: true }}
@@ -260,7 +277,7 @@ function OrganizationApplyPage() {
               <Controller
                 render={({ field }) => (
                   <TextField
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     variant='outlined'
@@ -269,7 +286,6 @@ function OrganizationApplyPage() {
                     margin='dense'
                   />
                 )}
-                defaultValue=''
                 name='Password'
                 control={control}
                 rules={{ required: true }}
@@ -281,7 +297,7 @@ function OrganizationApplyPage() {
               <Controller
                 render={({ field }) => (
                   <TextField
-                    value={field.value}
+                    value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
                     variant='outlined'
@@ -290,7 +306,6 @@ function OrganizationApplyPage() {
                     margin='dense'
                   />
                 )}
-                defaultValue=''
                 name='ConfirmPassword'
                 control={control}
                 rules={{
