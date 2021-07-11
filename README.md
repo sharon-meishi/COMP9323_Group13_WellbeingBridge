@@ -1,6 +1,7 @@
 # COMP9323_Group13_WellbeingBridge
 Group project of COMP9323
 
+
 # Backend (Inside backend folder)
 
 ## Installation
@@ -23,7 +24,10 @@ source env/bin/activate
 pip3 install -r requirements.txt
 ```
 
-After that you are good to go
+## Database initialization
+```shell
+python3 initialize_database.py
+```
 
 ## Running
 ```shell
