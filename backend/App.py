@@ -6,7 +6,6 @@ import json
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import jwt
-from initialize_database import create_database
 
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
