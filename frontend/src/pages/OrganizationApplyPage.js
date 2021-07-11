@@ -12,7 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
 import MuiAlert from '@material-ui/lab/Alert';
-import { organizationApplyRequest } from '../components/api'
+import { organizationApplyRequest } from '../components/api';
 
 function FetchAlert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -83,11 +83,11 @@ function OrganizationApplyPage() {
 
   const onSubmit = async (data) => {
     console.log(data);
-    const res = await organizationApplyRequest(data)
-    if (res[0] === 200){
+    const res = await organizationApplyRequest(data);
+    if (res[0] === 200) {
       reset();
-      console.log('apply success')
-      setErrorMsg('')
+      console.log('apply success');
+      setErrorMsg('');
       sessionStorage.setItem('token', res[1].token);
       sessionStorage.setItem('id', res[1].organizationid);
       sessionStorage.setItem('name', data.OrganizationName);
@@ -95,14 +95,13 @@ function OrganizationApplyPage() {
       context.setIsLoginState(true);
       history.push('/home');
     } else {
-      setErrorMsg(res[1])
+      setErrorMsg(res[1]);
     }
-  }
+  };
 
   useEffect(() => {
     reset();
-
-  }, [])
+  }, []);
 
   return (
     <>
@@ -117,7 +116,9 @@ function OrganizationApplyPage() {
           xl={3}
           className={classes.GridStyle}
         >
-          {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert>:null}
+          {errorMsg ? (
+            <FetchAlert severity='error'>{errorMsg}</FetchAlert>
+          ) : null}
           <Typography variant='h5' className={classes.titleStyle}>
             Register your organization
           </Typography>
@@ -125,10 +126,7 @@ function OrganizationApplyPage() {
             (All fields are required)
           </Typography>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className={classes.formStyle}
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
             <Typography className={classes.subtitleStyle}>
               Organization Information:
             </Typography>
@@ -166,18 +164,20 @@ function OrganizationApplyPage() {
                       variant='outlined'
                       className={classes.selectStyle}
                     >
-                      <MenuItem value='Youth'>Youth</MenuItem>
-                      <MenuItem value='Disability and carers'>
-                        Disability and carers
+                      <MenuItem value='Body Health'>Body Health</MenuItem>
+                      <MenuItem value='Community'>Community</MenuItem>
+                      <MenuItem value='Disability and Carers'>
+                        Disability and Carers
                       </MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
-                      <MenuItem value='Family'>Family</MenuItem>
                       <MenuItem value='Education'>Education</MenuItem>
                       <MenuItem value='Employment'>Employment</MenuItem>
-                      <MenuItem value='Body health'>Body health</MenuItem>
-                      <MenuItem value='Mental health'>Mental health</MenuItem>
-                      <MenuItem value='Money'>Money</MenuItem>
-                      <MenuItem value='Legal services'>Legal services</MenuItem>
+                      <MenuItem value='Family'>Family</MenuItem>
+                      <MenuItem value='Financial and Legal'>
+                        Financial and Legal
+                      </MenuItem>
+                      <MenuItem value='Mental Health'>Mental Health</MenuItem>
+                      <MenuItem value='Senior'>Senior</MenuItem>
+                      <MenuItem value='Youth'>Youth</MenuItem>
                     </Select>
                   );
                 }}
