@@ -13,7 +13,7 @@ import disability_and_carers from '../../Assets/OrganizationType/disability_and_
 import education from '../../Assets/OrganizationType/education.jpeg';
 import employment from '../../Assets/OrganizationType/employment.jpeg';
 import money from '../../Assets/OrganizationType/money.jpeg';
-import legal from '../../Assets/OrganizationType/legal.jpeg';
+import community from '../../Assets/OrganizationType/community.jpeg';
 import HomePageButton from '../HomePageButton'
 
 const useStyles = makeStyles((theme) => ({
@@ -72,13 +72,14 @@ function OrganizationAllType() {
           <OrganizationAvatar alt='family' src={family} title='Family'></OrganizationAvatar>
           <OrganizationAvatar alt='mental_health' src={mental_health} title='Mental Health'></OrganizationAvatar>
           <OrganizationAvatar alt='body_health' src={body_health} title='Body Health'></OrganizationAvatar>
+          
         </Grid>
         <Grid item xs={12} className={classes.row}>
+        <OrganizationAvatar alt='community' src={community} title='Community'></OrganizationAvatar>
         <OrganizationAvatar alt='disability_and_carers' src={disability_and_carers} title='Disability and Carers'></OrganizationAvatar>
           <OrganizationAvatar alt='education' src={education} title='Education'></OrganizationAvatar>
           <OrganizationAvatar alt='employment' src={employment} title='Employment'></OrganizationAvatar>
-          <OrganizationAvatar alt='money' src={money} title='Money'></OrganizationAvatar>
-          <OrganizationAvatar alt='legal' src={legal} title='Legal'></OrganizationAvatar>
+          <OrganizationAvatar alt='Financial and Legal' src={money} title='Financial and Legal'></OrganizationAvatar>
         </Grid>
       </Grid>
     </Box>

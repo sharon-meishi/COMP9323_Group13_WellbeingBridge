@@ -6,7 +6,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
 
-function ProfileMenu({nickname}) {
+function ProfileMenu({}) {
   
   const history = useHistory();
   const context = useContext(AppContext);
@@ -32,7 +32,6 @@ function ProfileMenu({nickname}) {
         aria-haspopup='true'
         onClick={handleClick}
       >
-        {/* <Avatar>{nickname.charAt(0)}</Avatar> */}
         <Avatar></Avatar>
       </Button>
       <Menu

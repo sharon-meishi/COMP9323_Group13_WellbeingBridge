@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { AppContext } from '../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -12,11 +12,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
 import MuiAlert from '@material-ui/lab/Alert';
-import { organizationApplyRequest } from '../components/api';
-
-function FetchAlert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
-}
+import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete'
+import TestAuto from '../components/TestAuto'
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -32,14 +29,20 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   titleStyle: {
-    textAlign: 'center',
+    fontSize: '40px',
     fontWeight: '500',
-    textDecoration: 'underline',
     color: '#26A69A',
   },
   centerStyle: {
-    marginTop: '5px',
-    textAlign: 'center',
+    fontSize: '12px',
+    fontWeight: '700',
+  },
+  halfStyle: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    paddingTop: '15px',
+    width:'45%'
   },
   formStyle: {
     display: 'flex',
@@ -66,9 +69,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function OrganizationApplyPage() {
+function EventEditPage(props) {
   const classes = useStyles();
-  const history = useHistory();
   const context = useContext(AppContext);
 
   const {
@@ -79,24 +81,11 @@ function OrganizationApplyPage() {
     formState: { errors },
   } = useForm();
 
+  const eventId = props.match.params.eventId;
   const [errorMsg, setErrorMsg] = useState('');
 
   const onSubmit = async (data) => {
     console.log(data);
-    const res = await organizationApplyRequest(data);
-    if (res[0] === 200) {
-      reset();
-      console.log('apply success');
-      setErrorMsg('');
-      sessionStorage.setItem('token', res[1].token);
-      sessionStorage.setItem('id', res[1].organizationid);
-      sessionStorage.setItem('name', data.OrganizationName);
-      sessionStorage.setItem('usergroup', 'organization');
-      context.setIsLoginState(true);
-      history.push('/home');
-    } else {
-      setErrorMsg(res[1]);
-    }
   };
 
   useEffect(() => {
@@ -110,28 +99,27 @@ function OrganizationApplyPage() {
         <Grid
           item
           xs={10}
-          sm={8}
-          md={6}
-          lg={5}
-          xl={3}
+          sm={10}
+          md={8}
+          lg={7}
+          xl={6}
           className={classes.GridStyle}
         >
-          {errorMsg ? (
-            <FetchAlert severity='error'>{errorMsg}</FetchAlert>
-          ) : null}
           <Typography variant='h5' className={classes.titleStyle}>
-            Register your organization
+            {eventId ? 'Edit your event' : 'Create a new event'}
           </Typography>
+          <hr />
           <Typography className={classes.centerStyle}>
-            (All fields are required)
+            All fields are required unless stated
           </Typography>
 
           <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
             <Typography className={classes.subtitleStyle}>
-              Organization Information:
+              Event Information:
             </Typography>
-            <section className={classes.formStyle}>
-              <label>Organization Name:</label>
+            <Box display='flex' width='100%' justifyContent='space-between'>
+            <section className={classes.halfStyle}>
+              <label>Event Name:</label>
               <Controller
                 render={({ field }) => (
                   <TextField
@@ -143,17 +131,17 @@ function OrganizationApplyPage() {
                     margin='dense'
                   />
                 )}
-                name='OrganizationName'
+                name='EventName'
                 control={control}
                 rules={{ required: true }}
               />
-              {errors?.OrganizationName?.type === 'required' && (
+              {errors?.EventName?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
             </section>
 
-            <section className={classes.formStyle}>
-              <label>Organization Type:</label>
+            <section className={classes.halfStyle}>
+              <label>Event Format:</label>
               <Controller
                 render={({ field }) => {
                   return (
@@ -164,40 +152,36 @@ function OrganizationApplyPage() {
                       variant='outlined'
                       className={classes.selectStyle}
                     >
-                      <MenuItem value='Body Health'>Body Health</MenuItem>
-                      <MenuItem value='Community'>Community</MenuItem>
-                      <MenuItem value='Disability and Carers'>
-                        Disability and Carers
-                      </MenuItem>
-                      <MenuItem value='Education'>Education</MenuItem>
-                      <MenuItem value='Employment'>Employment</MenuItem>
-                      <MenuItem value='Family'>Family</MenuItem>
-                      <MenuItem value='Financial and Legal'>
-                        Financial and Legal
-                      </MenuItem>
-                      <MenuItem value='Mental Health'>Mental Health</MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
-                      <MenuItem value='Youth'>Youth</MenuItem>
+                      <MenuItem value='Class'>Class</MenuItem>
+                      <MenuItem value='Conference'>Conference</MenuItem>
+                      <MenuItem value='Festival'>Festival</MenuItem>
+                      <MenuItem value='Party'>Party</MenuItem>
+                      <MenuItem value='Expo'>Expo</MenuItem>
+                      <MenuItem value='Game'>Game</MenuItem>
+                      <MenuItem value='Networking'>Networking</MenuItem>
+                      <MenuItem value='Race'>Race</MenuItem>
+                      <MenuItem value='Seminar'>Seminar</MenuItem>
+                      <MenuItem value='Tour'>Tour</MenuItem>
                     </Select>
                   );
                 }}
-                name='OrganizationType'
+                name='EventFormat'
                 control={control}
                 rules={{ required: true }}
               />
-              {errors?.OrganizationType?.type === 'required' && (
+              {errors?.EventFormat?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
             </section>
+            </Box>
 
             <section className={classes.formStyle}>
               <label>
-                Organization Introduction (Less than 200 characters):
+                Event Introduction (Less than 200 characters):
               </label>
               <Controller
                 render={({ field }) => (
                   <TextField
-                    id='OrganizationIntroduction'
                     multiline
                     rows={5}
                     variant='outlined'
@@ -208,14 +192,14 @@ function OrganizationApplyPage() {
                     margin='dense'
                   />
                 )}
-                name='OrganizationIntroduction'
+                name='EventIntroduction'
                 control={control}
                 rules={{ required: true, maxLength: 200 }}
               />
-              {errors?.OrganizationIntroduction?.type === 'required' && (
+              {errors?.EventIntroduction?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
-              {errors?.OrganizationIntroduction?.type === 'maxLength' && (
+              {errors?.EventIntroduction?.type === 'maxLength' && (
                 <Alert severity='error'>
                   This field should be less than 200 characters.
                 </Alert>
@@ -223,105 +207,85 @@ function OrganizationApplyPage() {
             </section>
 
             <section className={classes.formStyle}>
-              <label>Contact:</label>
+              <label>
+                Event Details:
+              </label>
               <Controller
                 render={({ field }) => (
                   <TextField
+                    multiline
+                    rows={5}
+                    variant='outlined'
                     value={field.value || ''}
                     onChange={field.onChange}
                     inputRef={field.ref}
-                    variant='outlined'
                     size='small'
                     margin='dense'
                   />
                 )}
-                defaultValue=''
-                name='Contact'
+                name='EventDetails'
                 control={control}
-                rules={{ required: true }}
+                rules={{ required: true}}
               />
-              {errors?.Contact?.type === 'required' && (
+              {errors?.EventDetails?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
               )}
             </section>
 
             <Typography className={classes.subtitleStyle}>
-              Account Information:
+              Date and Time
             </Typography>
 
             <section className={classes.formStyle}>
-              <label>Email:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    type='email'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                name='Email'
-                control={control}
-                rules={{ required: true }}
-              />
-              {errors?.Email?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
+              <label>Event start date:</label>
             </section>
 
             <section className={classes.formStyle}>
-              <label>Password:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    type='password'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                name='Password'
-                control={control}
-                rules={{ required: true }}
-              />
+              <label>Event start time:</label>
             </section>
 
             <section className={classes.formStyle}>
-              <label>Confirm Password:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    type='password'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                name='ConfirmPassword'
-                control={control}
-                rules={{
-                  required: true,
-                  validate: {
-                    matchesPreviousPassword: (value) => {
-                      const { Password } = getValues();
-                      return Password === value || 'Passwords should match';
-                    },
-                  },
-                }}
-              />
-              {errors?.ConfirmPassword && (
-                <Alert severity='error'>Passwords should match</Alert>
-              )}
+              <label>Event end date:</label>
             </section>
+
+            <section className={classes.formStyle}>
+              <label>Event end time:</label>
+            </section>
+
+
+            <Typography className={classes.subtitleStyle}>
+              Location Information:
+            </Typography>
+
+            <section className={classes.formStyle}>
+              <label>Online Event</label>
+            </section>
+
+
+            <section className={classes.formStyle}>
+              <label>Venue name</label>
+            </section>
+
+            <section className={classes.formStyle}>
+              <label>Street address</label>
+            </section>
+
+            <section className={classes.formStyle}>
+              <label>Postcode and Suburb</label>
+              <Controller 
+              render={({field}) => (
+                <TestAuto 
+                field={field}
+                />
+              )}
+              name='Postcode-Suburb'
+              control={control}
+              rules={{ required: true }}
+              />
+
+                
+            </section>
+
 
             <Button
               type='submit'
@@ -338,4 +302,4 @@ function OrganizationApplyPage() {
   );
 }
 
-export default OrganizationApplyPage;
+export default EventEditPage;

@@ -37,6 +37,29 @@ export const registerRequest = async (data) => {
     });
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];;
+    return [error.response.status,error.response.data.message];
   }
 };
+
+export const organizationApplyRequest = async(data) => {
+  const url = baseUrl + '/signup/organization'
+  const applyBody = {
+    organizationName: data.OrganizationName,
+    email: data.Email,
+    password: data.Password,
+    organizationType: data.OrganizationType,
+    contact: data.Contact,
+    introduction:data.OrganizationIntroduction,
+  }
+  try {
+    const res = await axios.post(url, applyBody, {
+      headers: {
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error)
+    return [error.response.status,error.response.data.message];
+  }
+}

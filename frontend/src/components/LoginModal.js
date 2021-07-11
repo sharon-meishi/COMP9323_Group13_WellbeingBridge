@@ -66,7 +66,6 @@ const useStyles = makeStyles({
 function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const history = useHistory();
-
   const context = useContext(AppContext);
 
   const {
@@ -86,15 +85,17 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     console.log(data);
     const res = await loginRequest(data)
     if (res[0] === 200){
+      reset();
       console.log('login success')
       handleClose()
       console.log(res)
       setErrorMsg('')
       sessionStorage.setItem('token', res[1].token);
-      sessionStorage.setItem('userId', res[1].userId);
+      //sessionStorage.setItem('name', data.nickname)
+      sessionStorage.setItem('id', res[1].userId);
       sessionStorage.setItem('usergroup', res[1].usergroup)
       context.setIsLoginState(true)
-      context.setUserType(res[1].usergroup); 
+      // context.setUserType(res[1].usergroup); 
     } else {
       setErrorMsg(res[1])
     }
