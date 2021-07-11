@@ -8,12 +8,16 @@ This project is using local MySQL database, therefore you need to have your MySQ
 ## Installation
 ### Download MySQL Community Server.
 For Windows users, follow steps in https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-installation.html
+
+
 For Mac users, follow steps in https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/macos-installation-pkg.html
 
 
 ## Running
 ### Start MySQL server
 For Windows users, follow steps in https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-start-service.html
+
+
 For Mac users, follow steps in https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/macos-installation-launchd.html
 
 
