@@ -184,8 +184,9 @@ def login(username, password):
 @api.route('/popular/events')
 class GetPopularEvent(Resource):
     def get(self):
-        querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
-        return sql_command(querry_string), 200
+        # querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
+        # return sql_command(querry_string), 200
+        return {'event_id': [1, 2, 3]}, 200
 
 
 parser = api.parser()
