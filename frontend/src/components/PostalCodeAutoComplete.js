@@ -16207,6 +16207,7 @@ export default function Virtualize({ field }) {
 
   return (
     <Autocomplete
+    autoSelect
       id='virtualize-demo'
       style={{ width: 300 }}
       disableListWrap
@@ -16215,11 +16216,12 @@ export default function Virtualize({ field }) {
       renderGroup={renderGroup}
       options={OPTIONS}
       groupBy={(option) => option[0].toUpperCase()}
+      value={field.value}
+      onChange={field.onChange}
+      inputRef={field.ref}
       renderInput={(params) => (
         <TextField {...params} 
-        value={field.value || ''}
-        onChange={field.onChange}
-        inputRef={field.ref}
+
         variant='outlined' size='small' margin='dense' />
       )}
       renderOption={(option) => <Typography noWrap>{option}</Typography>}

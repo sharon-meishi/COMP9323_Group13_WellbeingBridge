@@ -11,7 +11,10 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
-import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete'
+import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import ImageUpload from '../components/ImageUpload';
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -40,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     paddingTop: '15px',
-    width:'45%'
+    width: '45%',
   },
   formStyle: {
     display: 'flex',
@@ -65,6 +68,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '4px',
     height: '40px',
   },
+  pickerStyle: {
+    height: '30px',
+    fontSize: '15px',
+    border: '1px solid rgba(0, 0, 0, 0.23)',
+    borderRadius: '4px',
+    padding: '5px 8px',
+    marginTop: '8px',
+  },
 }));
 
 function EventEditPage(props) {
@@ -81,9 +92,19 @@ function EventEditPage(props) {
 
   const eventId = props.match.params.eventId;
   const [errorMsg, setErrorMsg] = useState('');
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
+  function GetFormattedDate(date) {
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+    return day + '/' + month + '/' + year;
+  }
 
   const onSubmit = async (data) => {
     console.log(data);
+    console.log(GetFormattedDate(data.StartDate));
   };
 
   useEffect(() => {
@@ -110,73 +131,71 @@ function EventEditPage(props) {
           <Typography className={classes.centerStyle}>
             All fields are required unless stated
           </Typography>
-
+          <ImageUpload />
           <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
             <Typography className={classes.subtitleStyle}>
               Event Information:
             </Typography>
             <Box display='flex' width='100%' justifyContent='space-between'>
-            <section className={classes.halfStyle}>
-              <label>Event Name:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                name='EventName'
-                control={control}
-                rules={{ required: true }}
-              />
-              {errors?.EventName?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
-            </section>
-
-            <section className={classes.halfStyle}>
-              <label>Event Format:</label>
-              <Controller
-                render={({ field }) => {
-                  return (
-                    <Select
+              <section className={classes.halfStyle}>
+                <label>Event Name:</label>
+                <Controller
+                  render={({ field }) => (
+                    <TextField
                       value={field.value || ''}
                       onChange={field.onChange}
-                      ref={field.ref}
+                      inputRef={field.ref}
                       variant='outlined'
-                      className={classes.selectStyle}
-                    >
-                      <MenuItem value='Class'>Class</MenuItem>
-                      <MenuItem value='Conference'>Conference</MenuItem>
-                      <MenuItem value='Festival'>Festival</MenuItem>
-                      <MenuItem value='Party'>Party</MenuItem>
-                      <MenuItem value='Expo'>Expo</MenuItem>
-                      <MenuItem value='Game'>Game</MenuItem>
-                      <MenuItem value='Networking'>Networking</MenuItem>
-                      <MenuItem value='Race'>Race</MenuItem>
-                      <MenuItem value='Seminar'>Seminar</MenuItem>
-                      <MenuItem value='Tour'>Tour</MenuItem>
-                    </Select>
-                  );
-                }}
-                name='EventFormat'
-                control={control}
-                rules={{ required: true }}
-              />
-              {errors?.EventFormat?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
-            </section>
+                      size='small'
+                      margin='dense'
+                    />
+                  )}
+                  name='EventName'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.EventName?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
+
+              <section className={classes.halfStyle}>
+                <label>Event Format:</label>
+                <Controller
+                  render={({ field }) => {
+                    return (
+                      <Select
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                        ref={field.ref}
+                        variant='outlined'
+                        className={classes.selectStyle}
+                      >
+                        <MenuItem value='Class'>Class</MenuItem>
+                        <MenuItem value='Conference'>Conference</MenuItem>
+                        <MenuItem value='Festival'>Festival</MenuItem>
+                        <MenuItem value='Party'>Party</MenuItem>
+                        <MenuItem value='Expo'>Expo</MenuItem>
+                        <MenuItem value='Game'>Game</MenuItem>
+                        <MenuItem value='Networking'>Networking</MenuItem>
+                        <MenuItem value='Race'>Race</MenuItem>
+                        <MenuItem value='Seminar'>Seminar</MenuItem>
+                        <MenuItem value='Tour'>Tour</MenuItem>
+                      </Select>
+                    );
+                  }}
+                  name='EventFormat'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.EventFormat?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
             </Box>
 
             <section className={classes.formStyle}>
-              <label>
-                Event Introduction (Less than 200 characters):
-              </label>
+              <label>Event Introduction (Less than 200 characters):</label>
               <Controller
                 render={({ field }) => (
                   <TextField
@@ -205,9 +224,7 @@ function EventEditPage(props) {
             </section>
 
             <section className={classes.formStyle}>
-              <label>
-                Event Details:
-              </label>
+              <label>Event Details:</label>
               <Controller
                 render={({ field }) => (
                   <TextField
@@ -223,7 +240,7 @@ function EventEditPage(props) {
                 )}
                 name='EventDetails'
                 control={control}
-                rules={{ required: true}}
+                rules={{ required: true }}
               />
               {errors?.EventDetails?.type === 'required' && (
                 <Alert severity='error'>This field is required.</Alert>
@@ -234,22 +251,57 @@ function EventEditPage(props) {
               Date and Time
             </Typography>
 
-            <section className={classes.formStyle}>
-              <label>Event start date:</label>
-            </section>
+            <Box display='flex' width='100%' justifyContent='space-between'>
+              <section className={classes.halfStyle}>
+                <label>Event start date:</label>
+                <Controller
+                  render={({ field }) => (
+                    <DatePicker
+                      selected={field.value}
+                      onChange={field.onChange}
+                      inputRef={field.ref}
+                      className={classes.pickerStyle}
+                    />
+                  )}
+                  name='StartDate'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.StartDate?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
 
-            <section className={classes.formStyle}>
-              <label>Event start time:</label>
-            </section>
+              <section className={classes.halfStyle}>
+                <label>Event end date:</label>
+                <Controller
+                  render={({ field }) => (
+                    <DatePicker
+                      selected={field.value}
+                      onChange={field.onChange}
+                      inputRef={field.ref}
+                      className={classes.pickerStyle}
+                    />
+                  )}
+                  name='EndDate'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.EndDate?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
+            </Box>
 
-            <section className={classes.formStyle}>
-              <label>Event end date:</label>
-            </section>
+            <Box display='flex' width='100%' justifyContent='space-between'>
+              <section className={classes.halfStyle}>
+                <label>Event start time:</label>
+              </section>
 
-            <section className={classes.formStyle}>
-              <label>Event end time:</label>
-            </section>
-
+              <section className={classes.halfStyle}>
+                <label>Event end time:</label>
+              </section>
+            </Box>
 
             <Typography className={classes.subtitleStyle}>
               Location Information:
@@ -258,7 +310,6 @@ function EventEditPage(props) {
             <section className={classes.formStyle}>
               <label>Online Event</label>
             </section>
-
 
             <section className={classes.formStyle}>
               <label>Venue name</label>
@@ -270,20 +321,16 @@ function EventEditPage(props) {
 
             <section className={classes.formStyle}>
               <label>Postcode and Suburb</label>
-              <Controller 
-              render={({field}) => (
-                <PostalCodeAutoComplete 
-                field={field}
-                />
-              )}
-              name='Postcode-Suburb'
-              control={control}
-              rules={{ required: true }}
+              <Controller
+                render={({ field }) => <PostalCodeAutoComplete field={field} />}
+                name='PostcodeSuburb'
+                control={control}
+                rules={{ required: true }}
               />
-
-                
+              {errors?.PostcodeSuburb?.type === 'required' && (
+                <Alert severity='error'>This field is required.</Alert>
+              )}
             </section>
-
 
             <Button
               type='submit'
