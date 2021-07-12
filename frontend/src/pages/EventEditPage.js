@@ -11,10 +11,14 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
+import Checkbox from '@material-ui/core/Checkbox';
 import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ImageUpload from '../components/ImageUpload';
+import { storage } from '../components/firebase';
+import placeholder from '../Assets/placeholder.png';
+import format from "date-fns/format";
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -76,6 +80,25 @@ const useStyles = makeStyles((theme) => ({
     padding: '5px 8px',
     marginTop: '8px',
   },
+  checkBoxStyle: {
+    display: 'flex',
+    paddingTop: '15px',
+    alignItems: 'center',
+  },
+  previewStyle: {
+    height: '300px',
+    display: 'flex',
+    marginTop: '8px',
+    padding: '10px',
+    border: '1px solid rgba(0, 0, 0, 0.23)',
+    borderRadius: '4px',
+    justifyContent: 'center',
+  },
+  imgStyle: {
+    height: '100%',
+    width: '100%',
+    objectFit: 'cover',
+  },
 }));
 
 function EventEditPage(props) {
@@ -92,24 +115,62 @@ function EventEditPage(props) {
 
   const eventId = props.match.params.eventId;
   const [errorMsg, setErrorMsg] = useState('');
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [successMsg, setsuccessMsg] = useState('')
+  const [onlineEvent, setOnlineEvent] = useState(false);
+  const [data, setData] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [startTime, setStartTime] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [endTime, setEndTime] = useState('');
+  
+  
 
-  function GetFormattedDate(date) {
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
-    var year = date.getFullYear();
-    return day + '/' + month + '/' + year;
-  }
+  const [{ alt, src }, setImg] = useState({
+    alt: 'Upload an Img',
+    src: placeholder,
+  });
+  const [file, setFile] = useState(null);
+  const [url, setURL] = useState('');
+  const hanleImgChange = (e) => {
+    setFile(e.target.files[0]);
+    if (e.target.files[0]) {
+      setImg({
+        alt: e.target.files[0].name,
+        src: URL.createObjectURL(e.target.files[0]),
+      });
+    }
+  };
+
+  const hanleUpload = async () => {
+    const ref = storage.ref(`/images/${file.name}`);
+    const uploadTask = ref.put(file);
+    uploadTask.on('state_changed', console.log, console.error, () => {
+      ref.getDownloadURL().then((url) => {
+        setFile(null);
+        setURL(url);
+      });
+    });
+  };
+
 
   const onSubmit = async (data) => {
     console.log(data);
-    console.log(GetFormattedDate(data.StartDate));
+    setData(data)
+    hanleUpload();
   };
+
+  useEffect(()=> {
+    if(url){
+      console.log(url)
+    }
+    // send event information to backend
+  }, [url])
 
   useEffect(() => {
     reset();
   }, []);
+
+  console.log(onlineEvent);
 
   return (
     <>
@@ -131,68 +192,71 @@ function EventEditPage(props) {
           <Typography className={classes.centerStyle}>
             All fields are required unless stated
           </Typography>
-          <ImageUpload />
+
           <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
             <Typography className={classes.subtitleStyle}>
               Event Information:
             </Typography>
-            <Box display='flex' width='100%' justifyContent='space-between'>
-              <section className={classes.halfStyle}>
-                <label>Event Name:</label>
-                <Controller
-                  render={({ field }) => (
-                    <TextField
+            <section className={classes.formStyle}>
+              <label>Event Name (Less than 50 characters):</label>
+              <Controller
+                render={({ field }) => (
+                  <TextField
+                    value={field.value || ''}
+                    onChange={field.onChange}
+                    inputRef={field.ref}
+                    variant='outlined'
+                    size='small'
+                    margin='dense'
+                  />
+                )}
+                name='EventName'
+                control={control}
+                rules={{ required: true, maxLength: 200 }}
+              />
+              {errors?.EventName?.type === 'required' && (
+                <Alert severity='error'>This field is required.</Alert>
+              )}
+              {errors?.EventName?.type === 'maxLength' && (
+                <Alert severity='error'>
+                  This field should be less than 50 characters.
+                </Alert>
+              )}
+            </section>
+
+            <section className={classes.halfStyle}>
+              <label>Event Format:</label>
+              <Controller
+                render={({ field }) => {
+                  return (
+                    <Select
                       value={field.value || ''}
                       onChange={field.onChange}
-                      inputRef={field.ref}
+                      ref={field.ref}
                       variant='outlined'
-                      size='small'
-                      margin='dense'
-                    />
-                  )}
-                  name='EventName'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.EventName?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-              </section>
-
-              <section className={classes.halfStyle}>
-                <label>Event Format:</label>
-                <Controller
-                  render={({ field }) => {
-                    return (
-                      <Select
-                        value={field.value || ''}
-                        onChange={field.onChange}
-                        ref={field.ref}
-                        variant='outlined'
-                        className={classes.selectStyle}
-                      >
-                        <MenuItem value='Class'>Class</MenuItem>
-                        <MenuItem value='Conference'>Conference</MenuItem>
-                        <MenuItem value='Festival'>Festival</MenuItem>
-                        <MenuItem value='Party'>Party</MenuItem>
-                        <MenuItem value='Expo'>Expo</MenuItem>
-                        <MenuItem value='Game'>Game</MenuItem>
-                        <MenuItem value='Networking'>Networking</MenuItem>
-                        <MenuItem value='Race'>Race</MenuItem>
-                        <MenuItem value='Seminar'>Seminar</MenuItem>
-                        <MenuItem value='Tour'>Tour</MenuItem>
-                      </Select>
-                    );
-                  }}
-                  name='EventFormat'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.EventFormat?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-              </section>
-            </Box>
+                      className={classes.selectStyle}
+                    >
+                      <MenuItem value='Class'>Class</MenuItem>
+                      <MenuItem value='Conference'>Conference</MenuItem>
+                      <MenuItem value='Festival'>Festival</MenuItem>
+                      <MenuItem value='Party'>Party</MenuItem>
+                      <MenuItem value='Expo'>Expo</MenuItem>
+                      <MenuItem value='Game'>Game</MenuItem>
+                      <MenuItem value='Networking'>Networking</MenuItem>
+                      <MenuItem value='Race'>Race</MenuItem>
+                      <MenuItem value='Seminar'>Seminar</MenuItem>
+                      <MenuItem value='Tour'>Tour</MenuItem>
+                    </Select>
+                  );
+                }}
+                name='EventFormat'
+                control={control}
+                rules={{ required: true }}
+              />
+              {errors?.EventFormat?.type === 'required' && (
+                <Alert severity='error'>This field is required.</Alert>
+              )}
+            </section>
 
             <section className={classes.formStyle}>
               <label>Event Introduction (Less than 200 characters):</label>
@@ -247,6 +311,25 @@ function EventEditPage(props) {
               )}
             </section>
 
+            <section>
+              <label>Event Image (jpg/jpeg or png)</label>
+              <form>
+                <input
+                  type='file'
+                  onChange={hanleImgChange}
+                  accept='image/jpeg, image/png'
+                />
+              </form>
+              <Box className={classes.previewStyle}>
+                <img
+                  className={classes.imgStyle}
+                  src={src}
+                  alt={alt}
+                  className='form-img__img-preview'
+                />
+              </Box>
+            </section>
+
             <Typography className={classes.subtitleStyle}>
               Date and Time
             </Typography>
@@ -257,8 +340,13 @@ function EventEditPage(props) {
                 <Controller
                   render={({ field }) => (
                     <DatePicker
+                      dateFormat='dd/MM/yyyy'
                       selected={field.value}
-                      onChange={field.onChange}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        console.log(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
+                        setStartDate(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
+                      }}
                       inputRef={field.ref}
                       className={classes.pickerStyle}
                     />
@@ -277,8 +365,13 @@ function EventEditPage(props) {
                 <Controller
                   render={({ field }) => (
                     <DatePicker
+                      dateFormat='dd/MM/yyyy'
                       selected={field.value}
-                      onChange={field.onChange}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        console.log(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
+                        setEndDate(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
+                      }}
                       inputRef={field.ref}
                       className={classes.pickerStyle}
                     />
@@ -296,10 +389,61 @@ function EventEditPage(props) {
             <Box display='flex' width='100%' justifyContent='space-between'>
               <section className={classes.halfStyle}>
                 <label>Event start time:</label>
+                <Controller
+                  render={({ field }) => (
+                    <DatePicker
+                      showTimeSelect
+                      showTimeSelectOnly
+                      timeIntervals={30}
+                      timeCaption='Time'
+                      dateFormat='h:mm aa'
+                      selected={field.value}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setStartTime(format(e, 'h:mm aa', {awareOfUnicodeTokens: true}))
+                      }}
+                      inputRef={field.ref}
+                      className={classes.pickerStyle}
+                      onChangeRaw={(event) => {
+                        console.log(event.target.value);
+                      }}
+                    />
+                  )}
+                  name='StartTime'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.StartTime?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
               </section>
 
               <section className={classes.halfStyle}>
                 <label>Event end time:</label>
+                <Controller
+                  render={({ field }) => (
+                    <DatePicker
+                      showTimeSelect
+                      showTimeSelectOnly
+                      timeIntervals={30}
+                      timeCaption='Time'
+                      dateFormat='h:mm aa'
+                      selected={field.value}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setEndTime(format(e, 'h:mm aa', {awareOfUnicodeTokens: true}))
+                      }}
+                      inputRef={field.ref}
+                      className={classes.pickerStyle}
+                    />
+                  )}
+                  name='EndTime'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.EndTime?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
               </section>
             </Box>
 
@@ -307,31 +451,78 @@ function EventEditPage(props) {
               Location Information:
             </Typography>
 
-            <section className={classes.formStyle}>
-              <label>Online Event</label>
-            </section>
-
-            <section className={classes.formStyle}>
-              <label>Venue name</label>
-            </section>
-
-            <section className={classes.formStyle}>
-              <label>Street address</label>
-            </section>
-
-            <section className={classes.formStyle}>
-              <label>Postcode and Suburb</label>
+            <section className={classes.checkBoxStyle}>
               <Controller
-                render={({ field }) => <PostalCodeAutoComplete field={field} />}
-                name='PostcodeSuburb'
+                name='IsOnlineEvent'
                 control={control}
-                rules={{ required: true }}
+                render={({ field }) => (
+                  <Checkbox
+                    color='primary'
+                    onChange={(e) => {
+                      field.onChange(e.target.checked);
+                      setOnlineEvent(e.target.checked);
+                    }}
+                    checked={field.value || false}
+                  />
+                )}
               />
-              {errors?.PostcodeSuburb?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
+              <label>This is an online event</label>
             </section>
+            {onlineEvent ? null : (
+              <>
+                <section className={classes.formStyle}>
+                  <label>Venue name:</label>
+                  <Controller
+                    render={({ field }) => (
+                      <TextField
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                        inputRef={field.ref}
+                        variant='outlined'
+                        size='small'
+                        margin='dense'
+                      />
+                    )}
+                    name='VenueName'
+                    control={control}
+                    rules={{ required: true }}
+                  />
+                  {errors?.VenueName?.type === 'required' && (
+                    <Alert severity='error'>This field is required.</Alert>
+                  )}
+                </section>
 
+                <section className={classes.formStyle}>
+                  <label>Street address:</label>
+                  <Controller
+                    render={({ field }) => (
+                      <TextField
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                        inputRef={field.ref}
+                        variant='outlined'
+                        size='small'
+                        margin='dense'
+                      />
+                    )}
+                    name='StreetAddress'
+                    control={control}
+                    rules={{ required: true }}
+                  />
+                  {errors?.StreetAddress?.type === 'required' && (
+                    <Alert severity='error'>This field is required.</Alert>
+                  )}
+                </section>
+
+                <section className={classes.halfStyle}>
+                  <label>Postcode and Suburb</label>
+                  <PostalCodeAutoComplete control={control} />
+                  {errors?.suburb?.type === 'required' && (
+                    <Alert severity='error'>This field is required.</Alert>
+                  )}
+                </section>
+              </>
+            )}
             <Button
               type='submit'
               variant='contained'

@@ -7,6 +7,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
 import { Typography } from '@material-ui/core';
+import { Controller } from 'react-hook-form';
 
 const LISTBOX_PADDING = 8; // px
 
@@ -16202,29 +16203,58 @@ const renderGroup = (params) => [
   params.children,
 ];
 
-export default function Virtualize({ field }) {
+export default function Virtualize({ onChange: ignored, control }) {
   const classes = useStyles();
-
   return (
-    <Autocomplete
-    autoSelect
-      id='virtualize-demo'
-      style={{ width: 300 }}
-      disableListWrap
-      classes={classes}
-      ListboxComponent={ListboxComponent}
-      renderGroup={renderGroup}
-      options={OPTIONS}
-      groupBy={(option) => option[0].toUpperCase()}
-      value={field.value}
-      onChange={field.onChange}
-      inputRef={field.ref}
-      renderInput={(params) => (
-        <TextField {...params} 
-
-        variant='outlined' size='small' margin='dense' />
+    <Controller
+      render={({field}) => (
+        <Autocomplete
+        defaultValue={null}
+          value={field.value || null}
+          onChange={ (e,data) => field.onChange(data)}
+          disableListWrap
+          classes={classes}
+          ListboxComponent={ListboxComponent}
+          renderGroup={renderGroup}
+          options={OPTIONS}
+          groupBy={(option) => option[0].toUpperCase()}
+          renderOption={(option) => <Typography noWrap>{option}</Typography>}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant='outlined'
+              size='small'
+              margin='dense'
+              
+            />
+          )}
+        />
       )}
-      renderOption={(option) => <Typography noWrap>{option}</Typography>}
+      onChange={([, data]) => data}
+      name='suburb'
+      control={control}
+      rules={{ required: true }}
     />
   );
+
+  // return (
+  //   <Autocomplete
+  //     autoSelect
+  //     id='virtualize-demo'
+  //     style={{ width: 300 }}
+  //     disableListWrap
+  //     classes={classes}
+  //     ListboxComponent={ListboxComponent}
+  //     renderGroup={renderGroup}
+  //     options={OPTIONS}
+  //     groupBy={(option) => option[0].toUpperCase()}
+  //     value={field.value}
+  //     onChange={field.onChange}
+  //     inputRef={field.ref}
+  //     renderInput={(params) => (
+  //       <TextField {...params} variant='outlined' size='small' margin='dense' />
+  //     )}
+  //     renderOption={(option) => <Typography noWrap>{option}</Typography>}
+  //   />
+  // );
 }
