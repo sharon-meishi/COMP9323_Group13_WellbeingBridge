@@ -77,11 +77,63 @@ export const createEventRequest = async (uploadBody) => {
     return [res.status, ''];
   } catch (error) {
     console.log(error);
-    if (error.response){
+    if (error.response) {
       return [error.response.status, error.response.data.message];
     } else {
-      return [error, '']
+      return [error, ''];
     }
-    
+  }
+};
+
+export const getEventDetails = async (eventId) => {
+  const url = baseUrl + `/event/${eventId}`;
+  let headers = {};
+  if (sessionStorage.getItem('token')) {
+    headers = {
+      Authorization: `${sessionStorage.getItem('token')}`,
+      'content-Type': 'application/json',
+    };
+  } else {
+    headers = {
+      'content-Type': 'application/json',
+    };
+  }
+  try {
+    const res = await axios.get(
+      url,
+      {},
+      {
+        headers: headers,
+      }
+    );
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const updateEventDetails = async (eventId, uploadBody) => {
+  const url = baseUrl + `/event/${eventId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.put(url, uploadBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };

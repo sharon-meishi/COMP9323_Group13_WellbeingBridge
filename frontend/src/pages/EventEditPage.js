@@ -1,242 +1,67 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import BackToTop from '../components/BackToTop';
+import { getEventDetails } from '../components/api';
+import LoadingBackdrop from '../components/LoadingBackdrop'
 import placeholder from '../Assets/placeholder.png';
-import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete';
-import { createEventRequest } from '../components/api';
-import { storage } from '../components/firebase';
-import { AppContext } from '../utils/store';
-import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Backdrop from '@material-ui/core/Backdrop';
-import Alert from '@material-ui/lab/Alert';
-import { geocodeByAddress, geocodeByPlaceId } from 'react-google-places-autocomplete';
 
-import format from 'date-fns/format';
-import parse from 'date-fns/parse'
-import DatePicker from 'react-datepicker';
-import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-import 'react-datepicker/dist/react-datepicker.css';
 
-const useStyles = makeStyles((theme) => ({
-  backgroundStyle: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: '30px',
-    width: '100%',
-    fontFamily: 'Noto Sans',
-  },
-  GridStyle: {
-    width: '100%',
-  },
-  titleStyle: {
-    fontSize: '40px',
-    fontWeight: '500',
-    color: '#26A69A',
-  },
-  centerStyle: {
-    fontSize: '12px',
-    fontWeight: '700',
-  },
-  halfStyle: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    paddingTop: '15px',
-    width: '45%',
-  },
-  formStyle: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    paddingTop: '15px',
-  },
-  subtitleStyle: {
-    fontSize: '18px',
-    marginTop: '30px',
-    fontWeight: '700',
-  },
-  buttonStyle: {
-    fontSize: '16px',
-    marginTop: '20px',
-    marginBottom: '10px',
-  },
-  selectStyle: {
-    marginTop: '8px',
-    marginBottom: '4px',
-    height: '40px',
-  },
-  pickerStyle: {
-    height: '30px',
-    fontSize: '15px',
-    border: '1px solid rgba(0, 0, 0, 0.23)',
-    borderRadius: '4px',
-    padding: '5px 8px',
-    marginTop: '8px',
-  },
-  previewStyle: {
-    height: '300px',
-    display: 'flex',
-    marginTop: '8px',
-    padding: '10px',
-    border: '1px solid rgba(0, 0, 0, 0.23)',
-    borderRadius: '4px',
-    justifyContent: 'center',
-  },
-  imgStyle: {
-    height: '100%',
-    width: '100%',
-    objectFit: 'cover',
-  },
-  imgBoxLabel: {
-    marginTop: '8px',
-  },
-  addressStyle: {
-    color: 'black',
-    height: '40px',
-  },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
-  },
-}));
+import EventForm from '../components/EventEditPage/EventForm';
+import parse from 'date-fns/parse';
+
+
 
 function EventEditPage(props) {
-  const classes = useStyles();
-  const context = useContext(AppContext);
-  const ref = useRef();
-
-  const {
-    register,
-    reset,
-    control,
-    handleSubmit,
-    getValues,
-    formState: { errors },
-  } = useForm();
-
   const eventId = props.match.params.eventId;
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setsuccessMsg] = useState('');
-  const [eventFormat, setEventFormat] = useState('');
-  const [data, setData] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const [{ alt, src }, setImg] = useState({
-    alt: 'Upload an Img',
-    src: placeholder,
-  });
-  const [file, setFile] = useState(null);
-  const [url, setURL] = useState('');
-
-  const handleImgChange = (e) => {
-    setFile(e.target.files[0]);
-    if (e.target.files[0]) {
-      setImg({
-        alt: e.target.files[0].name,
-        src: URL.createObjectURL(e.target.files[0]),
-      });
-    }
-  };
-
-  const handleUpload = async () => {
-    const ref = storage.ref(`/images/${file.name}`);
-    const uploadTask = ref.put(file);
-    uploadTask.on('state_changed', console.log, console.error, () => {
-      ref.getDownloadURL().then((url) => {
-        setFile(null);
-        setURL(url);
-      });
-    });
-  };
-
-  const onSubmit = async (data) => {
-    setLoading(true);
-    console.log(data);
-    setData(data);
-    //handleUpload();
-  };
+  const [rawData, setRawData] = useState(null);
+  const [data, setData] = useState(null);
 
   const parsedDate = (dateString, format) => {
-    return parse(dateString, format, new Date())
-  }
+    return parse(dateString, format, new Date());
+  };
 
   useEffect(() => {
-    const sendData = async (uploadBody) => {
-      const Data = await createEventRequest(uploadBody);
+    const fetchData = async (eventId) => {
+      const Data = await getEventDetails(eventId);
       if (Data[0] === 200) {
-        console.log('create success');
-        setLoading(false);
-        reset();
+        console.log(Data[1]);
+        setRawData(Data[1]);
+
+        const date = Data[1].date.split(' ');
+        const time = Data[1].time.split('to');
+        let startDate, endDate;
+
+        console.log(date);
+        console.log(time);
+        if (date.length === 3) {
+          startDate = parsedDate(date[0], 'dd/MM/yyyy');
+          endDate = parsedDate(date[2], 'dd/MM/yyyy');
+        } else {
+          startDate = parsedDate(date[0], 'dd/MM/yyyy');
+          endDate = parsedDate(date[0], 'dd/MM/yyyy');
+        }
+        const startTime = parsedDate(time[0], 'h:mm aa ');
+        const endTime = parsedDate(time[1], ' h:mm aa');
+
+        const processedData = {
+          EventName: Data[1].eventName,
+          EventFormat: Data[1].format,
+          EventIntroduction: Data[1].introduction,
+          EventDetails: Data[1].details,
+          StartDate: startDate,
+          EndDate: endDate,
+          StartTime: startTime,
+          EndTime: endTime,
+          Postcode: Data[1].location.postcode,
+        };
+        setData(processedData);
       } else {
         console.log('error', Data[0]);
       }
     };
-
-    if (url) {
-      let date = '';
-      if (startDate === endDate) {
-        date = startDate;
-      } else {
-        date = `${startDate} to ${endDate}`;
-      }
-
-      let location = {};
-      if (eventFormat === 'Online Event') {
-        location = {
-          postcode: '',
-          suburb: '',
-          street: '',
-          venue: '',
-        };
-      } else {
-        location = {
-          postcode: data.Postcode,
-          suburb: '',
-          street: '',
-          venue: data.address.label,
-        };
-      }
-      const uploadBody = {
-        eventName: data.EventName,
-        thumbnail: url,
-        format: data.EventFormat,
-        location: location,
-        date: date,
-        time: `${startTime} to ${endTime}`,
-        introduction: data.EventIntroduction,
-        details: data.EventDetails,
-      };
-      console.log(uploadBody);
-      sendData(uploadBody);
-    }
-  }, [url]);
-
-  useEffect(() => {
-    reset();
-    setImg({
-      alt: 'Upload an image',
-      src: placeholder,
-    });
-    setURL('');
-    setLoading(false);
-    if (eventId){
-      console.log(eventId)
-      // selected = {parse('07/07/2021', 'dd/MM/yyyy', new Date())}
+    if (eventId) {
+      console.log(eventId);
+      fetchData(eventId);
     }
   }, []);
 
@@ -244,396 +69,16 @@ function EventEditPage(props) {
     <>
       <BackToTop showBelow={250} />
       <NavBar />
-      <Grid container className={classes.backgroundStyle}>
-        <Grid
-          item
-          xs={10}
-          sm={10}
-          md={8}
-          lg={7}
-          xl={6}
-          className={classes.GridStyle}
-        >
-          <Typography variant='h5' className={classes.titleStyle}>
-            {eventId ? 'Edit your event' : 'Create a new event'}
-          </Typography>
-          <hr />
-          <Typography className={classes.centerStyle}>
-            All fields are required.
-          </Typography>
-
-          <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
-            <Typography className={classes.subtitleStyle}>
-              Event Information:
-            </Typography>
-            <>
-              <section className={classes.formStyle}>
-                <label>Event Name (Less than 50 characters):</label>
-                <Controller
-                  render={({ field }) => (
-                    <TextField
-                      value={field.value || ''}
-                      onChange={field.onChange}
-                      inputRef={field.ref}
-                      variant='outlined'
-                      size='small'
-                      margin='dense'
-                    />
-                  )}
-                  name='EventName'
-                  control={control}
-                  rules={{ required: true, maxLength: 200 }}
-                />
-                {errors?.EventName?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-                {errors?.EventName?.type === 'maxLength' && (
-                  <Alert severity='error'>
-                    This field should be less than 50 characters.
-                  </Alert>
-                )}
-              </section>
-
-              <section className={classes.halfStyle}>
-                <label>Event Format:</label>
-                <Controller
-                  render={({ field }) => {
-                    return (
-                      <Select
-                        value={field.value || ''}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setEventFormat(e.target.value);
-                        }}
-                        ref={field.ref}
-                        variant='outlined'
-                        className={classes.selectStyle}
-                      >
-                        <MenuItem value='Online Event'>Online Event</MenuItem>
-                        <MenuItem value='Class'>Class</MenuItem>
-                        <MenuItem value='Conference'>Conference</MenuItem>
-                        <MenuItem value='Festival'>Festival</MenuItem>
-                        <MenuItem value='Party'>Party</MenuItem>
-                        <MenuItem value='Expo'>Expo</MenuItem>
-                        <MenuItem value='Game'>Game</MenuItem>
-                        <MenuItem value='Networking'>Networking</MenuItem>
-                        <MenuItem value='Race'>Race</MenuItem>
-                        <MenuItem value='Seminar'>Seminar</MenuItem>
-                        <MenuItem value='Tour'>Tour</MenuItem>
-                      </Select>
-                    );
-                  }}
-                  name='EventFormat'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.EventFormat?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-              </section>
-
-              <section className={classes.formStyle}>
-                <label>Event Introduction (Less than 200 characters):</label>
-                <Controller
-                  render={({ field }) => (
-                    <TextField
-                      multiline
-                      rows={5}
-                      variant='outlined'
-                      value={field.value || ''}
-                      onChange={field.onChange}
-                      inputRef={field.ref}
-                      size='small'
-                      margin='dense'
-                    />
-                  )}
-                  name='EventIntroduction'
-                  control={control}
-                  rules={{ required: true, maxLength: 200 }}
-                />
-                {errors?.EventIntroduction?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-                {errors?.EventIntroduction?.type === 'maxLength' && (
-                  <Alert severity='error'>
-                    This field should be less than 200 characters.
-                  </Alert>
-                )}
-              </section>
-
-              <section className={classes.formStyle}>
-                <label>Event Details:</label>
-                <Controller
-                  render={({ field }) => (
-                    <TextField
-                      multiline
-                      rows={5}
-                      variant='outlined'
-                      value={field.value || ''}
-                      onChange={field.onChange}
-                      inputRef={field.ref}
-                      size='small'
-                      margin='dense'
-                    />
-                  )}
-                  name='EventDetails'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.EventDetails?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-              </section>
-
-              <section className={classes.imgBoxLabel}>
-                <label>Event Image (jpg/jpeg or png)</label>
-                <Controller
-                  render={({ field }) => (
-                    <input
-                      type='file'
-                      value={field.value || ''}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        handleImgChange(e);
-                      }}
-                      inputRef={field.ref}
-                      accept='image/jpeg, image/png'
-                    />
-                  )}
-                  name='picture'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.picture?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-                <Box className={classes.previewStyle}>
-                  <img
-                    className={classes.imgStyle}
-                    src={src}
-                    alt={alt}
-                    className='form-img__img-preview'
-                  />
-                </Box>
-              </section>
-            </>
-
-            <Typography className={classes.subtitleStyle}>
-              Date and Time:
-            </Typography>
-            <>
-              <Box display='flex' width='100%' flexDirection='column'>
-                <Box display='flex' width='100%' justifyContent='space-between'>
-                  <section className={classes.halfStyle}>
-                    <label>Event start date:</label>
-                    <Controller
-                      render={({ field }) => (
-                        <DatePicker
-                          dateFormat='dd/MM/yyyy'
-                          selected={field.value}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setStartDate(
-                              format(e, 'dd/MM/yyyy', {
-                                awareOfUnicodeTokens: true,
-                              })
-                            );
-                          }}
-                          inputRef={field.ref}
-                          className={classes.pickerStyle}
-                        />
-                      )}
-                      name='StartDate'
-                      control={control}
-                      rules={{ required: true }}
-                    />
-                    {errors?.StartDate?.type === 'required' && (
-                      <Alert severity='error'>This field is required.</Alert>
-                    )}
-                  </section>
-
-                  <section className={classes.halfStyle}>
-                    <label>Event end date:</label>
-                    <Controller
-                      render={({ field }) => (
-                        <DatePicker
-                          dateFormat='dd/MM/yyyy'
-                          selected={field.value}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setEndDate(
-                              format(e, 'dd/MM/yyyy', {
-                                awareOfUnicodeTokens: true,
-                              })
-                            );
-                          }}
-                          inputRef={field.ref}
-                          className={classes.pickerStyle}
-                        />
-                      )}
-                      name='EndDate'
-                      control={control}
-                      rules={{
-                        required: true,
-                        validate: (value) => {
-                          const { StartDate } = getValues();
-                          const diff = StartDate - value;
-                          return (
-                            diff <= 0 ||
-                            'End date should not be earlier than start date'
-                          );
-                        },
-                      }}
-                    />
-                    {errors?.EndDate?.type === 'required' && (
-                      <Alert severity='error'>This field is required.</Alert>
-                    )}
-                  </section>
-                </Box>
-                {errors?.EndDate?.type === 'validate' && (
-                  <Alert severity='error'>{errors.EndDate.message}</Alert>
-                )}
-              </Box>
-
-              <Box display='flex' width='100%' flexDirection='column'>
-                <Box display='flex' width='100%' justifyContent='space-between'>
-                  <section className={classes.halfStyle}>
-                    <label>Event start time:</label>
-                    <Controller
-                      render={({ field }) => (
-                        <DatePicker
-                          showTimeSelect
-                          showTimeSelectOnly
-                          timeIntervals={30}
-                          timeCaption='Time'
-                          dateFormat='h:mm aa'
-                          selected={field.value}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setStartTime(
-                              format(e, 'h:mm aa', {
-                                awareOfUnicodeTokens: true,
-                              })
-                            );
-                          }}
-                          inputRef={field.ref}
-                          className={classes.pickerStyle}
-                          onChangeRaw={(event) => {
-                            console.log(event.target.value);
-                          }}
-                        />
-                      )}
-                      name='StartTime'
-                      control={control}
-                      rules={{ required: true }}
-                    />
-                    {errors?.StartTime?.type === 'required' && (
-                      <Alert severity='error'>This field is required.</Alert>
-                    )}
-                  </section>
-
-                  <section className={classes.halfStyle}>
-                    <label>Event end time:</label>
-                    <Controller
-                      render={({ field }) => (
-                        <DatePicker
-                          showTimeSelect
-                          showTimeSelectOnly
-                          timeIntervals={30}
-                          timeCaption='Time'
-                          dateFormat='h:mm aa'
-                          selected={field.value}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setEndTime(
-                              format(e, 'h:mm aa', {
-                                awareOfUnicodeTokens: true,
-                              })
-                            );
-                          }}
-                          inputRef={field.ref}
-                          className={classes.pickerStyle}
-                        />
-                      )}
-                      name='EndTime'
-                      control={control}
-                      rules={{
-                        required: true,
-                        validate: (value) => {
-                          const { StartTime } = getValues();
-                          const diff = StartTime - value;
-                          return (
-                            diff <= 0 ||
-                            'End time should not be earlier than start time'
-                          );
-                        },
-                      }}
-                    />
-                    {errors?.EndTime?.type === 'required' && (
-                      <Alert severity='error'>This field is required.</Alert>
-                    )}
-                  </section>
-                </Box>
-                {errors?.EndTime?.type === 'validate' && (
-                  <Alert severity='error'>{errors.EndTime.message}</Alert>
-                )}
-              </Box>
-            </>
-
-            {eventFormat === 'Online Event' ? null : (
-              <>
-                <Typography className={classes.subtitleStyle}>
-                  Location Information:
-                </Typography>
-
-                <section className={classes.formStyle}>
-                  <label >Event address:</label>
-                  <Controller
-                    render={({ field }) => (
-                      <GooglePlacesAutocomplete
-                        ref={ref}
-                        className={classes.addressStyle}
-                        selectProps={{
-                          value: field.value,
-                          onChange: field.onChange,
-                          placeholder: 'Search for address...',
-                          defaultValue: {label: '123', value: '123'}
-                        }}
-                        minLengthAutocomplete={3}
-                      />
-                    )}
-                    name='address'
-                    control={control}
-                    rules={{ required: true }}
-                  />
-                  {errors?.address?.type === 'required' && (
-                    <Alert severity='error'>This field is required.</Alert>
-                  )}
-                </section>
-                <section className={classes.halfStyle}>
-                  <label>Postcode and Suburb</label>
-                  <PostalCodeAutoComplete control={control} />
-                  {errors?.Postcode?.type === 'required' && (
-                    <Alert severity='error'>This field is required.</Alert>
-                  )}
-                </section>
-              </>
-            )}
-
-            <Button
-              type='submit'
-              variant='contained'
-              color='primary'
-              className={classes.buttonStyle}
-            >
-              Submit
-            </Button>
-            <Backdrop className={classes.backdrop} open={loading}>
-              <CircularProgress color='primary' />
-            </Backdrop>
-          </form>
-        </Grid>
-      </Grid>
+      {data ? (
+        <EventForm
+          eventId={eventId}
+          preloadedValues={data}
+          preloadedImg={rawData.thumbnail}
+          preloadedAddress={rawData.location.venue}
+        />
+      ) : (
+       null
+      )}
     </>
   );
 }
