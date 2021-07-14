@@ -390,6 +390,111 @@ paths:
           description: "Forbiddent! Wrong token."
         404:
           description: "Event not found"
+  
+  /event/{eventid}/comment:
+    post:
+      tags:
+      - "event"
+      description: "Comment on an event"
+      summary: Make a comment on a specific event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "the event id"
+          required: true
+        - name: "comment"
+          in: "body"
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: "string"
+                example: "Nice Event"
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+  /event/{eventid}/comment/{commentid}:
+    put:
+      tags:
+      - "event"
+      description: "Update a comment on an event"
+      summary: Update a comment on a specific event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "the event id"
+          required: true
+        - in: path
+          name: commentid
+          type: integer
+          format: "int32"
+          description: "the comment id"
+          required: true
+        - name: "comment"
+          in: "body"
+          required: true
+          schema:
+            type: object
+            properties:
+              comment:
+                type: "string"
+                example: "Good Event"
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+    delete:
+      tags:
+      - "event"
+      description: "Update a comment on an event"
+      summary: Update a comment on a specific event
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+        - in: path
+          name: eventid
+          type: integer
+          format: "int32"
+          description: "the event id"
+          required: true
+        - in: path
+          name: commentid
+          type: integer
+          format: "int32"
+          description: "the comment id"
+          required: true
+      responses:
+        200:
+          description: OK
+        403:
+          description: "Forbiddent! Wrong token."
+        404:
+          description: "Event not found"
+        
+      
+  
           
   /organization/{oId}/summary:
     get:
@@ -729,9 +834,6 @@ definitions:
       password:
         type: "string"
         example: "123456"
-      usergroup:
-        type: "string"
-        example: "individual"
         
   userProfile:
     type: object
@@ -761,9 +863,6 @@ definitions:
       password:
         type: "string"
         example: "123456"
-      usergroup:
-        type: "string"
-        example: "organization"
       organizationType:
         $ref: '#/definitions/organizationType'
       contact:
@@ -791,9 +890,6 @@ definitions:
   eventUpload:
     type: "object"
     properties:
-      oId:
-        type: integer
-        example: 2
       eventName:
         type: "string"
         description: "The name of event"
@@ -822,12 +918,16 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
+      time:
+        type: "string"
+        example: "11:00 AM to 12:00 PM"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       details:
         type: "string"
-        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
-      recommendation:
-        $ref: '#/definitions/ArrayOfInt'
+        example: "Inner West Council and Fuel Personal Transformations have joined together to bring local residents community classes in the park!All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
   
   eventUpdate:
     type: "object"
@@ -863,10 +963,17 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
+      time:
+        type: "string"
+        example: "11:00 AM to 12:00 PM"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       details:
         type: "string"
         example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
+        
   eventSummary:
     type: "object"
     properties:
@@ -883,7 +990,7 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
       location:
         type: object
         properties:
@@ -893,6 +1000,9 @@ definitions:
           suburb:
             type: "string"
             example: "Ashfield NSW"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       favourite:
         type: boolean
         example: true
@@ -907,6 +1017,13 @@ definitions:
         type: "string"
         description: "The name of event"
         example: "Community Yoga Class"
+      organizationId: 
+        type: "integer"
+        example: 1
+      organizationName:
+        type: "string"
+        description: "The organization that holds the event"
+        example: "Innerwest Council"
       thumbnail:
         type: "string"
         description: "image link"
@@ -931,18 +1048,47 @@ definitions:
       date:
         type: "string"
         format: "date-time"
-        example: ""
+        example: "14-07-2021"
+      time:
+        type: "string"
+        example: "11:00 AM to 12:00 PM"
+      introduction:
+        type: "string"
+        example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. "
       details:
         type: "string"
         example: "Aimed at all levels of fitness and age groups, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session.  All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"
+      comments: 
+        type: array
+        items:
+          type: object
+          properties:
+            commentId:
+              type: 'integer'
+              example: 1
+            userId:
+              type: "integer"
+              example: 1
+            username:
+              type: "string"
+              example: "Sharon"
+            published:
+              type: 'string'
+              example: 'published time'
+            comment:
+              type: 'string'
+              example: 'Nice event!'
       recommendation:
         $ref: '#/definitions/ArrayOfInt'
+      bookedUser:
+        $ref: '#/definitions/ArrayOfInt'
+      booked:
+        type: boolean
+        example: false
       favourite:
         type: boolean
         example: true
-      book:
-        type: boolean
-        example: true
+
       
 
 
@@ -988,9 +1134,12 @@ definitions:
       introduction:
         type: "string"
         example: "The Centre is open to assist young people with health advice and support and information, around a range of matters including: caring for others, stress, relationships, employment and depression"
+      details:
+        type: "string"
+        example: "Headspace is the National Youth Mental Health Foundation providing early intervention mental health services to 12-25 year olds, along with assistance in promoting young peoples’ wellbeing."
       video:
         type: "string"
-        example: "video link"
+        example: "https://youtu.be/DxIDKZHW3-E"
       serviceList:
         type: array
         items:

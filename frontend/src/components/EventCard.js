@@ -1,28 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-// import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
-// import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-// import Collapse from '@material-ui/core/Collapse';
-// import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-// import { red } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-// import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SamplePic from '../Assets/eventPic.jpeg';
 import Link from '@material-ui/core/Link';
+import Box from '@material-ui/core/Box';
+import { getEventSummary } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 325,
     margin: '20px 0 20px 0',
+    display: 'flex',
+    flexDirection: 'column'
   },
   media: {
     height: 0,
@@ -37,32 +34,22 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontSize: '1.2rem',
-    // paddingRight:"1%",
-    width: '65%',
     textDecoration: 'underline',
-    // color:"textSecondary",
   },
   location: {
     fontSize: '0.9rem',
     justifyContent: 'end',
-    paddingTop: '9%',
-    width: '35%',
-    // color:"textSecondary",
+    alignSelf: 'flex-end',
+    
   },
-  // expandOpen: {
-  //   transform: 'rotate(180deg)',
-  // },
   date: {
-    paddingTop: '2%',
     fontSize: '0.7rem',
+    fontStyle:'italic'
   },
   detail: {
     paddingTop: '2%',
     height: '10%',
   },
-  // avatar: {
-  //   backgroundColor: red[500],
-  // },
   actions: {
     display: 'flex',
   },
@@ -72,40 +59,49 @@ const useStyles = makeStyles((theme) => ({
 }));
 function EventCard(props) {
   const classes = useStyles();
-  // const [expanded, setExpanded] = React.useState(false);
-  const { eventId, thumbnail, name, date, location, favourite } = props.info;
+  const [info, setInfo] = useState(null);
   const preventDefault = (event) => event.preventDefault();
-  // const handleExpandClick = () => {
-  //   setExpanded(!expanded);
-  // };
-  // console.log(id);
-  console.log(props);
-  // console.log(props.info);
 
-  return (
+  useEffect(() => {
+    console.log(props.eventId);
+    const fetchData = async () => {
+      const res = await getEventSummary(props.eventId);
+      if (res[0] === 200) {
+        setInfo(res[1]);
+      }
+    };
+    fetchData();
+  }, []);
+
+  console.log(info);
+
+  return info ? (
     <Card className={classes.root}>
       <CardMedia
         className={classes.media}
-        image={SamplePic}
-        title='Paella dish'
+        image={info.thumbnail}
+        title='Event Image'
       />
+
+      <Box display='flex' flexDirection='column' height='100%' justifyContent='space-between'>
       <CardContent>
-        <Grid container direction='row'>
-          <Typography className={classes.title}>{name}</Typography>
-          <Typography className={classes.location}>
-            {location.suburb}
-          </Typography>
+        <Grid container direction='column'>
+          <Typography className={classes.title}>{info.name}</Typography>
+          <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
+            <Typography className={classes.date} color='textSecondary'>
+              {info.date}
+            </Typography>
+            <Typography className={classes.location}>
+              {info.location.suburb}
+            </Typography>
+          </Box>
         </Grid>
-        <Typography className={classes.date} color='textSecondary'>
-          29, June 2021
-        </Typography>
+
         <Grid className={classes.detail}>
-          <Typography >
-            Aimed at all levels of fitness and age groups, the classes will be
-            gentle exercise focus.
-          </Typography>
+          <Typography>{info.introduction}</Typography>
         </Grid>
       </CardContent>
+
       <CardActions className={classes.actions} disableSpacing>
         <IconButton aria-label='add to favorites'>
           <FavoriteIcon />
@@ -114,16 +110,19 @@ function EventCard(props) {
           <ShareIcon />
         </IconButton>
         <Link
-          href='#'
-          onClick={preventDefault}
+          href={`/event/${props.eventId}`}
+          // onClick={preventDefault}
           className={classes.view}
           variant='body2'
+          // to={`/event/${eventId}`}
         >
           Discover More
         </Link>
       </CardActions>
+      </Box>
     </Card>
-  );
+ 
+  ) : null;
 }
 
 export default EventCard;
