@@ -8,7 +8,7 @@ import CardBoard from '../components/HomePage/CardBoard';
 function HomePage() {
   return (
     <>
-      <BackToTop showBelow={250} />
+       <BackToTop showBelow={250} />
       <NavBar />
       <NewsCarousel />
       <OrganizationAllType />

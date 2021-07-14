@@ -92,18 +92,6 @@ ListboxComponent.propTypes = {
   children: PropTypes.node,
 };
 
-function random(length) {
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-
-  for (let i = 0; i < length; i += 1) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-
-  return result;
-}
-
 const useStyles = makeStyles({
   listbox: {
     boxSizing: 'border-box',
@@ -16231,30 +16219,9 @@ export default function Virtualize({ onChange: ignored, control }) {
         />
       )}
       onChange={([, data]) => data}
-      name='suburb'
+      name='Postcode'
       control={control}
       rules={{ required: true }}
     />
   );
-
-  // return (
-  //   <Autocomplete
-  //     autoSelect
-  //     id='virtualize-demo'
-  //     style={{ width: 300 }}
-  //     disableListWrap
-  //     classes={classes}
-  //     ListboxComponent={ListboxComponent}
-  //     renderGroup={renderGroup}
-  //     options={OPTIONS}
-  //     groupBy={(option) => option[0].toUpperCase()}
-  //     value={field.value}
-  //     onChange={field.onChange}
-  //     inputRef={field.ref}
-  //     renderInput={(params) => (
-  //       <TextField {...params} variant='outlined' size='small' margin='dense' />
-  //     )}
-  //     renderOption={(option) => <Typography noWrap>{option}</Typography>}
-  //   />
-  // );
 }

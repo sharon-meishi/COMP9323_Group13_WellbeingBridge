@@ -1,6 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import NavBar from '../components/NavBar';
+import BackToTop from '../components/BackToTop';
+import placeholder from '../Assets/placeholder.png';
+import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete';
+import { createEventRequest } from '../components/api';
+import { storage } from '../components/firebase';
 import { AppContext } from '../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -10,15 +15,16 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from '@material-ui/core/Backdrop';
 import Alert from '@material-ui/lab/Alert';
-import Checkbox from '@material-ui/core/Checkbox';
-import PostalCodeAutoComplete from '../components/PostalCodeAutoComplete';
+import { geocodeByAddress, geocodeByPlaceId } from 'react-google-places-autocomplete';
+
+import format from 'date-fns/format';
+import parse from 'date-fns/parse'
 import DatePicker from 'react-datepicker';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import 'react-datepicker/dist/react-datepicker.css';
-import ImageUpload from '../components/ImageUpload';
-import { storage } from '../components/firebase';
-import placeholder from '../Assets/placeholder.png';
-import format from "date-fns/format";
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -64,8 +70,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
     marginTop: '20px',
     marginBottom: '10px',
-    width: '50%',
-    alignSelf: 'center',
   },
   selectStyle: {
     marginTop: '8px',
@@ -79,11 +83,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '4px',
     padding: '5px 8px',
     marginTop: '8px',
-  },
-  checkBoxStyle: {
-    display: 'flex',
-    paddingTop: '15px',
-    alignItems: 'center',
   },
   previewStyle: {
     height: '300px',
@@ -99,13 +98,26 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     objectFit: 'cover',
   },
+  imgBoxLabel: {
+    marginTop: '8px',
+  },
+  addressStyle: {
+    color: 'black',
+    height: '40px',
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 function EventEditPage(props) {
   const classes = useStyles();
   const context = useContext(AppContext);
+  const ref = useRef();
 
   const {
+    register,
     reset,
     control,
     handleSubmit,
@@ -115,15 +127,14 @@ function EventEditPage(props) {
 
   const eventId = props.match.params.eventId;
   const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setsuccessMsg] = useState('')
-  const [onlineEvent, setOnlineEvent] = useState(false);
-  const [data, setData] = useState('')
-  const [startDate, setStartDate] = useState('')
+  const [successMsg, setsuccessMsg] = useState('');
+  const [eventFormat, setEventFormat] = useState('');
+  const [data, setData] = useState('');
+  const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endDate, setEndDate] = useState('');
   const [endTime, setEndTime] = useState('');
-  
-  
+  const [loading, setLoading] = useState(false);
 
   const [{ alt, src }, setImg] = useState({
     alt: 'Upload an Img',
@@ -131,7 +142,8 @@ function EventEditPage(props) {
   });
   const [file, setFile] = useState(null);
   const [url, setURL] = useState('');
-  const hanleImgChange = (e) => {
+
+  const handleImgChange = (e) => {
     setFile(e.target.files[0]);
     if (e.target.files[0]) {
       setImg({
@@ -141,7 +153,7 @@ function EventEditPage(props) {
     }
   };
 
-  const hanleUpload = async () => {
+  const handleUpload = async () => {
     const ref = storage.ref(`/images/${file.name}`);
     const uploadTask = ref.put(file);
     uploadTask.on('state_changed', console.log, console.error, () => {
@@ -152,28 +164,85 @@ function EventEditPage(props) {
     });
   };
 
-
   const onSubmit = async (data) => {
+    setLoading(true);
     console.log(data);
-    setData(data)
-    hanleUpload();
+    setData(data);
+    //handleUpload();
   };
 
-  useEffect(()=> {
-    if(url){
-      console.log(url)
+  const parsedDate = (dateString, format) => {
+    return parse(dateString, format, new Date())
+  }
+
+  useEffect(() => {
+    const sendData = async (uploadBody) => {
+      const Data = await createEventRequest(uploadBody);
+      if (Data[0] === 200) {
+        console.log('create success');
+        setLoading(false);
+        reset();
+      } else {
+        console.log('error', Data[0]);
+      }
+    };
+
+    if (url) {
+      let date = '';
+      if (startDate === endDate) {
+        date = startDate;
+      } else {
+        date = `${startDate} to ${endDate}`;
+      }
+
+      let location = {};
+      if (eventFormat === 'Online Event') {
+        location = {
+          postcode: '',
+          suburb: '',
+          street: '',
+          venue: '',
+        };
+      } else {
+        location = {
+          postcode: data.Postcode,
+          suburb: '',
+          street: '',
+          venue: data.address.label,
+        };
+      }
+      const uploadBody = {
+        eventName: data.EventName,
+        thumbnail: url,
+        format: data.EventFormat,
+        location: location,
+        date: date,
+        time: `${startTime} to ${endTime}`,
+        introduction: data.EventIntroduction,
+        details: data.EventDetails,
+      };
+      console.log(uploadBody);
+      sendData(uploadBody);
     }
-    // send event information to backend
-  }, [url])
+  }, [url]);
 
   useEffect(() => {
     reset();
+    setImg({
+      alt: 'Upload an image',
+      src: placeholder,
+    });
+    setURL('');
+    setLoading(false);
+    if (eventId){
+      console.log(eventId)
+      // selected = {parse('07/07/2021', 'dd/MM/yyyy', new Date())}
+    }
   }, []);
-
-  console.log(onlineEvent);
 
   return (
     <>
+      <BackToTop showBelow={250} />
       <NavBar />
       <Grid container className={classes.backgroundStyle}>
         <Grid
@@ -190,339 +259,367 @@ function EventEditPage(props) {
           </Typography>
           <hr />
           <Typography className={classes.centerStyle}>
-            All fields are required unless stated
+            All fields are required.
           </Typography>
 
           <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
             <Typography className={classes.subtitleStyle}>
               Event Information:
             </Typography>
-            <section className={classes.formStyle}>
-              <label>Event Name (Less than 50 characters):</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    variant='outlined'
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                name='EventName'
-                control={control}
-                rules={{ required: true, maxLength: 200 }}
-              />
-              {errors?.EventName?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
-              {errors?.EventName?.type === 'maxLength' && (
-                <Alert severity='error'>
-                  This field should be less than 50 characters.
-                </Alert>
-              )}
-            </section>
-
-            <section className={classes.halfStyle}>
-              <label>Event Format:</label>
-              <Controller
-                render={({ field }) => {
-                  return (
-                    <Select
+            <>
+              <section className={classes.formStyle}>
+                <label>Event Name (Less than 50 characters):</label>
+                <Controller
+                  render={({ field }) => (
+                    <TextField
                       value={field.value || ''}
                       onChange={field.onChange}
-                      ref={field.ref}
+                      inputRef={field.ref}
                       variant='outlined'
-                      className={classes.selectStyle}
-                    >
-                      <MenuItem value='Class'>Class</MenuItem>
-                      <MenuItem value='Conference'>Conference</MenuItem>
-                      <MenuItem value='Festival'>Festival</MenuItem>
-                      <MenuItem value='Party'>Party</MenuItem>
-                      <MenuItem value='Expo'>Expo</MenuItem>
-                      <MenuItem value='Game'>Game</MenuItem>
-                      <MenuItem value='Networking'>Networking</MenuItem>
-                      <MenuItem value='Race'>Race</MenuItem>
-                      <MenuItem value='Seminar'>Seminar</MenuItem>
-                      <MenuItem value='Tour'>Tour</MenuItem>
-                    </Select>
-                  );
-                }}
-                name='EventFormat'
-                control={control}
-                rules={{ required: true }}
-              />
-              {errors?.EventFormat?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
-            </section>
-
-            <section className={classes.formStyle}>
-              <label>Event Introduction (Less than 200 characters):</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    multiline
-                    rows={5}
-                    variant='outlined'
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                name='EventIntroduction'
-                control={control}
-                rules={{ required: true, maxLength: 200 }}
-              />
-              {errors?.EventIntroduction?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
-              {errors?.EventIntroduction?.type === 'maxLength' && (
-                <Alert severity='error'>
-                  This field should be less than 200 characters.
-                </Alert>
-              )}
-            </section>
-
-            <section className={classes.formStyle}>
-              <label>Event Details:</label>
-              <Controller
-                render={({ field }) => (
-                  <TextField
-                    multiline
-                    rows={5}
-                    variant='outlined'
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    size='small'
-                    margin='dense'
-                  />
-                )}
-                name='EventDetails'
-                control={control}
-                rules={{ required: true }}
-              />
-              {errors?.EventDetails?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
-            </section>
-
-            <section>
-              <label>Event Image (jpg/jpeg or png)</label>
-              <form>
-                <input
-                  type='file'
-                  onChange={hanleImgChange}
-                  accept='image/jpeg, image/png'
+                      size='small'
+                      margin='dense'
+                    />
+                  )}
+                  name='EventName'
+                  control={control}
+                  rules={{ required: true, maxLength: 200 }}
                 />
-              </form>
-              <Box className={classes.previewStyle}>
-                <img
-                  className={classes.imgStyle}
-                  src={src}
-                  alt={alt}
-                  className='form-img__img-preview'
+                {errors?.EventName?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+                {errors?.EventName?.type === 'maxLength' && (
+                  <Alert severity='error'>
+                    This field should be less than 50 characters.
+                  </Alert>
+                )}
+              </section>
+
+              <section className={classes.halfStyle}>
+                <label>Event Format:</label>
+                <Controller
+                  render={({ field }) => {
+                    return (
+                      <Select
+                        value={field.value || ''}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setEventFormat(e.target.value);
+                        }}
+                        ref={field.ref}
+                        variant='outlined'
+                        className={classes.selectStyle}
+                      >
+                        <MenuItem value='Online Event'>Online Event</MenuItem>
+                        <MenuItem value='Class'>Class</MenuItem>
+                        <MenuItem value='Conference'>Conference</MenuItem>
+                        <MenuItem value='Festival'>Festival</MenuItem>
+                        <MenuItem value='Party'>Party</MenuItem>
+                        <MenuItem value='Expo'>Expo</MenuItem>
+                        <MenuItem value='Game'>Game</MenuItem>
+                        <MenuItem value='Networking'>Networking</MenuItem>
+                        <MenuItem value='Race'>Race</MenuItem>
+                        <MenuItem value='Seminar'>Seminar</MenuItem>
+                        <MenuItem value='Tour'>Tour</MenuItem>
+                      </Select>
+                    );
+                  }}
+                  name='EventFormat'
+                  control={control}
+                  rules={{ required: true }}
                 />
+                {errors?.EventFormat?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
+
+              <section className={classes.formStyle}>
+                <label>Event Introduction (Less than 200 characters):</label>
+                <Controller
+                  render={({ field }) => (
+                    <TextField
+                      multiline
+                      rows={5}
+                      variant='outlined'
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      inputRef={field.ref}
+                      size='small'
+                      margin='dense'
+                    />
+                  )}
+                  name='EventIntroduction'
+                  control={control}
+                  rules={{ required: true, maxLength: 200 }}
+                />
+                {errors?.EventIntroduction?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+                {errors?.EventIntroduction?.type === 'maxLength' && (
+                  <Alert severity='error'>
+                    This field should be less than 200 characters.
+                  </Alert>
+                )}
+              </section>
+
+              <section className={classes.formStyle}>
+                <label>Event Details:</label>
+                <Controller
+                  render={({ field }) => (
+                    <TextField
+                      multiline
+                      rows={5}
+                      variant='outlined'
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      inputRef={field.ref}
+                      size='small'
+                      margin='dense'
+                    />
+                  )}
+                  name='EventDetails'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.EventDetails?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
+
+              <section className={classes.imgBoxLabel}>
+                <label>Event Image (jpg/jpeg or png)</label>
+                <Controller
+                  render={({ field }) => (
+                    <input
+                      type='file'
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleImgChange(e);
+                      }}
+                      inputRef={field.ref}
+                      accept='image/jpeg, image/png'
+                    />
+                  )}
+                  name='picture'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.picture?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+                <Box className={classes.previewStyle}>
+                  <img
+                    className={classes.imgStyle}
+                    src={src}
+                    alt={alt}
+                    className='form-img__img-preview'
+                  />
+                </Box>
+              </section>
+            </>
+
+            <Typography className={classes.subtitleStyle}>
+              Date and Time:
+            </Typography>
+            <>
+              <Box display='flex' width='100%' flexDirection='column'>
+                <Box display='flex' width='100%' justifyContent='space-between'>
+                  <section className={classes.halfStyle}>
+                    <label>Event start date:</label>
+                    <Controller
+                      render={({ field }) => (
+                        <DatePicker
+                          dateFormat='dd/MM/yyyy'
+                          selected={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setStartDate(
+                              format(e, 'dd/MM/yyyy', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }}
+                          inputRef={field.ref}
+                          className={classes.pickerStyle}
+                        />
+                      )}
+                      name='StartDate'
+                      control={control}
+                      rules={{ required: true }}
+                    />
+                    {errors?.StartDate?.type === 'required' && (
+                      <Alert severity='error'>This field is required.</Alert>
+                    )}
+                  </section>
+
+                  <section className={classes.halfStyle}>
+                    <label>Event end date:</label>
+                    <Controller
+                      render={({ field }) => (
+                        <DatePicker
+                          dateFormat='dd/MM/yyyy'
+                          selected={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setEndDate(
+                              format(e, 'dd/MM/yyyy', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }}
+                          inputRef={field.ref}
+                          className={classes.pickerStyle}
+                        />
+                      )}
+                      name='EndDate'
+                      control={control}
+                      rules={{
+                        required: true,
+                        validate: (value) => {
+                          const { StartDate } = getValues();
+                          const diff = StartDate - value;
+                          return (
+                            diff <= 0 ||
+                            'End date should not be earlier than start date'
+                          );
+                        },
+                      }}
+                    />
+                    {errors?.EndDate?.type === 'required' && (
+                      <Alert severity='error'>This field is required.</Alert>
+                    )}
+                  </section>
+                </Box>
+                {errors?.EndDate?.type === 'validate' && (
+                  <Alert severity='error'>{errors.EndDate.message}</Alert>
+                )}
               </Box>
-            </section>
 
-            <Typography className={classes.subtitleStyle}>
-              Date and Time
-            </Typography>
-
-            <Box display='flex' width='100%' justifyContent='space-between'>
-              <section className={classes.halfStyle}>
-                <label>Event start date:</label>
-                <Controller
-                  render={({ field }) => (
-                    <DatePicker
-                      dateFormat='dd/MM/yyyy'
-                      selected={field.value}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        console.log(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
-                        setStartDate(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
-                      }}
-                      inputRef={field.ref}
-                      className={classes.pickerStyle}
+              <Box display='flex' width='100%' flexDirection='column'>
+                <Box display='flex' width='100%' justifyContent='space-between'>
+                  <section className={classes.halfStyle}>
+                    <label>Event start time:</label>
+                    <Controller
+                      render={({ field }) => (
+                        <DatePicker
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={30}
+                          timeCaption='Time'
+                          dateFormat='h:mm aa'
+                          selected={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setStartTime(
+                              format(e, 'h:mm aa', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }}
+                          inputRef={field.ref}
+                          className={classes.pickerStyle}
+                          onChangeRaw={(event) => {
+                            console.log(event.target.value);
+                          }}
+                        />
+                      )}
+                      name='StartTime'
+                      control={control}
+                      rules={{ required: true }}
                     />
-                  )}
-                  name='StartDate'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.StartDate?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-              </section>
+                    {errors?.StartTime?.type === 'required' && (
+                      <Alert severity='error'>This field is required.</Alert>
+                    )}
+                  </section>
 
-              <section className={classes.halfStyle}>
-                <label>Event end date:</label>
-                <Controller
-                  render={({ field }) => (
-                    <DatePicker
-                      dateFormat='dd/MM/yyyy'
-                      selected={field.value}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        console.log(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
-                        setEndDate(format(e, 'dd/MM/yyyy', {awareOfUnicodeTokens: true}))
-                      }}
-                      inputRef={field.ref}
-                      className={classes.pickerStyle}
-                    />
-                  )}
-                  name='EndDate'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.EndDate?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-              </section>
-            </Box>
-
-            <Box display='flex' width='100%' justifyContent='space-between'>
-              <section className={classes.halfStyle}>
-                <label>Event start time:</label>
-                <Controller
-                  render={({ field }) => (
-                    <DatePicker
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={30}
-                      timeCaption='Time'
-                      dateFormat='h:mm aa'
-                      selected={field.value}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setStartTime(format(e, 'h:mm aa', {awareOfUnicodeTokens: true}))
-                      }}
-                      inputRef={field.ref}
-                      className={classes.pickerStyle}
-                      onChangeRaw={(event) => {
-                        console.log(event.target.value);
+                  <section className={classes.halfStyle}>
+                    <label>Event end time:</label>
+                    <Controller
+                      render={({ field }) => (
+                        <DatePicker
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={30}
+                          timeCaption='Time'
+                          dateFormat='h:mm aa'
+                          selected={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setEndTime(
+                              format(e, 'h:mm aa', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }}
+                          inputRef={field.ref}
+                          className={classes.pickerStyle}
+                        />
+                      )}
+                      name='EndTime'
+                      control={control}
+                      rules={{
+                        required: true,
+                        validate: (value) => {
+                          const { StartTime } = getValues();
+                          const diff = StartTime - value;
+                          return (
+                            diff <= 0 ||
+                            'End time should not be earlier than start time'
+                          );
+                        },
                       }}
                     />
-                  )}
-                  name='StartTime'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.StartTime?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
+                    {errors?.EndTime?.type === 'required' && (
+                      <Alert severity='error'>This field is required.</Alert>
+                    )}
+                  </section>
+                </Box>
+                {errors?.EndTime?.type === 'validate' && (
+                  <Alert severity='error'>{errors.EndTime.message}</Alert>
                 )}
-              </section>
+              </Box>
+            </>
 
-              <section className={classes.halfStyle}>
-                <label>Event end time:</label>
-                <Controller
-                  render={({ field }) => (
-                    <DatePicker
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={30}
-                      timeCaption='Time'
-                      dateFormat='h:mm aa'
-                      selected={field.value}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setEndTime(format(e, 'h:mm aa', {awareOfUnicodeTokens: true}))
-                      }}
-                      inputRef={field.ref}
-                      className={classes.pickerStyle}
-                    />
-                  )}
-                  name='EndTime'
-                  control={control}
-                  rules={{ required: true }}
-                />
-                {errors?.EndTime?.type === 'required' && (
-                  <Alert severity='error'>This field is required.</Alert>
-                )}
-              </section>
-            </Box>
-
-            <Typography className={classes.subtitleStyle}>
-              Location Information:
-            </Typography>
-
-            <section className={classes.checkBoxStyle}>
-              <Controller
-                name='IsOnlineEvent'
-                control={control}
-                render={({ field }) => (
-                  <Checkbox
-                    color='primary'
-                    onChange={(e) => {
-                      field.onChange(e.target.checked);
-                      setOnlineEvent(e.target.checked);
-                    }}
-                    checked={field.value || false}
-                  />
-                )}
-              />
-              <label>This is an online event</label>
-            </section>
-            {onlineEvent ? null : (
+            {eventFormat === 'Online Event' ? null : (
               <>
+                <Typography className={classes.subtitleStyle}>
+                  Location Information:
+                </Typography>
+
                 <section className={classes.formStyle}>
-                  <label>Venue name:</label>
+                  <label >Event address:</label>
                   <Controller
                     render={({ field }) => (
-                      <TextField
-                        value={field.value || ''}
-                        onChange={field.onChange}
-                        inputRef={field.ref}
-                        variant='outlined'
-                        size='small'
-                        margin='dense'
+                      <GooglePlacesAutocomplete
+                        ref={ref}
+                        className={classes.addressStyle}
+                        selectProps={{
+                          value: field.value,
+                          onChange: field.onChange,
+                          placeholder: 'Search for address...',
+                          defaultValue: {label: '123', value: '123'}
+                        }}
+                        minLengthAutocomplete={3}
                       />
                     )}
-                    name='VenueName'
+                    name='address'
                     control={control}
                     rules={{ required: true }}
                   />
-                  {errors?.VenueName?.type === 'required' && (
+                  {errors?.address?.type === 'required' && (
                     <Alert severity='error'>This field is required.</Alert>
                   )}
                 </section>
-
-                <section className={classes.formStyle}>
-                  <label>Street address:</label>
-                  <Controller
-                    render={({ field }) => (
-                      <TextField
-                        value={field.value || ''}
-                        onChange={field.onChange}
-                        inputRef={field.ref}
-                        variant='outlined'
-                        size='small'
-                        margin='dense'
-                      />
-                    )}
-                    name='StreetAddress'
-                    control={control}
-                    rules={{ required: true }}
-                  />
-                  {errors?.StreetAddress?.type === 'required' && (
-                    <Alert severity='error'>This field is required.</Alert>
-                  )}
-                </section>
-
                 <section className={classes.halfStyle}>
                   <label>Postcode and Suburb</label>
                   <PostalCodeAutoComplete control={control} />
-                  {errors?.suburb?.type === 'required' && (
+                  {errors?.Postcode?.type === 'required' && (
                     <Alert severity='error'>This field is required.</Alert>
                   )}
                 </section>
               </>
             )}
+
             <Button
               type='submit'
               variant='contained'
@@ -531,6 +628,9 @@ function EventEditPage(props) {
             >
               Submit
             </Button>
+            <Backdrop className={classes.backdrop} open={loading}>
+              <CircularProgress color='primary' />
+            </Backdrop>
           </form>
         </Grid>
       </Grid>

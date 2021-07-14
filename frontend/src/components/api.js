@@ -18,7 +18,7 @@ export const loginRequest = async (data) => {
     });
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    return [error.response.status, error.response.data.message];
   }
 };
 
@@ -27,7 +27,7 @@ export const registerRequest = async (data) => {
   const signupBody = {
     nickname: data.nickname,
     email: data.email,
-    password: data.nickname
+    password: data.nickname,
   };
   try {
     const res = await axios.post(url, signupBody, {
@@ -37,20 +37,20 @@ export const registerRequest = async (data) => {
     });
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    return [error.response.status, error.response.data.message];
   }
 };
 
-export const organizationApplyRequest = async(data) => {
-  const url = baseUrl + '/signup/organization'
+export const organizationApplyRequest = async (data) => {
+  const url = baseUrl + '/signup/organization';
   const applyBody = {
     organizationName: data.OrganizationName,
     email: data.Email,
     password: data.Password,
     organizationType: data.OrganizationType,
     contact: data.Contact,
-    introduction:data.OrganizationIntroduction,
-  }
+    introduction: data.OrganizationIntroduction,
+  };
   try {
     const res = await axios.post(url, applyBody, {
       headers: {
@@ -59,7 +59,29 @@ export const organizationApplyRequest = async(data) => {
     });
     return [res.status, res.data];
   } catch (error) {
-    console.log(error)
-    return [error.response.status,error.response.data.message];
+    console.log(error);
+    return [error.response.status, error.response.data.message];
   }
-}
+};
+
+export const createEventRequest = async (uploadBody) => {
+  const url = baseUrl + '/event';
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.post(url, uploadBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response){
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, '']
+    }
+    
+  }
+};
