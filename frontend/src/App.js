@@ -27,7 +27,7 @@ function App() {
       <AppContext.Provider value={store}>
         <Switch>
           <Route exact path='/home' component={HomePage} />
-          <Route exact path='/:eventId' component={EventDetailsPage} />
+          <Route exact path='/event/:eventId' component={EventDetailsPage} />
           <Route
             exact
             path='/organization/apply'
