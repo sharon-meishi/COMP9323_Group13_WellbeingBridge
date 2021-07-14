@@ -72,8 +72,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 function EventCard(props) {
   const classes = useStyles();
+  console.log(props.info);
   // const [expanded, setExpanded] = React.useState(false);
-  const { eventId, thumbnail, name, date, location, favourite } = props.info;
+  const { eventId,introduction, thumbnail, name, date, location, favourite } = props.info;
   const preventDefault = (event) => event.preventDefault();
   // const handleExpandClick = () => {
   //   setExpanded(!expanded);
@@ -93,16 +94,15 @@ function EventCard(props) {
         <Grid container direction='row'>
           <Typography className={classes.title}>{name}</Typography>
           <Typography className={classes.location}>
-            {location.suburb}
+            {/* {location.suburb} */}
           </Typography>
         </Grid>
         <Typography className={classes.date} color='textSecondary'>
-          29, June 2021
+          {date}
         </Typography>
         <Grid className={classes.detail}>
           <Typography >
-            Aimed at all levels of fitness and age groups, the classes will be
-            gentle exercise focus.
+            {introduction}
           </Typography>
         </Grid>
       </CardContent>
@@ -114,10 +114,11 @@ function EventCard(props) {
           <ShareIcon />
         </IconButton>
         <Link
-          href='#'
-          onClick={preventDefault}
+          href={`/event/${eventId}`}
+          // onClick={preventDefault}
           className={classes.view}
           variant='body2'
+          // to={`/event/${eventId}`}
         >
           Discover More
         </Link>

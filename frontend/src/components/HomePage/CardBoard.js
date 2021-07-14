@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import HomePageButton from '../HomePageButton';
 import Box from '@material-ui/core/Box';
+import { getPopularEventId, getEventSummary } from '../api';
 
 const useStyles = makeStyles({
   root: {
@@ -33,75 +34,21 @@ const useStyles = makeStyles({
   }
 });
 const CardBoard = () => {
+  const [event_list,setEventlist] = React.useState([]);
   const classes = useStyles();
-  const event_list = [
-    {
-      eventId: 1,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 2,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 3,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 4,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 5,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 6,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-  ];
+  const fetchOrigin = async ()=>{
+    const res = await getPopularEventId();
+    if (res[0] === 200){
+      const ids = res[1].event_id;
+      for (let i = 0; i < ids.length; i++){
+        let event = await getEventSummary([ids[i]]);
+        setEventlist([...event]);
+      }
+      console.log(event_list);
+    }
+  }
+  React.useEffect(()=>fetchOrigin(),[]);
+  // fetchOrigin();
   // const event_board = event_list.map(event => <EventCard key={event.eventId} className={classes.item}></EventCard>);
   return (
     <Box display='flex' flexDirection='column' alignItems='center' justifyContent='space-between'>
