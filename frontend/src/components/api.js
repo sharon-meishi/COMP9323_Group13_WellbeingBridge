@@ -80,9 +80,9 @@ export const getPopularEventId = async (data) => {
   }
 };
 
-export const getEventSummary = async (data) => {
-  console.log(data);
-  const url = baseUrl + `/event/${data[0]}/summary`;
+export const getEventSummary = async (eventId) => {
+  console.log(eventId)
+  const url = baseUrl + `/event/${eventId}/summary`;
   try {
     const res = await axios.get(url, {
       headers: {
