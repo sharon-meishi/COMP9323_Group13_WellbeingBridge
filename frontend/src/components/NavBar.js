@@ -13,7 +13,7 @@ import {
   Button,
   Avatar,
   Link,
-  Box
+  Box,
 } from '@material-ui/core';
 import HomePageButton from './HomePageButton';
 import LoginModal from './LoginModal';
@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
+      flexDirection: 'column',
     },
   },
   leftBox: {
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
+      flexDirection: 'column',
     },
   },
   searchBox: {
@@ -89,9 +89,8 @@ const useStyles = makeStyles((theme) => ({
 export default function NavBar() {
   const classes = useStyles();
   const history = useHistory();
-  
-  const context = useContext(AppContext);
 
+  const context = useContext(AppContext);
 
   const [type, settype] = React.useState('organization');
   const handleChange = (event) => {
@@ -113,6 +112,9 @@ export default function NavBar() {
     history.push('/home');
   };
 
+  const toCreateEvent = () => {
+    history.push('/event/create');
+  };
 
   return (
     <div className={classes.root}>
@@ -131,7 +133,12 @@ export default function NavBar() {
         />
       ) : null}
       <Box className={classes.title}>
-        <Link href='#' onClick={toOrganizationApplyPage} underline='always' color='inherit'>
+        <Link
+          href='#'
+          onClick={toOrganizationApplyPage}
+          underline='always'
+          color='inherit'
+        >
           Want to list your organization and events? Apply here!
         </Link>
       </Box>
@@ -159,13 +166,15 @@ export default function NavBar() {
             <SearchIcon className={classes.search} />
           </div>
         </div>
-        {context.isLoginState ? (
-          null
-        ):
-        <HomePageButton text='LOGIN' onClick={handleClickOpen} />
-        }
-        {context.isLoginState ? <ProfileMenu />: null}
-        
+        <Box display='flex' alignItems='center'>
+          {context.isLoginState ? null : (
+            <HomePageButton text='LOGIN' onClick={handleClickOpen} />
+          )}
+          {sessionStorage.getItem('usergroup') === 'organization' ? (
+            <HomePageButton text='NEW EVENT' onClick={toCreateEvent} />
+          ) : null}
+          {context.isLoginState ? <ProfileMenu /> : null}
+        </Box>
       </div>
     </div>
   );
