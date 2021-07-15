@@ -4,7 +4,7 @@ import placeholder from '../../Assets/placeholder.png';
 import PostalCodeAutoComplete from './PostalCodeAutoComplete';
 import LoadingBackdrop from '../LoadingBackdrop';
 import SuccessDialog from './SuccessDialog'
-import { storage } from './firebase';
+import { storage } from '../firebase';
 import { createEventRequest, updateEventDetails } from '../api';
 
 import { makeStyles } from '@material-ui/core/styles';

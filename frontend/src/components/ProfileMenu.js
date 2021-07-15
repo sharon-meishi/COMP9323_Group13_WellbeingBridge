@@ -25,6 +25,10 @@ function ProfileMenu({}) {
     sessionStorage.clear();
   }
 
+  const toMyProfile = () => {
+    history.push(`/profile/${sessionStorage.getItem('id')}`);
+  }
+
   return (
     <div>
       <Button
@@ -41,7 +45,7 @@ function ProfileMenu({}) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={toMyProfile}>Profile</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>

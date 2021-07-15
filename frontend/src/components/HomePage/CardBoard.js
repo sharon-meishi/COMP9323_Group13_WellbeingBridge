@@ -48,7 +48,7 @@ const CardBoard = () => {
     if (res[0] === 200) {
       setEventlist(res[1].event_id);
     } else {
-      console.log('something wrong');
+      console.log('something wrong in CardBoard');
     }
   };
 

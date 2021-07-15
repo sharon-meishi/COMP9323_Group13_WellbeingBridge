@@ -6,6 +6,8 @@ import OrganizationApplyPage from './pages/OrganizationApplyPage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import EventEditPage from './pages/EventEditPage';
 import EventCreatePage from './pages/EventCreatePage';
+import ProfilePage from './pages/ProfilePage';
+import OrganizationDetailsPage from './pages/OrganizationDetailsPage';
 import { ThemeProvider } from '@material-ui/core/styles';
 import Theme from './components/theme';
 
@@ -32,11 +34,14 @@ function App() {
           <Route exact path='/event/create' component={EventCreatePage} />
           <Route exact path='/event/edit/:eventId' component={EventEditPage} />
           <Route exact path='/event/:eventId' component={EventDetailsPage} />
+          <Route exact path='/profile/:id' component={ProfilePage} />
+          <Route exact path='/organization/:oId' component={OrganizationDetailsPage} />
           <Route
             exact
             path='/organization/apply'
             component={OrganizationApplyPage}
           />
+          
           <Redirect to='/home' />
         </Switch>
       </AppContext.Provider>

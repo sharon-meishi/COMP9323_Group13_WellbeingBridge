@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import SamplePic from '../Assets/eventPic.jpeg';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import { getEventSummary } from './api';
@@ -60,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: '35%',
   },
 }));
+
 function EventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);

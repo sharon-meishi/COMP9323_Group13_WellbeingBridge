@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-function SuccessDialog({ open, setOpen, message, onClick, text,  }) {
+function SuccessDialog({ open, setOpen, message, onClick, }) {
     const classes = useStyles();
   const handleClose = () => {
     setOpen(false);
