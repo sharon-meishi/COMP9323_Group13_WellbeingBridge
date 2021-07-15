@@ -3,8 +3,6 @@ import NavBar from '../components/NavBar';
 import BackToTop from '../components/BackToTop';
 import { getEventDetails } from '../components/api';
 import LoadingBackdrop from '../components/LoadingBackdrop'
-import placeholder from '../Assets/placeholder.png';
-
 
 import EventForm from '../components/EventEditPage/EventForm';
 import parse from 'date-fns/parse';

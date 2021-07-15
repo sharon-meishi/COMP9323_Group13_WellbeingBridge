@@ -5,11 +5,12 @@ import { withStyles } from '@material-ui/core/styles';
 const StyledButton = withStyles({
   root: {
     background: '#216991',
-    fontSize: '13px',
+    fontSize: '15px',
     '&:hover': {
       background: '#FFF',
       color: '#216991',
     },
+    fontFamily: `'Noto Sans', 'Roboto'`,
   },
   label: {
     textTransform: 'none',

@@ -29,14 +29,14 @@ function App() {
       <AppContext.Provider value={store}>
         <Switch>
           <Route exact path='/home' component={HomePage} />
+          <Route exact path='/event/create' component={EventCreatePage} />
+          <Route exact path='/event/edit/:eventId' component={EventEditPage} />
           <Route exact path='/event/:eventId' component={EventDetailsPage} />
           <Route
             exact
             path='/organization/apply'
             component={OrganizationApplyPage}
           />
-          <Route exact path='/event/create' component={EventCreatePage} />
-          <Route exact path='/event/edit/:eventId' component={EventEditPage} />
           <Redirect to='/home' />
         </Switch>
       </AppContext.Provider>

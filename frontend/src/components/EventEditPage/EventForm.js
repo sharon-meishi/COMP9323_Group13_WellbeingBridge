@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import placeholder from '../../Assets/placeholder.png';
 import PostalCodeAutoComplete from './PostalCodeAutoComplete';
 import LoadingBackdrop from '../LoadingBackdrop';
+import SuccessDialog from './SuccessDialog'
 import { storage } from './firebase';
 import { createEventRequest, updateEventDetails } from '../api';
 
@@ -20,7 +21,10 @@ import Alert from '@material-ui/lab/Alert';
 
 import format from 'date-fns/format';
 import DatePicker from 'react-datepicker';
-import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import GooglePlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-google-places-autocomplete';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -115,6 +119,7 @@ function EventForm({
   preloadedAddress,
 }) {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
 
   const {
     reset,
@@ -126,30 +131,45 @@ function EventForm({
     defaultValues: preloadedValues,
   });
 
-  const [eventFormat, setEventFormat] = useState('');
-  const [data, setData] = useState('');
-  const [startDate, setStartDate] = useState(
-    format(preloadedValues.StartDate, 'dd/MM/yyyy', {
-      awareOfUnicodeTokens: true,
-    })
-  );
-  const [endDate, setEndDate] = useState(
-    format(preloadedValues.EndDate, 'dd/MM/yyyy', {
-      awareOfUnicodeTokens: true,
-    })
-  );
-  const [startTime, setStartTime] = useState(
-    format(preloadedValues.StartTime, 'h:mm aa', {
-      awareOfUnicodeTokens: true,
-    })
-  );
-  const [endTime, setEndTime] = useState(
-    format(preloadedValues.EndTime, 'h:mm aa', {
-      awareOfUnicodeTokens: true,
-    })
-  );
   const [loading, setLoading] = useState(false);
 
+  // event location
+  const [eventFormat, setEventFormat] = useState('');
+  const [lat, setLat] = useState(null);
+  const [lng, setlng] = useState(null);
+
+  // event date and time
+  const [data, setData] = useState('');
+  const [startDate, setStartDate] = useState(
+    eventId
+      ? format(preloadedValues.StartDate, 'dd/MM/yyyy', {
+          awareOfUnicodeTokens: true,
+        })
+      : ''
+  );
+  const [endDate, setEndDate] = useState(
+    eventId
+      ? format(preloadedValues.EndDate, 'dd/MM/yyyy', {
+          awareOfUnicodeTokens: true,
+        })
+      : ''
+  );
+  const [startTime, setStartTime] = useState(
+    eventId
+      ? format(preloadedValues.StartTime, 'h:mm aa', {
+          awareOfUnicodeTokens: true,
+        })
+      : ''
+  );
+  const [endTime, setEndTime] = useState(
+    eventId
+      ? format(preloadedValues.EndTime, 'h:mm aa', {
+          awareOfUnicodeTokens: true,
+        })
+      : ''
+  );
+
+  // Event Image
   const [{ alt, src }, setImg] = useState({
     alt: 'Upload an Img',
     src: preloadedImg,
@@ -178,6 +198,17 @@ function EventForm({
     });
   };
 
+  const setLatLng = (address) => {
+    console.log(address);
+    geocodeByAddress(address)
+      .then((results) => getLatLng(results[0]))
+      .then(({ lat, lng }) => {
+        setLat(lat);
+        setlng(lng);
+        console.log('Successfully got latitude and longitude', { lat, lng });
+      });
+  };
+
   const buildBody = () => {
     let date = '';
     if (startDate === endDate) {
@@ -189,16 +220,16 @@ function EventForm({
     if (eventFormat === 'Online Event') {
       location = {
         postcode: '',
-        suburb: '',
-        street: '',
-        venue: '',
+        address: '',
+        lat: '',
+        lng: '',
       };
     } else {
       location = {
         postcode: data.Postcode,
-        suburb: '',
-        street: '',
-        venue: data.address ? data.address.label : preloadedAddress,
+        address: data.address ? data.address.label : preloadedAddress,
+        lat: lat.toFixed(6),
+        lng: lng.toFixed(6),
       };
     }
     const uploadBody = {
@@ -223,11 +254,14 @@ function EventForm({
     } else {
       setURL(preloadedImg);
     }
+    if (data.address.label) {
+      setLatLng(data.address.label);
+    }
   };
 
   useEffect(() => {
     const sendData = async (uploadBody) => {
-    let Data
+      let Data;
       if (eventId) {
         Data = await updateEventDetails(eventId, uploadBody);
       } else {
@@ -245,7 +279,9 @@ function EventForm({
     if (url) {
       const uploadBody = buildBody();
       console.log(uploadBody);
-      sendData(uploadBody);
+      setLoading(false);
+      setOpen(true);
+      //sendData(uploadBody);
     }
   }, [url]);
 
@@ -277,7 +313,8 @@ function EventForm({
         <Typography className={classes.centerStyle}>
           All fields are required.
         </Typography>
-
+        <Button onClick={() => setOpen(true)}>open</Button>
+        <SuccessDialog open={open} setOpen={setOpen} message={'thank you!'} />
         <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
           <Typography className={classes.subtitleStyle}>
             Event Information:
