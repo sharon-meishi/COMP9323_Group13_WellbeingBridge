@@ -16,10 +16,11 @@ import { getEventSummary } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 325,
+    width: 335,
     margin: '20px 0 20px 0',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    
   },
   media: {
     height: 0,
@@ -35,11 +36,13 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontSize: '1.2rem',
     textDecoration: 'underline',
+    fontWeight: 400,
   },
   location: {
     fontSize: '0.9rem',
     justifyContent: 'end',
     alignSelf: 'flex-end',
+    fontWeight: 500,
     
   },
   date: {

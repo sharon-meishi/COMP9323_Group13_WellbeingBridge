@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import EventCard from '../EventCard';
 import Grid from '@material-ui/core/Grid';
@@ -7,12 +7,12 @@ import HomePageButton from '../HomePageButton';
 import Box from '@material-ui/core/Box';
 import { getPopularEventId } from '../api';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    direction: 'row',
-    justifyContent: 'space-around ',
-    alignItems: 'space-between',
-    padding: '0 10% 0 10%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between ',
+    alignItems: 'center',
   },
   text: {
     fontFamily: `'Noto Sans', 'Roboto'`,
@@ -21,12 +21,24 @@ const useStyles = makeStyles({
     padding: '1% 0 0 0',
   },
   title: {
-    width: '70%',
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-});
+  item: {
+    width: '100%'
+  },
+  eventBox: {
+    display:'flex',
+    width:'100%',
+    justifyContent:'space-between',
+    flexWrap:'wrap',
+    [theme.breakpoints.down('md')]: {
+      justifyContent:'center',
+    },
+  }
+}));
 const CardBoard = () => {
   const [event_list, setEventlist] = useState([]);
   const classes = useStyles();
@@ -35,13 +47,12 @@ const CardBoard = () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {
       setEventlist(res[1].event_id);
-    } else{
-      console.log('something wrong')
+    } else {
+      console.log('something wrong');
     }
   };
 
- useEffect(() => fetchOrigin(), []);
-
+  useEffect(() => fetchOrigin(), []);
 
   return (
     <Box
@@ -50,20 +61,24 @@ const CardBoard = () => {
       alignItems='center'
       justifyContent='space-between'
     >
-      <Box className={classes.title}>
-        <Typography variant='h4' className={classes.text}>
-          What's on
-        </Typography>
-        <HomePageButton text='Find an event' />
-      </Box>
       <Grid container className={classes.root}>
-        {event_list.map((eventId) => (
-          <EventCard
-            key={eventId}
-            eventId={eventId}
-            className={classes.item}
-          ></EventCard>
-        ))}
+        <Grid item sm={10} md={9} xl={8} className={classes.item}>
+          <Box className={classes.title} mt={1}>
+            <Typography variant='h4' className={classes.text}>
+              What's on
+            </Typography>
+            <HomePageButton text='Find Event' />
+          </Box>
+          <Box className={classes.eventBox} >
+            {event_list.map((eventId) => (
+              <EventCard
+                key={eventId}
+                eventId={eventId}
+                className={classes.item}
+              ></EventCard>
+            ))}
+          </Box>
+        </Grid>
       </Grid>
     </Box>
   );
