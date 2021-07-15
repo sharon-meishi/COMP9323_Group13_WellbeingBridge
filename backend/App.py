@@ -393,6 +393,13 @@ event_model = api.model("event", {
     "introduction": fields.String,
     "details": fields.String
 })
+user_model = api.model("user",{
+    "UserId": fields.Integer,
+    "Nickname": fields.String,
+    "Email": fields.String,
+    "Password": fields.String,
+    "FavouriteId": fields.String
+    })
 
 
 @api.route("/event", doc={"description": "publish details of an event"})
@@ -538,6 +545,54 @@ class GetEventbyId(Resource):
                 "message": "Success"
             }
         return output, 200
+
+############# User Profile ###################
+@api.route("/user/profile", doc={"description": "get current user profile"})
+@api.doc(parser=token_parser)
+class GetUserProfilebyId(Resource):
+    def get(self):
+        token = token_parser.parse_args()['Authorization']
+        user_id = get_user_id_by_token(token)
+        user_sql = f"SELECT * FROM User WHERE UserId={user_id};"
+        user_info = sql_command(user_sql)[0]
+        output = {"UserId": user_id,
+                  "Nickname": user_info[1],
+                  "Email":user_info[2],
+                  "Password": user_info[3],
+                  "FavouriteId": user_info[4]
+                  }
+
+        return output, 200
+
+    @api.expect(user_model)
+    def put(self):
+        data = json.loads(request.get_data())
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "Invalid input"
+            }
+            return output, 400
+        user_info = decode_token(token)
+        sql = '''UPDATE User SET UserId = {}, 
+                                 Nickname = '{}', 
+                                 Email = '{}', 
+                                 Password = '{}', 
+                                 FavouriteId = '{}'
+                WHERE UserId = {}'''. \
+                format(data['UserId'],
+                       data['Nickname'],
+                       data['Email'],
+                       data['Password'],
+                       data['FavouriteId'],
+                       data['UserId'])
+        sql_command(sql)
+        output = {
+                "message": "success"
+        }
+
+        return output, 200
+
 
 
 if __name__ == "__main__":
