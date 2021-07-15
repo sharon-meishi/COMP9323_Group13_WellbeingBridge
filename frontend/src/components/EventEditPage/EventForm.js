@@ -128,25 +128,25 @@ function EventForm({
 
   const [eventFormat, setEventFormat] = useState('');
   const [data, setData] = useState('');
-  const [startDate, setStartDate] = useState(
+  const [startDate, setStartDate] = useState( eventId ?
     format(preloadedValues.StartDate, 'dd/MM/yyyy', {
       awareOfUnicodeTokens: true,
-    })
+    }) : ''
   );
-  const [endDate, setEndDate] = useState(
+  const [endDate, setEndDate] = useState(eventId ?
     format(preloadedValues.EndDate, 'dd/MM/yyyy', {
       awareOfUnicodeTokens: true,
-    })
+    }) : ''
   );
-  const [startTime, setStartTime] = useState(
+  const [startTime, setStartTime] = useState( eventId ?
     format(preloadedValues.StartTime, 'h:mm aa', {
       awareOfUnicodeTokens: true,
-    })
+    }) : ''
   );
-  const [endTime, setEndTime] = useState(
+  const [endTime, setEndTime] = useState( eventId ?
     format(preloadedValues.EndTime, 'h:mm aa', {
       awareOfUnicodeTokens: true,
-    })
+    }) : ''
   );
   const [loading, setLoading] = useState(false);
 
