@@ -64,7 +64,6 @@ function EventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);
   const preventDefault = (event) => event.preventDefault();
-
   useEffect(() => {
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
