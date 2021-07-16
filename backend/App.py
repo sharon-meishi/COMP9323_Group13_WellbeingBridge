@@ -29,7 +29,7 @@ def sql_command(command):
     return result
 
 
-user_model = api.model("user", {
+individual_model = api.model("user", {
     "nickname": fields.String,
     "email": fields.String,
     "password": fields.String
@@ -39,7 +39,7 @@ user_model = api.model("user", {
 # individual user's sign up
 @api.route('/signup/user', doc={"description": "new individual user registration"})
 class IndividualRegister(Resource):
-    @api.expect(user_model)
+    @api.expect(individual_model)
     def post(self):
         data = json.loads(request.get_data())
         nickname = data['nickname']
@@ -202,7 +202,7 @@ token_parser.add_argument('Authorization', type=str, location='headers')
 class event(Resource):
     def get(self, eventid):
         token = token_parser.parse_args()['Authorization']
-        event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Suburb, Introduction FROM Event WHERE EventId='{eventid}';"
+        event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Address,Lat,Lng, Introduction,Time,Category FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
 
         if token is None:
@@ -210,8 +210,8 @@ class event(Resource):
         else:
             email = decode_token(token)['email']
             type = decode_token(token)['type']
-            if type=='organization':
-                favourite=False
+            if type == 'organization':
+                favourite = False
             else:
                 user_sql = f"SELECT FavouriteId FROM User WHERE Email='{email}';"
                 if_favourite = sql_command(user_sql)[0][0]
@@ -227,13 +227,17 @@ class event(Resource):
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
                              "thumbnail": result[0][1],
+                             "category": result[0][10],
                              "name": result[0][2],
                              "date": result[0][3],
+                             "time": result[0][9],
                              "location": {
                                  "postcode": result[0][4],
-                                 "suburb": result[0][5]
+                                 "Address": result[0][5],
+                                 "Lat": result[0][6],
+                                 "Lng": result[0][7]
                              },
-                             "introduction": result[0][6],
+                             "introduction": result[0][8],
                              "favourite": favourite}
             return result_output, 200
         else:
@@ -377,29 +381,32 @@ class unbook(Resource):
         return output, 200
 
 
+user_model = api.model("user", {
+    "UserId": fields.Integer,
+    "Nickname": fields.String,
+    "Email": fields.String,
+    "Password": fields.String,
+    "FavouriteId": fields.String
+})
+
+
 location_model = api.model("location", {
     "postcode": fields.String,
-    "suburb": fields.String,
-    "street": fields.String,
-    "venue": fields.String
+    "address": fields.String,
+    "lat": fields.String,
+    "lng": fields.String
 })
 event_model = api.model("event", {
     "eventName": fields.String,
     "thumbnail": fields.String,
     "format": fields.String,
+    "category": fields.String,
     "location": fields.Nested(location_model),
     "date": fields.String,
     "time": fields.String,
     "introduction": fields.String,
     "details": fields.String
 })
-user_model = api.model("user",{
-    "UserId": fields.Integer,
-    "Nickname": fields.String,
-    "Email": fields.String,
-    "Password": fields.String,
-    "FavouriteId": fields.String
-    })
 
 
 @api.route("/event", doc={"description": "publish details of an event"})
@@ -425,10 +432,11 @@ class PublishEvent(Resource):
             org_email = user_info['email']
             org_sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email = '{org_email}';"
             org_result = sql_command(org_sql)[0]
-            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
+            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
                 format(data['eventName'], org_result[0], org_result[1], data['thumbnail'], data['format'],
-                       data['location']['postcode'], data['location']['suburb'],
-                       data['location']['street'], data['location']['venue'], data['date'], data['time'],
+                       data['category'],
+                       data['location']['postcode'], data['location']['address'],
+                       data['location']['lat'], data['location']['lng'], data['date'], data['time'],
                        data['introduction'], data['details'])
             sql_command(sql)
             output = {
@@ -504,16 +512,17 @@ class GetEventbyId(Resource):
             "OrganizationName": event_info[3],
             "thumbnail": event_info[4],
             "format": event_info[5],
+            "category": event_info[6],
             "location": {
-                "postcode": event_info[6],
-                "suburb": event_info[7],
-                "street": event_info[8],
-                "venue": event_info[9],
+                "postcode": event_info[7],
+                "address": event_info[8],
+                "lat": event_info[9],
+                "lng": event_info[10],
             },
-            "date": event_info[10],
-            "time": event_info[11],
-            "introduction": event_info[12],
-            "details": event_info[13],
+            "date": event_info[11],
+            "time": event_info[12],
+            "introduction": event_info[13],
+            "details": event_info[14],
             "comments": comments,
             "recommendation": recommendation,
             "bookedUser": booked_event_user,
@@ -539,12 +548,13 @@ class GetEventbyId(Resource):
                     "message": "wrong token!"
                 }
                 return output, 403
-            update_sql = f"UPDATE Event SET EventName='{data['eventName']}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Postcode='{data['location']['postcode']}',Suburb='{data['location']['suburb']}',Street='{data['location']['street']}',venue='{data['location']['venue']}',Date='{data['date']}',Time='{data['time']}',Introduction='{data['introduction']}',Details='{data['details']}' WHERE Eventid={eventid};"
+            update_sql = f"UPDATE Event SET EventName='{data['eventName']}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Category='{data['category']}',Postcode='{data['location']['postcode']}',Address='{data['location']['address']}',Lat='{data['location']['lat']}',lng='{data['location']['lng']}',Date='{data['date']}',Time='{data['time']}',Introduction='{data['introduction']}',Details='{data['details']}' WHERE Eventid={eventid};"
             sql_command(update_sql)
             output = {
                 "message": "Success"
             }
         return output, 200
+
 
 ############# User Profile ###################
 @api.route("/user/profile", doc={"description": "get current user profile"})
@@ -557,7 +567,7 @@ class GetUserProfilebyId(Resource):
         user_info = sql_command(user_sql)[0]
         output = {"UserId": user_id,
                   "Nickname": user_info[1],
-                  "Email":user_info[2],
+                  "Email": user_info[2],
                   "Password": user_info[3],
                   "FavouriteId": user_info[4]
                   }
@@ -580,19 +590,138 @@ class GetUserProfilebyId(Resource):
                                  Password = '{}', 
                                  FavouriteId = '{}'
                 WHERE UserId = {}'''. \
-                format(data['UserId'],
-                       data['Nickname'],
-                       data['Email'],
-                       data['Password'],
-                       data['FavouriteId'],
-                       data['UserId'])
+            format(data['UserId'],
+                   data['Nickname'],
+                   data['Email'],
+                   data['Password'],
+                   data['FavouriteId'],
+                   data['UserId'])
         sql_command(sql)
         output = {
-                "message": "success"
+            "message": "success"
         }
 
         return output, 200
 
+
+org_profile_model = api.model("profile", {
+    "organizationName": fields.String,
+    "password": fields.String
+})
+
+
+@api.route("/organization/profile/<int:oid>",
+           doc={"description": "get the profile information of an organization user"})
+@api.doc(parser=token_parser)
+class Organization_profile(Resource):
+    def get(self, oid):
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "bad request!"
+            }
+            return output, 405
+        else:
+            user_type = decode_token(token)['type']
+            if user_type != 'organization':
+                output = {
+                    "message": "wrong token!"
+                }
+                return output, 403
+            org_sql = f"SELECT OrganizationName, Email FROM Organization WHERE OrganizationId={oid};"
+            result = sql_command(org_sql)
+            event_sql = f"SELECT EventId FROM Event WHERE OrganizationId={oid};"
+            event_list = sql_command(event_sql)
+            event_id = []
+            if len(event_list):
+                for i in event_list:
+                    event_id.append(i[0])
+            if len(result):
+                output = {
+                    "oId": oid,
+                    "organizationName": result[0][0],
+                    "email": result[0][1],
+                    "publishedEvent": event_id
+                }
+                return output, 200
+            output = {
+                "message": "NOT FOUND"
+            }
+            return output, 404
+
+    @api.expect(org_profile_model)
+    def put(self, oid):
+        data = json.loads(request.get_data())
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "bad request!"
+            }
+            return output, 405
+        else:
+            user_type = decode_token(token)['type']
+            if user_type != 'organization':
+                output = {
+                    "message": "wrong token!"
+                }
+                return output, 403
+            # find_password=f"SELECT Password FROM Organization WHERE OrganizationId={oid};"
+            if data['password'] == '':
+                sql = f"UPDATE Organization SET OrganizationName='{data['organizationName']}' WHERE OrganizationId={oid};"
+            else:
+                sql = f"UPDATE Organization SET OrganizationName='{data['organizationName']}',Password='{data['password']}' WHERE OrganizationId={oid};"
+            sql_command(sql)
+            output = {
+                "message": "Success"
+            }
+            return output, 200
+
+
+comment_model = api.model("comment", {
+    "comment": fields.String
+})
+
+
+@api.route("/event/<int:eventid>/comment", doc={"description": "make a comment on a specific event"})
+@api.doc(parser=token_parser)
+class Organization_profile(Resource):
+    @api.expect(comment_model)
+    def post(self, eventid):
+        data = api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        type = decode_token(token)['type']
+        if type == 'individual':
+            sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+            result = sql_command(sql)[0]
+            userid = result[0]
+            username = result[1]
+
+        else:
+            sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email='{email}';"
+            result = sql_command(sql)[0]
+            userid = result[0]
+            username = result[1]
+        find_event_sql = f"SELECT * FROM Event WHERE EventId={eventid};"
+        event_result = sql_command(find_event_sql)
+        if len(event_result):
+            time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{data['comment']}','{time}');"
+            sql_command(sql)
+            output = {
+                "message": "success"
+            }
+            return 200
+        else:
+            output = {
+                "message": "Not found this event"
+            }
+            return output, 404
 
 
 if __name__ == "__main__":
