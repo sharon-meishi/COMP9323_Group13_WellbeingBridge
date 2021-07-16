@@ -25,11 +25,20 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-function SuccessDialog({ open, setOpen, message, onClick, text,  }) {
+function SuccessDialog({ open, setOpen, message, onClick, }) {
+    const history = useHistory();
     const classes = useStyles();
-  const handleClose = () => {
-    setOpen(false);
-  };
+    const handleClose = () => {
+      setOpen(false);
+    };
+
+    const backToHome = () => {
+      history.push('/home');
+    }
+
+    const backToProfile = () => {
+      history.push(`/profile/${sessionStorage.getItem('id')}`);
+    }
   return (
     <Dialog
       open={open}
@@ -41,11 +50,14 @@ function SuccessDialog({ open, setOpen, message, onClick, text,  }) {
       <CheckCircleOutlineIcon className={classes.iconStyle}/>
       </Box>
       <Box m={3}>
-           <Typography variant='subtitle1'>Thank you! Your event has been created successfully.</Typography> 
+           <Typography variant='subtitle1'>{message}</Typography> 
       </Box>
       <DialogActions>
-        <Button onClick={handleClose} color='primary' >
+        <Button onClick={backToHome} color='primary' >
           Back to HomePage
+        </Button>
+        <Button onClick={backToProfile} color='primary' >
+          Back to MyProfile
         </Button>
 
       </DialogActions>

@@ -97,7 +97,6 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
       sessionStorage.setItem('id', res[1].userId);
       sessionStorage.setItem('usergroup', 'individual')
       context.setIsLoginState(true);
-      // context.setUserType('individual');
     } else {
       setErrorMsg(res[1]);
     }

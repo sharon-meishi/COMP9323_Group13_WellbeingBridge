@@ -18,6 +18,7 @@ import {
 import HomePageButton from './HomePageButton';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
+import LogoButton from './LogoButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     backgroundColor: '#C5EDE9',
-    paddingTop: '15px',
-    paddingBottom: '15px',
+    paddingTop: '10px',
+    paddingBottom: '10px',
     fontFamily: 'Noto Sans',
     fontSize: '20px',
     fontWeight: 400,
@@ -37,10 +38,10 @@ const useStyles = makeStyles((theme) => ({
     height: '40px',
   },
   border: {
-    borderBottom: 'solid rgba(0, 0, 0, 0.1)',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
     display: 'flex',
     flexDirection: 'row',
-    padding: '10px 10px 10px 30px',
+    padding: '3px 10px 3px 30px',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     alignItems: 'center',
@@ -86,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NavBar() {
+export default function NavBar({ profile }) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -132,26 +133,22 @@ export default function NavBar() {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
-      <Box className={classes.title}>
-        <Link
-          href='#'
-          onClick={toOrganizationApplyPage}
-          underline='always'
-          color='inherit'
-        >
-          Want to list your organization and events? Apply here!
-        </Link>
-      </Box>
+      {profile ? null : (
+        <Box className={classes.title}>
+          <Link
+            href='#'
+            onClick={toOrganizationApplyPage}
+            underline='always'
+            color='inherit'
+          >
+            Want to list your organization and events? Apply here!
+          </Link>
+        </Box>
+      )}
 
       <div className={classes.border}>
         <div className={classes.leftBox}>
-          <Button onClick={toHomePage}>
-            <Avatar
-              alt='WellbeingBridgeLogo'
-              src={icon}
-              className={classes.image}
-            />
-          </Button>
+          {profile ? null : <LogoButton />}
           <div className={classes.searchBox}>
             <FormControl className={classes.select}>
               <Select value={type} onChange={handleChange} defaultValue={type}>

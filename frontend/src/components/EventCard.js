@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import SamplePic from '../Assets/eventPic.jpeg';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import { getEventSummary } from './api';
@@ -60,13 +59,13 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: '35%',
   },
 }));
+
 function EventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);
   const preventDefault = (event) => event.preventDefault();
 
   useEffect(() => {
-    console.log(props.eventId);
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
@@ -76,7 +75,6 @@ function EventCard(props) {
     fetchData();
   }, []);
 
-  console.log(info);
 
   return info ? (
     <Card className={classes.root}>
@@ -95,7 +93,7 @@ function EventCard(props) {
               {info.date}
             </Typography>
             <Typography className={classes.location}>
-              {info.location.suburb}
+              {info.location.postcode}
             </Typography>
           </Box>
         </Grid>

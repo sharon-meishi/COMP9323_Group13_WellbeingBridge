@@ -138,8 +138,7 @@ export const updateEventDetails = async (eventId, uploadBody) => {
   }
 };
 
-export const getPopularEventId = async (data) => {
-  console.log(data);
+export const getPopularEventId = async () => {
   const url = baseUrl + '/popular/events';
   try {
     const res = await axios.get(url, {
@@ -155,7 +154,6 @@ export const getPopularEventId = async (data) => {
 };
 
 export const getEventSummary = async (eventId) => {
-  console.log(eventId)
   const url = baseUrl + `/event/${eventId}/summary`;
   try {
     const res = await axios.get(url, {
