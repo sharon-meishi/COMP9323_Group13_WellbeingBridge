@@ -248,7 +248,14 @@ class event(Resource):
                 "message": "Not Found"
             }
             return output, 404
-
+        
+    def delete(self,eventid):
+        try:
+            delete_sql=f'delete from Event where EventId={eventid};'
+            sql_command(delete_sql)
+            return {"message": 'Success!'},200
+        except:
+            return {"message": 'Wrong ID. Please try again.'}, 400
 
 def get_user_id_by_token(token):
     user_email = decode_token(token)['email']
