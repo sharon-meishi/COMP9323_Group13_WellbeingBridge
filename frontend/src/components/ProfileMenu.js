@@ -23,6 +23,11 @@ function ProfileMenu({}) {
   const handleLogout = () => {
     context.setIsLoginState(false);
     sessionStorage.clear();
+    history.push(`/home`);
+  }
+
+  const toMyProfile = () => {
+    history.push(`/profile/${sessionStorage.getItem('id')}`);
   }
 
   return (
@@ -32,7 +37,7 @@ function ProfileMenu({}) {
         aria-haspopup='true'
         onClick={handleClick}
       >
-        <Avatar></Avatar>
+        <Avatar>{sessionStorage.getItem('name').charAt(0)}</Avatar>
       </Button>
       <Menu
         id='simple-menu'
@@ -41,7 +46,7 @@ function ProfileMenu({}) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={toMyProfile}>Profile</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>
