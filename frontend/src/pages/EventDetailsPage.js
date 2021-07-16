@@ -1,6 +1,6 @@
 import React from 'react';
 import NavBar from '../components/NavBar';
-import { getEventDetail } from '../components/api';
+import { getEventDetail, likeEvent } from '../components/api';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
@@ -9,6 +9,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Grid from '@material-ui/core/Grid';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
+import CardActions from '@material-ui/core/CardActions';
 
 
 const useStyles = makeStyles({
@@ -28,31 +29,34 @@ const useStyles = makeStyles({
     height:'50%',
 
   },
-//   title:{
-//     display:'flex',
-//     justifyContent:'space-between',
-//     backgroundColor:'green',
-//   },
+  title:{
+    display:'flex',
+    justifyContent:'space-between',
+    // backgroundColor :'green',
+  },
   actions:{
     display:'flex',
   },
   like:{
     marginLeft:'5%',
+    alignItems:'start',
   },
-  bookbutton:{
+  isbook:{
+    color:'white',
+    backgroundColor:'green',
+    height:'35px',
+    margin:'1.5% 3%',
+  },
+  notbook:{
     color:'green',
     borderColor:'green',
     height:'35px',
-
+    margin:'1.5% 3%',
   },
   photo:{
     overflow:'hidden',
     width:'300px',
     height:'500px',
-  },
-  title:{
-    display:'flex',
-    flexDirection:'row',
   },
   org:{
     float:'right',
@@ -89,15 +93,45 @@ function EventDetailsPage({match}) {
   const classes = useStyles();
   const eventId = match.params.eventId;
   const [detail, setDetail] = React.useState({});
+  const [islike, setIslike] = React.useState(false);
+  const [isbook, setIsbook] = React.useState(false);
+  const token = sessionStorage.getItem('token');
+  console.log(token);
   const getEvent = async ()=>{
     const res = await getEventDetail([eventId]);
     if (res[0] === 200){
       console.log(res[1]);
       setDetail(res[1]);
+      if(res[1].favorite){
+          setIslike(true);
+      }
+      if(res[1].booked){
+        console.log('initial booked')
+        setIsbook(true);
+    }
     }
   }
   console.log(detail.OrganizationName);
   React.useEffect(()=>getEvent(),[]);
+  const handleLike = ()=>{
+      if (islike){
+        setIslike(false);
+        console.log('set like false');
+      }else{
+        setIslike(true);
+        console.log('set like true');
+      }
+      likeEvent([token,eventId]);
+  }
+  const handleBook = ()=>{
+      if (isbook){
+        setIsbook(false);
+        console.log('set like false');
+      }else{
+        setIsbook(true);
+        console.log('set like true');
+      }
+  }
   return (
     <div>
       <NavBar />
@@ -109,10 +143,18 @@ function EventDetailsPage({match}) {
               <Typography variant="h4" component="h2">
                 {detail.eventName}
               </Typography>
-              <IconButton className={classes.like} aria-label='add to favorites'>
-                <FavoriteIcon />
-              </IconButton>
-              <Button variant="outlined" className={classes.bookbutton}>BOOK</Button>
+              <CardActions className={classes.actions} disableSpacing>
+                <IconButton className={classes.like} onClick={handleLike} aria-label='add to favorites'>
+                  {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
+                         :<FavoriteIcon fontSize='medium'/>
+                  }
+                </IconButton>
+                <IconButton className={classes.book} onClick={handleBook} aria-label='add to favorites'>
+                  {isbook?<Button variant="contained" className={classes.isbook}>UNBOOK</Button>
+                         :<Button variant="outlined" className={classes.notbook}>BOOK</Button>
+                  }
+                </IconButton>
+            </CardActions>
             </Grid>
             <Typography variant="body1" className={classes.org}>
                 By {detail.OrganizationName}
@@ -125,7 +167,7 @@ function EventDetailsPage({match}) {
                 What time: {detail.time}
               </Typography>
               <Typography variant="body1" className={classes.org}>
-                Where: {detail.location.venue}<br/>{detail.location.street}<br/>{detail.location.suburb}
+                {/* Where: {detail.location.venue}<br/>{detail.location.street}<br/>{detail.location.suburb} */}
               </Typography>
             </Grid>
             <Grid className={classes.intro}>
