@@ -407,7 +407,18 @@ event_model = api.model("event", {
     "introduction": fields.String,
     "details": fields.String
 })
-
+org_model = api.model("org", {
+    "organizationName": fields.String,
+    "organizationType": fields.String,
+    "logo": fields.String,
+    "contact": fields.String,
+    "introduction": fields.String,
+    "details": fields.String,
+    "video": fields.String,
+    "serviceList": fields.String,
+    "websiteLink": fields.String,
+    "otherEvents": fields.String,
+})
 
 @api.route("/event", doc={"description": "publish details of an event"})
 @api.doc(parser=token_parser)
@@ -723,6 +734,76 @@ class Organization_profile(Resource):
             }
             return output, 404
 
+@api.route("/organization/<int:orgid>", doc={"description": "get details of an organization"})
+@api.doc(parser=token_parser)
 
+class org(Resource):
+    def get(self,orgid):
+        token = token_parser.parse_args()['Authorization']
+        org_sql = f"SELECT * FROM Organization WHERE OrganizationId={orgid};"
+
+        output_org=sql_command(org_sql)
+        if len(output_org)==0:
+            return 404, 'Not Found'
+        org_info = output_org[0]
+        orgname=org_info[3]
+        orgtype=org_info[4]
+        logo=org_info[5]
+        contact=org_info[6]
+        orgintro=org_info[7]
+        detail=org_info[8]
+        video=org_info[9]
+        servicelist=org_info[10]
+        servicelist=servicelist.split(',')
+        website=org_info[11]
+        otherevent=org_info[12].split(',')
+        output={
+            'oId':orgid,
+            'organizationName':orgname,
+            'organizationType':orgtype,
+            'logo':logo,
+            'contact':contact,
+            'introduction':orgintro,
+            "details":detail,
+            "video":video,
+            "serviceList":servicelist,
+            "websiteLink":website,
+            "otherEvents":otherevent
+        }
+        return output,200
+
+    @api.expect(org_model)
+    def put(self,orgid):
+        data = api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "bad request!"
+            }
+            return output, 405
+        
+        user_type = decode_token(token)['type']
+        if user_type != 'organization':
+                output = {
+                    "message": "wrong token!"
+                }
+                return output, 403
+
+        update_sql = f"UPDATE Organization SET OrganizationName='{data['organizationName']}', \
+            OrganizationType='{data['organizationType']}',Logo='{data['logo']}',\
+            Contact='{data['contact']}',\
+            Introduction='{data['introduction']}',\
+            Details='{data['details']}',\
+            VideoUrl='{data['video']}',\
+            ServiceList='{data['serviceList']}',\
+            WebsiteLink='{data['websiteLink']}',\
+            otherEvents='{data['otherEvents']}' WHERE OrganizationId={orgid};"
+        sql_command(update_sql)
+        output = {
+                "message": "Success"
+            }
+        return output, 200
+        
+        
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=8000, debug=True)
