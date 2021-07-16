@@ -3,10 +3,9 @@ import { useForm, Controller } from 'react-hook-form';
 import placeholder from '../../Assets/placeholder.png';
 import PostalCodeAutoComplete from './PostalCodeAutoComplete';
 import LoadingBackdrop from '../LoadingBackdrop';
-import SuccessDialog from './SuccessDialog'
+import SuccessDialog from './SuccessDialog';
 import { storage } from '../firebase';
 import { createEventRequest, updateEventDetails } from '../api';
-
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -15,10 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Backdrop from '@material-ui/core/Backdrop';
 import Alert from '@material-ui/lab/Alert';
-
 import format from 'date-fns/format';
 import DatePicker from 'react-datepicker';
 import GooglePlacesAutocomplete, {
@@ -26,6 +22,10 @@ import GooglePlacesAutocomplete, {
   getLatLng,
 } from 'react-google-places-autocomplete';
 import 'react-datepicker/dist/react-datepicker.css';
+
+function FetchAlert(props) {
+  return <Alert elevation={6} variant='filled' {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   backgroundStyle: {
@@ -120,6 +120,7 @@ function EventForm({
 }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const {
     reset,
@@ -135,8 +136,8 @@ function EventForm({
 
   // event location
   const [eventFormat, setEventFormat] = useState('');
-  const [lat, setLat] = useState(null);
-  const [lng, setlng] = useState(null);
+  const [lat, setLat] = useState(eventId ? preloadedValues.lat : null);
+  const [lng, setlng] = useState(eventId ? preloadedValues.lng : null);
 
   // event date and time
   const [data, setData] = useState('');
@@ -203,8 +204,8 @@ function EventForm({
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {
-        setLat(lat);
-        setlng(lng);
+        setLat(lat.toFixed(6));
+        setlng(lng.toFixed(6));
         console.log('Successfully got latitude and longitude', { lat, lng });
       });
   };
@@ -228,14 +229,15 @@ function EventForm({
       location = {
         postcode: data.Postcode,
         address: data.address ? data.address.label : preloadedAddress,
-        lat: lat.toFixed(6),
-        lng: lng.toFixed(6),
+        lat: lat,
+        lng: lng,
       };
     }
     const uploadBody = {
       eventName: data.EventName,
       thumbnail: url,
       format: data.EventFormat,
+      category: data.EventCategory,
       location: location,
       date: date,
       time: `${startTime} to ${endTime}`,
@@ -254,7 +256,7 @@ function EventForm({
     } else {
       setURL(preloadedImg);
     }
-    if (data.address.label) {
+    if (data.address) {
       setLatLng(data.address.label);
     }
   };
@@ -272,7 +274,7 @@ function EventForm({
         setLoading(false);
         reset();
       } else {
-        console.log('error', Data[0]);
+        setErrorMsg(`Something wrong ${Data[1]}`)
       }
     };
 
@@ -281,7 +283,7 @@ function EventForm({
       console.log(uploadBody);
       setLoading(false);
       setOpen(true);
-      //sendData(uploadBody);
+      sendData(uploadBody);
     }
   }, [url]);
 
@@ -306,6 +308,7 @@ function EventForm({
         xl={6}
         className={classes.GridStyle}
       >
+        {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
         <Typography variant='h5' className={classes.titleStyle}>
           {eventId ? 'Edit your event' : 'Create a new event'}
         </Typography>
@@ -314,7 +317,15 @@ function EventForm({
           All fields are required.
         </Typography>
         <Button onClick={() => setOpen(true)}>open</Button>
-        <SuccessDialog open={open} setOpen={setOpen} message={'thank you!'} />
+        <SuccessDialog
+          open={open}
+          setOpen={setOpen}
+          message={
+            eventId
+              ? 'Thank you! Your event information has been updated successfully!'
+              : 'Thank you! Your event has been created successfully!'
+          }
+        />
         <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
           <Typography className={classes.subtitleStyle}>
             Event Information:
@@ -346,44 +357,82 @@ function EventForm({
                 </Alert>
               )}
             </section>
-
-            <section className={classes.halfStyle}>
-              <label>Event Format:</label>
-              <Controller
-                render={({ field }) => {
-                  return (
-                    <Select
-                      value={field.value || ''}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setEventFormat(e.target.value);
-                      }}
-                      ref={field.ref}
-                      variant='outlined'
-                      className={classes.selectStyle}
-                    >
-                      <MenuItem value='Online Event'>Online Event</MenuItem>
-                      <MenuItem value='Class'>Class</MenuItem>
-                      <MenuItem value='Conference'>Conference</MenuItem>
-                      <MenuItem value='Festival'>Festival</MenuItem>
-                      <MenuItem value='Party'>Party</MenuItem>
-                      <MenuItem value='Expo'>Expo</MenuItem>
-                      <MenuItem value='Game'>Game</MenuItem>
-                      <MenuItem value='Networking'>Networking</MenuItem>
-                      <MenuItem value='Race'>Race</MenuItem>
-                      <MenuItem value='Seminar'>Seminar</MenuItem>
-                      <MenuItem value='Tour'>Tour</MenuItem>
-                    </Select>
-                  );
-                }}
-                name='EventFormat'
-                control={control}
-                rules={{ required: true }}
-              />
-              {errors?.EventFormat?.type === 'required' && (
-                <Alert severity='error'>This field is required.</Alert>
-              )}
-            </section>
+            <Box display='flex' justifyContent='space-between'>
+              <section className={classes.halfStyle}>
+                <label>Event Format:</label>
+                <Controller
+                  render={({ field }) => {
+                    return (
+                      <Select
+                        value={field.value || ''}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setEventFormat(e.target.value);
+                        }}
+                        ref={field.ref}
+                        variant='outlined'
+                        className={classes.selectStyle}
+                      >
+                        <MenuItem value='Online Event'>Online Event</MenuItem>
+                        <MenuItem value='Class'>Class</MenuItem>
+                        <MenuItem value='Conference'>Conference</MenuItem>
+                        <MenuItem value='Festival'>Festival</MenuItem>
+                        <MenuItem value='Party'>Party</MenuItem>
+                        <MenuItem value='Expo'>Expo</MenuItem>
+                        <MenuItem value='Game'>Game</MenuItem>
+                        <MenuItem value='Networking'>Networking</MenuItem>
+                        <MenuItem value='Race'>Race</MenuItem>
+                        <MenuItem value='Seminar'>Seminar</MenuItem>
+                        <MenuItem value='Tour'>Tour</MenuItem>
+                      </Select>
+                    );
+                  }}
+                  name='EventFormat'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.EventFormat?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
+              <section className={classes.halfStyle}>
+                <label>Event Category:</label>
+                <Controller
+                  render={({ field }) => {
+                    return (
+                      <Select
+                        value={field.value || ''}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setEventFormat(e.target.value);
+                        }}
+                        ref={field.ref}
+                        variant='outlined'
+                        className={classes.selectStyle}
+                      >
+                        <MenuItem value='Health and fitness'>
+                          Health and fitness
+                        </MenuItem>
+                        <MenuItem value='Multicultural'>Multicultural</MenuItem>
+                        <MenuItem value='Sports and recreation'>
+                          Sports and recreation
+                        </MenuItem>
+                        <MenuItem value='Festival'>Family</MenuItem>
+                        <MenuItem value='Kids'>Community organised</MenuItem>
+                        <MenuItem value='Seniors'>Seniors</MenuItem>
+                        <MenuItem value='Young People'>Young People</MenuItem>
+                      </Select>
+                    );
+                  }}
+                  name='EventCategory'
+                  control={control}
+                  rules={{ required: true }}
+                />
+                {errors?.EventCategory?.type === 'required' && (
+                  <Alert severity='error'>This field is required.</Alert>
+                )}
+              </section>
+            </Box>
 
             <section className={classes.formStyle}>
               <label>Event Introduction (Less than 200 characters):</label>

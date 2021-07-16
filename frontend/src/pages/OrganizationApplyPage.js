@@ -11,11 +11,10 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
-import MuiAlert from '@material-ui/lab/Alert';
 import { organizationApplyRequest } from '../components/api';
 
 function FetchAlert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
+  return <Alert elevation={6} variant='filled' {...props} />;
 }
 
 const useStyles = makeStyles((theme) => ({

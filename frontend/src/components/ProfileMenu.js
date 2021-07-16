@@ -23,6 +23,7 @@ function ProfileMenu({}) {
   const handleLogout = () => {
     context.setIsLoginState(false);
     sessionStorage.clear();
+    history.push(`/home`);
   }
 
   const toMyProfile = () => {
@@ -36,7 +37,7 @@ function ProfileMenu({}) {
         aria-haspopup='true'
         onClick={handleClick}
       >
-        <Avatar></Avatar>
+        <Avatar>{sessionStorage.getItem('name').charAt(0)}</Avatar>
       </Button>
       <Menu
         id='simple-menu'

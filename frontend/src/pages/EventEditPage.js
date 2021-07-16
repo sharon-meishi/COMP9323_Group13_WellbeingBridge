@@ -3,16 +3,19 @@ import NavBar from '../components/NavBar';
 import BackToTop from '../components/BackToTop';
 import { getEventDetails } from '../components/api';
 import LoadingBackdrop from '../components/LoadingBackdrop'
-
+import Alert from '@material-ui/lab/Alert';
 import EventForm from '../components/EventEditPage/EventForm';
 import parse from 'date-fns/parse';
 
-
+function FetchAlert(props) {
+  return <Alert elevation={6} variant='filled' {...props} />;
+}
 
 function EventEditPage(props) {
   const eventId = props.match.params.eventId;
   const [rawData, setRawData] = useState(null);
   const [data, setData] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const parsedDate = (dateString, format) => {
     return parse(dateString, format, new Date());
@@ -44,6 +47,7 @@ function EventEditPage(props) {
         const processedData = {
           EventName: Data[1].eventName,
           EventFormat: Data[1].format,
+          EventCategory: Data[1].category,
           EventIntroduction: Data[1].introduction,
           EventDetails: Data[1].details,
           StartDate: startDate,
@@ -51,28 +55,32 @@ function EventEditPage(props) {
           StartTime: startTime,
           EndTime: endTime,
           Postcode: Data[1].location.postcode,
+          lat: Data[1].location.lat,
+          lng: Data[1].location.lng
         };
         setData(processedData);
       } else {
-        console.log('error', Data[0]);
+        setErrorMsg(`Something wrong ${Data[1]}`)
       }
     };
     if (eventId) {
-      console.log(eventId);
       fetchData(eventId);
     }
   }, []);
+
+  
 
   return (
     <>
       <BackToTop showBelow={250} />
       <NavBar />
+      {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
       {data ? (
         <EventForm
           eventId={eventId}
           preloadedValues={data}
           preloadedImg={rawData.thumbnail}
-          preloadedAddress={rawData.location.venue}
+          preloadedAddress={rawData.location.address}
         />
       ) : (
        null
