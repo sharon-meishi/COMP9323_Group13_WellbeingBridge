@@ -183,3 +183,21 @@ export const getEventDetail = async (data) => {
     return [error.response.status,error.response.data.message];
   }
 };
+
+export const likeEvent = async (data) => {
+  console.log(data);
+  const url = baseUrl + `/event/${data[1]}/favourite`;
+  try {
+    const res = await axios.put(url, {
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+        'token':data[0],
+        'eventid':data[1],
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    return [error.response.status,error.response.data.message];
+  }
+};
