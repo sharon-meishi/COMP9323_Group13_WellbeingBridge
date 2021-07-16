@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import BackToTop from '../components/BackToTop';
 import { getEventDetails } from '../components/api';
-import LoadingBackdrop from '../components/LoadingBackdrop'
 import Alert from '@material-ui/lab/Alert';
 import EventForm from '../components/EventEditPage/EventForm';
 import parse from 'date-fns/parse';
@@ -66,7 +65,7 @@ function EventEditPage(props) {
     if (eventId) {
       fetchData(eventId);
     }
-  }, []);
+  }, [eventId]);
 
   
 
