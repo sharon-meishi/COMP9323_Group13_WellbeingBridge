@@ -12,9 +12,8 @@ import HomePage from './pages/HomePage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import EventEditPage from './pages/EventEditPage';
 import EventCreatePage from './pages/EventCreatePage';
-import OrganizationApplyPage from './pages/OrganizationPage/OrganizationApplyPage';
-import OrganizationDashboardPage from './pages/OrganizationPage/OrganizationDashboardPage';
-import OrganizationDetailsPage from './pages/OrganizationPage/OrganizationDetailsPage';
+import OrganizationApplyPage from './pages/OrganizationApplyPage';
+import OrganizationDashboardPage from './pages/OrganizationDashboardPage';
 import IndividualUserProfilePage from './pages/IndividualUserProfilePage';
 
 function App() {
@@ -60,11 +59,6 @@ function App() {
               exact
               path='/organization/apply'
               component={OrganizationApplyPage}
-            />
-            <Route
-              exact
-              path='/organization/:oId'
-              component={OrganizationDetailsPage}
             />
 
             <Redirect to='/home' />
