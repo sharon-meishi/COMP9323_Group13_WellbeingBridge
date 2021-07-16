@@ -66,7 +66,6 @@ function EventCard(props) {
   const preventDefault = (event) => event.preventDefault();
 
   useEffect(() => {
-    console.log(props.eventId);
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
@@ -76,7 +75,6 @@ function EventCard(props) {
     fetchData();
   }, []);
 
-  console.log(info);
 
   return info ? (
     <Card className={classes.root}>
@@ -95,7 +93,7 @@ function EventCard(props) {
               {info.date}
             </Typography>
             <Typography className={classes.location}>
-              {info.location.suburb}
+              {info.location.postcode}
             </Typography>
           </Box>
         </Grid>

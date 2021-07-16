@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, BrowserRouter as Router} from 'react-router-dom';
 import { AppContext } from './utils/store';
 import HomePage from './pages/HomePage';
 import OrganizationApplyPage from './pages/OrganizationApplyPage';
@@ -29,21 +29,23 @@ function App() {
   return (
     <ThemeProvider theme={Theme}>
       <AppContext.Provider value={store}>
+        <Route>
         <Switch>
           <Route exact path='/home' component={HomePage} />
           <Route exact path='/event/create' component={EventCreatePage} />
           <Route exact path='/event/edit/:eventId' component={EventEditPage} />
           <Route exact path='/event/:eventId' component={EventDetailsPage} />
           <Route exact path='/profile/:id' component={ProfilePage} />
-          <Route exact path='/organization/:oId' component={OrganizationDetailsPage} />
           <Route
             exact
             path='/organization/apply'
             component={OrganizationApplyPage}
           />
-          
+          <Route exact path='/organization/:oId' component={OrganizationDetailsPage} />
+
           <Redirect to='/home' />
         </Switch>
+        </Route>
       </AppContext.Provider>
     </ThemeProvider>
   );

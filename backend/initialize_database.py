@@ -101,7 +101,7 @@ def create_database():
   Lng,Date,Time,Introduction,Details)
 VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
 "https://www.indianyoga.school/public/uploads/gallery/kids-yoga-ttc.jpg","Class","Health and fitness",
-"Ashfield, NSW 2131","Ashfield Park, Parramatta Rd, Ashfield NSW, Australia","-33.884895","151.135696",
+"ASHFIELD, NSW 2131","Ashfield Park, Parramatta Rd, Ashfield NSW, Australia","-33.884895","151.135696",
 "14-07-2021",
 "11:00 AM to 12:00 PM",
  "Aimed at kids between 5 to 12, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. ",
