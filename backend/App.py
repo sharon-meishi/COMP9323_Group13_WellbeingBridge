@@ -152,8 +152,8 @@ class Login(Resource):
 
 
 def login(username, password):
-    sql_login_u = f"SELECT UserId, Password FROM User WHERE Email = '{username}';"
-    sql_login_o = f"SELECT OrganizationId, Password FROM Organization WHERE Email = '{username}';"
+    sql_login_u = f"SELECT UserId, Password, NickName FROM User WHERE Email = '{username}';"
+    sql_login_o = f"SELECT OrganizationId, Password,OrganizationName FROM Organization WHERE Email = '{username}';"
     result_u = sql_command(sql_login_u)
     result_o = sql_command(sql_login_o)
     tag = 'string'
@@ -161,10 +161,12 @@ def login(username, password):
     if len(result_u) > 0:
         group_id = result_u[0][0]
         password_final = result_u[0][1]
+        name=result_u[0][2]
         tag = 'individual'
     elif len(result_o) > 0:
         group_id = result_o[0][0]
         password_final = result_o[0][1]
+        name=result_o[0][2]
         tag = 'organization'
 
     if password == password_final:
@@ -172,6 +174,7 @@ def login(username, password):
         output = {
             "userId": group_id,
             "usergroup": tag,
+            "name": name,
             "token": token
         }
         return output, 200
