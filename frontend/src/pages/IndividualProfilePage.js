@@ -1,16 +1,15 @@
 import React from 'react';
 import NavBar from '../components/NavBar';
 import BackToTop from '../components/BackToTop';
-import EventForm from '../components/EventEditPage/EventForm';
+import ProfileEditForm from '../components/ProfileEditForm'
 
-function EventCreatePage() {
+function IndividualUserProfilePage() {
   return (
     <>
       <BackToTop showBelow={250} />
       <NavBar />
-      <EventForm />
     </>
   );
 }
 
-export default EventCreatePage;
+export default IndividualUserProfilePage;

@@ -100,7 +100,7 @@ function OrganizationApplyPage() {
 
   useEffect(() => {
     reset();
-  }, []);
+  }, [reset]);
 
   return (
     <>

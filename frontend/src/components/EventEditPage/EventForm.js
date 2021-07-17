@@ -210,43 +210,6 @@ function EventForm({
       });
   };
 
-  const buildBody = () => {
-    let date = '';
-    if (startDate === endDate) {
-      date = startDate;
-    } else {
-      date = `${startDate} to ${endDate}`;
-    }
-    let location = {};
-    if (eventFormat === 'Online Event') {
-      location = {
-        postcode: '',
-        address: '',
-        lat: '',
-        lng: '',
-      };
-    } else {
-      location = {
-        postcode: data.Postcode,
-        address: data.address ? data.address.label : preloadedAddress,
-        lat: lat,
-        lng: lng,
-      };
-    }
-    const uploadBody = {
-      eventName: data.EventName,
-      thumbnail: url,
-      format: data.EventFormat,
-      category: data.EventCategory,
-      location: location,
-      date: date,
-      time: `${startTime} to ${endTime}`,
-      introduction: data.EventIntroduction,
-      details: data.EventDetails,
-    };
-    return uploadBody;
-  };
-
   const onSubmit = async (data) => {
     setLoading(true);
     console.log(data);
@@ -262,6 +225,42 @@ function EventForm({
   };
 
   useEffect(() => {
+    const buildBody = () => {
+      let date = '';
+      if (startDate === endDate) {
+        date = startDate;
+      } else {
+        date = `${startDate} to ${endDate}`;
+      }
+      let location = {};
+      if (eventFormat === 'Online Event') {
+        location = {
+          postcode: '',
+          address: '',
+          lat: '',
+          lng: '',
+        };
+      } else {
+        location = {
+          postcode: data.Postcode,
+          address: data.address ? data.address.label : preloadedAddress,
+          lat: lat,
+          lng: lng,
+        };
+      }
+      const uploadBody = {
+        eventName: data.EventName,
+        thumbnail: url,
+        format: data.EventFormat,
+        category: data.EventCategory,
+        location: location,
+        date: date,
+        time: `${startTime} to ${endTime}`,
+        introduction: data.EventIntroduction,
+        details: data.EventDetails,
+      };
+      return uploadBody;
+    };
     const sendData = async (uploadBody) => {
       let Data;
       if (eventId) {
@@ -274,7 +273,7 @@ function EventForm({
         setLoading(false);
         reset();
       } else {
-        setErrorMsg(`Something wrong ${Data[1]}`)
+        setErrorMsg(`Something wrong ${Data[1]}`);
       }
     };
 
@@ -285,7 +284,7 @@ function EventForm({
       setOpen(true);
       sendData(uploadBody);
     }
-  }, [url]);
+  }, [url, eventId, reset]);
 
   useEffect(() => {
     reset();
@@ -533,7 +532,6 @@ function EventForm({
                   className={classes.imgStyle}
                   src={src || placeholder}
                   alt={alt}
-                  className='form-img__img-preview'
                 />
               </Box>
             </section>
