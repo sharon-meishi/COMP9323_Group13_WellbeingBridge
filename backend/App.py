@@ -742,7 +742,6 @@ class Organization_profile(Resource):
 
 @api.route("/organization/<int:orgid>", doc={"description": "get details of an organization"})
 @api.doc(parser=token_parser)
-
 class org(Resource):
     def get(self,orgid):
         token = token_parser.parse_args()['Authorization']
@@ -809,6 +808,31 @@ class org(Resource):
                 "message": "Success"
             }
         return output, 200
+
+@api.route("/event/<int:eventid>/comment/<int:commentid>", doc={"description": "edit comments under one event"})
+@api.doc(parser=token_parser)
+class comment(Resource):
+    @api.expect(comment_model)
+    def put(self,eventid, commentid):
+        token = token_parser.parse_args()['Authorization']
+        data = api.payload
+        edit_comment_sql = f"UPDATE COMMENT SET comment='{data['comment']}' WHERE id={commentid}"
+        sql_command(edit_comment_sql)
+        output = {
+            "message": "Success"
+        }
+        return output, 200
+
+    def delete(self, eventid, commentid):
+        try:
+            token = token_parser.parse_args()['Authorization']
+            delete_sql=f'DELETE FROM COMMENT where id={commentid};'
+            sql_command(delete_sql)
+            return {"message": 'Success!'},200
+        except:
+            return {"message": 'Wrong ID. Please try again.'}, 400
+
+
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=8000, debug=True)
