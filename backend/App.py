@@ -253,12 +253,11 @@ def get_user_id_by_token(token):
         return None
 
 
-@api.route("/event/{eventid}/favourite", doc={"description": "like an event"})
-@api.doc(parser=parser)
+@api.route("/event/<int:eventid>/favourite", doc={"description": "like an event"})
+@api.doc(parser=token_parser)
 class favourite(Resource):
-    def put(self):
-        event_id = parser.parse_args()['eventid']
-        token = parser.parse_args()['token']
+    def put(self, eventid):
+        token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         if user_id is None:
             output = {
@@ -271,14 +270,14 @@ class favourite(Resource):
 
         if curr_favourite_id:
             ids = curr_favourite_id.split(',')
-            if any([id_ == event_id for id_ in ids]):
+            if any([id_ == eventid for id_ in ids]):
                 output = {
                     "message": "Internal Error: event is already favourited."
                 }
                 return output, 500
-            favourite_id = curr_favourite_id + ',' + event_id
+            favourite_id = curr_favourite_id + ',' + eventid
         else:
-            favourite_id = event_id
+            favourite_id = eventid
 
         sql_update_favourite = f"Update User SET FavouriteId='{favourite_id}' WHERE UserId='{user_id}';"
         sql_command(sql_update_favourite)
@@ -286,12 +285,11 @@ class favourite(Resource):
         return {'favourite_id': favourite_id}, 200
 
 
-@api.route("/event/{eventid}/unfavourite", doc={"description": "unlike an event"})
-@api.doc(parser=parser)
+@api.route("/event/<int:eventid>/unfavourite", doc={"description": "unlike an event"})
+@api.doc(parser=token_parser)
 class unfavourite(Resource):
-    def put(self):
-        event_id = parser.parse_args()['eventid']
-        token = parser.parse_args()['token']
+    def put(self, eventid):
+        token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         if user_id is None:
             output = {
@@ -312,7 +310,7 @@ class unfavourite(Resource):
         if curr_favourite_id:
             ids = curr_favourite_id.split(',')
             for i, id_ in enumerate(ids):
-                if id_ == event_id:
+                if id_ == eventid:
                     new_favorate_id = ids[:i] + ids[i + 1:]
                     break
             if new_favorate_id or (not new_favorate_id and len(ids) == 1):
@@ -322,56 +320,54 @@ class unfavourite(Resource):
                 return {'favourite_id': new_favorate_id}, 200
             else:
                 output = {
-                    "message": "Internal Error: user never liked this event with id: " + event_id
+                    "message": "Internal Error: user never liked this event with id: " + eventid
                 }
                 return output, 500
 
 
-@api.route("/event/{eventid}/book", doc={"description": "Book an event"})
-@api.doc(parser=parser)
+@api.route("/event/<int:eventid>/book", doc={"description": "Book an event"})
+@api.doc(parser=token_parser)
 class book(Resource):
-    def put(self):
-        event_id = parser.parse_args()['eventid']
-        token = parser.parse_args()['token']
+    def put(self, eventid):
+        token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         if user_id is None:
             output = {
                 "message": "Internal Error: no user found."
             }
             return output, 500
-        sql_booking = f"SELECT BookingId FROM Booking WHERE UserId = '{user_id}' AND EventId = '{event_id}';"
+        sql_booking = f"SELECT BookingId FROM Booking WHERE UserId = '{user_id}' AND EventId = '{eventid}';"
         booking_result = sql_command(sql_booking)
         if booking_result:
             output = {
                 "message": "Booking is already being made."
             }
         else:
-            sql = "INSERT INTO Booking VALUES (NULL, '{}', '{}');".format(event_id, user_id)
+            sql = "INSERT INTO Booking VALUES (NULL, '{}', '{}');".format(eventid, user_id)
             sql_command(sql)
             output = {"message": "new event is booked."}
         return output, 200
 
 
-@api.route("/event/{eventid}/unbook", doc={"description": "Unook an event"})
-@api.doc(parser=parser)
+@api.route("/event/<int:eventid>/unbook", doc={"description": "Unook an event"})
+@api.doc(parser=token_parser)
 class unbook(Resource):
-    def put(self):
-        event_id = parser.parse_args()['eventid']
-        token = parser.parse_args()['token']
+    def put(self, eventid):
+        token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         if user_id is None:
             output = {
                 "message": "Internal Error: no user found."
             }
             return output, 500
-        sql_booking = f"SELECT BookingId FROM Booking WHERE UserId = '{user_id}' AND EventId = '{event_id}';"
+        sql_booking = f"SELECT BookingId FROM Booking WHERE UserId = '{user_id}' AND EventId = '{eventid}';"
         booking_result = sql_command(sql_booking)
         if not booking_result:
             output = {
                 "message": "No booking for this event."
             }
         else:
-            sql = f"DELETE FROM Booking WHERE UserId = '{user_id}' AND EventId = '{event_id}';"
+            sql = f"DELETE FROM Booking WHERE UserId = '{user_id}' AND EventId = '{eventid}';"
             sql_command(sql)
             output = {"message": "event is unbooked."}
         return output, 200
