@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Noto sans',
     display: 'flex',
     flexDirection: 'column',
-    margin: '210px 200px',
+    margin: '10% 5%',
     position: 'fixed',
     top: 0,
     left: 0,
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#f1a07a',
   },
   content: {
-    padding: '50px 400px',
+    padding: '5% 10% 0 20%',
   },
 }));
 
