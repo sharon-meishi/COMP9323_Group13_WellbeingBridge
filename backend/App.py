@@ -28,7 +28,7 @@ def sql_command(command):
     return result
 
 
-individual_model = api.model("user", {
+individual_model = api.model("individual", {
     "nickname": fields.String,
     "email": fields.String,
     "password": fields.String
