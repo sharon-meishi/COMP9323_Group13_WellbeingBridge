@@ -11,7 +11,6 @@ app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
 CORS(app)
 
-
 def sql_command(command):
     db = pymysql.connect(
         host='localhost',
@@ -109,7 +108,7 @@ class OrganizationRegister(Resource):
                 return output, 403
             else:
                 organization_id = 0
-                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}','{}','{}',NULL,NULL,NULL,NULL);". \
+                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}','{}','{}',NULL,NULL,NULL,NULL,NULL,NULL);". \
                     format(organization_id, email, password, organization_name, organization_type, contact,
                            introduction)
                 sql_command(sql)
@@ -188,8 +187,9 @@ def login(username, password):
 @api.route('/popular/events')
 class GetPopularEvent(Resource):
     def get(self):
-        querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
-        return sql_command(querry_string), 200
+        # querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
+        # return sql_command(querry_string), 200
+        return {'event_id': [1, 2, 3]}, 200
 
 
 parser = api.parser()
@@ -813,7 +813,6 @@ class org(Resource):
                 "message": "Success"
             }
         return output, 200
-        
-        
+
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=8000, debug=True)
