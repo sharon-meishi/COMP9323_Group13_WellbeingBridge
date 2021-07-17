@@ -14,7 +14,8 @@ import EventEditPage from './pages/EventEditPage';
 import EventCreatePage from './pages/EventCreatePage';
 import OrganizationApplyPage from './pages/OrganizationApplyPage';
 import OrganizationDashboardPage from './pages/OrganizationDashboardPage';
-import IndividualUserProfilePage from './pages/IndividualUserProfilePage';
+import OrganizationHomePage from './pages/OrganizationHomePage'
+import IndividualProfilePage from './pages/IndividualProfilePage';
 
 function App() {
   const [isLoginState, setIsLoginState] = React.useState(
@@ -48,12 +49,18 @@ function App() {
             <Route
               exact
               path='/profile'
-              component={IndividualUserProfilePage}
+              component={IndividualProfilePage}
             />
             <Route
               exact
               path='/dashboard'
               component={OrganizationDashboardPage}
+            />
+
+            <Route
+              exact
+              path='/organization/:oId'
+              component={OrganizationHomePage}
             />
             <Route
               exact

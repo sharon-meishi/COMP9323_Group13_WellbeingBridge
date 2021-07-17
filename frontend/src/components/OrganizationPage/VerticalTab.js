@@ -89,8 +89,9 @@ export default function VerticalTabs() {
         }}
       >
         <Tab icon={<BarChartIcon />} label='DashBoard' {...a11yProps(0)} />
-        <Tab icon={<HomeIcon />} label='Home Page' {...a11yProps(1)} />
+
         <Tab icon={<EventIcon />} label='My Events' {...a11yProps(2)} />
+        <Tab icon={<HomeIcon />} label='Organization Page' {...a11yProps(1)} />
         <Tab
           icon={<SettingsIcon />}
           label='Account Setting'
