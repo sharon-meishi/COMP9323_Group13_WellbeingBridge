@@ -4,14 +4,11 @@ import ProfileMenu from './ProfileMenu';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import icon from '../Assets/WellbeingBridgeLogo.png';
 import {
   FormControl,
   MenuItem,
   Select,
   InputBase,
-  Button,
-  Avatar,
   Link,
   Box,
 } from '@material-ui/core';
@@ -109,9 +106,9 @@ export default function NavBar({ profile }) {
     history.push('/organization/apply');
   };
 
-  const toHomePage = () => {
-    history.push('/home');
-  };
+  // const toHomePage = () => {
+  //   history.push('/home');
+  // };
 
   const toCreateEvent = () => {
     history.push('/event/create');

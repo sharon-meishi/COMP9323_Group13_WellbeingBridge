@@ -156,10 +156,11 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.emailRegister?.type === 'required' && (
-              "This field is required"
+              <Alert severity='error'>This field is required</Alert>
           )}
           {errors?.emailRegister?.type === 'pattern' && (
-            "Invalid email input"
+            <Alert severity='error'> Invalid email input</Alert>
+           
           )}
           <TextField
             {...register('password', {
@@ -175,7 +176,7 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.password?.type === 'required' && (
-            "This field is required"
+            <Alert severity='error'>This field is required</Alert>
           )}
           <Button
             type='submit'

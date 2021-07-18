@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import NavBar from '../components/NavBar';
 import BackToTop from '../components/BackToTop';
 import EventForm from '../components/EventEditPage/EventForm';

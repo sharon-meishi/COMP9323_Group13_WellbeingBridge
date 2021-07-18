@@ -43,38 +43,34 @@ def create_database():
   `otherEvents` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`OrganizationId`));'''
 
-    insert_organization = '''INSERT INTO Organization (OrganizationId,Email,Password,OrganizationName,OrganizationType,
+    insert_organization = '''
+    INSERT INTO Organization 
+    (OrganizationId,Email,Password,OrganizationName,OrganizationType,
     Logo,Contact,Introduction,Details,VideoUrl,ServiceList,WebsiteLink,otherEvents) 
-    VALUES (0, "wellbeing@org.com", 
-    "abcd", "HeadSpace", "Youth","https://sydneynorthhealthnetwork.org.au/wp-content/uploads/2016/04/Headspace-logo
-    .png","headspace@newhorizons.net.au","The Centre is open to assist young people with health advice and support 
-    and information, around a range of matters including: caring for others, stress, relationships, employment and 
-    depression","Headspace is the National Youth Mental Health Foundation providing early intervention mental health 
-    services to 12-25 year olds, along with assistance in promoting young peoples’ wellbeing.",
-    "https://youtu.be/DxIDKZHW3-E",'"mental health counselling","education support","employment support","alcohol and 
-    other drug services"', "https://headspace.org.au","1,2,3"), 
+    VALUES (0, "wellbeing@org.com", "abcd", "HeadSpace", "Youth",
+    "https://sydneynorthhealthnetwork.org.au/wp-content/uploads/2016/04/Headspace-logo.png",
+    "headspace@newhorizons.net.au",
+    "The Centre is open to assist young people with health advice and support and information, around a range of matters including: caring for others, stress, relationships, employment and depression",
+    "Headspace is the National Youth Mental Health Foundation providing early intervention mental health services to 12-25 year olds, along with assistance in promoting young peoples’ wellbeing.",
+    "https://youtu.be/DxIDKZHW3-E",
+    'mental health counselling,education support,employment support,alcohol and other drug services', 
+    "https://headspace.org.au","1,2,3"), 
+
     (0, 'test@org.com', 'abcd', "My Aged Care", "Seniors", 
-    "https://www.myagedcare.gov.au/themes/custom/myagedcare/logo.png", "1800-200-422", "My Aged Care is the 
-    Australian Government's starting point on your aged care journey. Find and access the government-funded services 
-    you need.", "My Aged Care will offer: prompt, reliable and confidential services; polite, helpful and 
-    knowledgeable staff; clear information, available in other languages if you speak another language; support to 
-    access information if you have hearing difficulties or a vision impairment; help to find government funded aged 
-    care services; prompt resolution of any complaint or concern you have with My Aged Care.", 
-    "https://youtu.be/QkWMK7gDVkw", '"Information on the different types of aged care services available", 
-    "An assessment of needs to identify eligibility and the right type of care", "Referrals and support to find 
-    service providers that can meet your needs", "Information on what you might need to pay towards the cost of your 
-    care."', "https://www.myagedcare.gov.au", '1,2,3'), 
+    "https://www.myagedcare.gov.au/themes/custom/myagedcare/logo.png",
+     "1800-200-422", "My Aged Care is the Australian Government's starting point on your aged care journey. Find and access the government-funded services you need.", 
+     "My Aged Care will offer: prompt, reliable and confidential services; polite, helpful and knowledgeable staff; clear information, available in other languages if you speak another language; support to access information if you have hearing difficulties or a vision impairment; help to find government funded aged care services; prompt resolution of any complaint or concern you have with My Aged Care.", 
+    "https://youtu.be/QkWMK7gDVkw", 
+    'Information on the different types of aged care services available,An assessment of needs to identify eligibility and the right type of care,Referrals and support to find service providers that can meet your needs,Information on what you might need to pay towards the cost of your care', 
+    "https://www.myagedcare.gov.au", "1,2,3"), 
+
     (0, '9323@org.com', 'abcd', "House to Grow", "Education", 
     "https://brizy.b-cdn.net/media/iW=70&iH=80&oX=0&oY=0&cW=70&cH=80/d1073b4eea3ad956e7750133d6091c22.png", 
     "info@housetogrow.org", "Empowering communities through education for life, holistic health and wellbeing ", 
-    "House to Grow is a not-for-profit organisation that empowers vulnerable children in unhealthy environments and 
-    women affected by domestic violence through personal development, education for life and holistic health. We try 
-    not to limit who can come to us, we encourage and support any individual that seeks personal development, 
-    education for life and holistic health. We also deliver educational programs to organisations, community groups 
-    and people in need. ", "video link", '"Colouring Dreams - Creating an environment for children to dream", 
-    "Growing Healthy International Students - More Self improvement for better societies", "The Flight of the 
-    Butterflies - Empowering women", "Building Emotionally Intelligent Communities - Get your volunteers ready for 
-    tomorrow’s job"', "https://www.housetogrow.org", '1,2,3'); '''
+    "House to Grow is a not-for-profit organisation that empowers vulnerable children in unhealthy environments and women affected by domestic violence through personal development, education for life and holistic health. We try not to limit who can come to us, we encourage and support any individual that seeks personal development, education for life and holistic health. We also deliver educational programs to organisations, community groups and people in need. ", 
+    "https://www.youtube.com/watch?v=mxz8KyV3Ydc", 
+    'Colouring Dreams - Creating an environment for children to dream,Growing Healthy International Students - More Self improvement for better societies,The Flight of the Butterflies - Empowering women, Building Emotionally Intelligent Communities - Get your volunteers ready for tomorrow’s job', 
+    "https://www.housetogrow.org", '1,2,3'); '''
     event_table = '''
     CREATE TABLE IF NOT EXISTS `Event` (
   `EventId` int NOT NULL AUTO_INCREMENT,
@@ -118,8 +114,7 @@ VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
 "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F137085143%2F307439946789%2F1%2Foriginal.20210531-025831?w=800&auto=format%2Ccompress&q=75&sharp=10&rect=1%2C78%2C1250%2C625&s=3d6e67be19885a5a9411e28685a3bf0a",
 "Class","Young People","MARRICKVILLE, NSW 2204","142 Addison Road, Marrickville NSW, Australia","-33.902220","151.161075","01-08-2021","11:00 AM to 3:00 PM",
  "A half day of activity that challenges young people to engage with wellbeing and make new connections in a friendly and fun environment.",
- "# TrueDreamersTour2021 event promises a half day of activity that challenges young people to engage with health and make new connections in a friendly and fun environment. including
-              Inspirational stories from internaitonal students; Documentary internaional students in Australia; Round table with experts in health and education; Yoga and meditation activity; Live Music; Gift vouchers");
+ "# TrueDreamersTour2021 event promises a half day of activity that challenges young people to engage with health and make new connections in a friendly and fun environment. including Inspirational stories from internaitonal students; Documentary internaional students in Australia; Round table with experts in health and education; Yoga and meditation activity; Live Music; Gift vouchers");
     '''
 
     booking_table = '''

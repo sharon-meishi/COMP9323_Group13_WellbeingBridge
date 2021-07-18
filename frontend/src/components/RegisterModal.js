@@ -90,12 +90,12 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
     if (res[0] === 200) {
       reset();
       console.log('register success');
-      handleClose()
+      handleClose();
       setErrorMsg('');
       sessionStorage.setItem('token', res[1].token);
-      sessionStorage.setItem('name', data.nickname)
+      sessionStorage.setItem('name', data.nickname);
       sessionStorage.setItem('id', res[1].userId);
-      sessionStorage.setItem('usergroup', 'individual')
+      sessionStorage.setItem('usergroup', 'individual');
       context.setIsLoginState(true);
     } else {
       setErrorMsg(res[1]);
@@ -154,7 +154,7 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.nickname?.type === 'required' && (
-            <error>This field is required</error>
+            <Alert severity='error'>This field is required</Alert>
           )}
           <TextField
             {...register('email', {
@@ -171,8 +171,9 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             className={classes.textFieldStyle}
             required
           />
-          {errors?.emailRegister?.type === 'required' &&
-            'This field is required'}
+          {errors?.emailRegister?.type === 'required' && (
+            <Alert severity='error'>This field is required</Alert>
+          )}
           {errors?.emailRegister?.type === 'pattern' && 'Invalid email input'}
           <TextField
             {...register('password', {
@@ -187,7 +188,9 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             className={classes.textFieldStyle}
             required
           />
-          {errors?.password?.type === 'required' && 'This field is required'}
+          {errors?.password?.type === 'required' && (
+            <Alert severity='error'>This field is required</Alert>
+          )}
           <TextField
             {...register('passwordConfirmation', {
               required: true,
@@ -208,7 +211,9 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.passwordConfirmation && (
-            <div>{errors.passwordConfirmation.message}</div>
+            <Alert severity='error'>
+              {errors.passwordConfirmation.message}
+            </Alert>
           )}
           <Button
             type='submit'
