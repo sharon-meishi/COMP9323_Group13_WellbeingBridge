@@ -594,7 +594,10 @@ class GetUserProfilebyId(Resource):
         user_info = sql_command(user_sql)[0]
         bood_info = sql_command(book_sql)
         booking_lst = [info[0] for info in bood_info]
-        favourite_id = [int(fid) for fid in user_info[4].split(',')]
+        if user_info[4]:
+            favourite_id = [int(fid) for fid in user_info[4].split(',')]
+        else:
+            favourite_id = []
         output = {"UserId": user_id,
                   "Nickname": user_info[1],
                   "Email": user_info[2],
