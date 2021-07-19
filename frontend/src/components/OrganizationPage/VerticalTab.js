@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState,  useEffect } from 'react';
 import PropTypes from 'prop-types';
+import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -9,6 +10,15 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import HomeIcon from '@material-ui/icons/Home';
 import EventIcon from '@material-ui/icons/Event';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import Dashboard from './Dashboard'
+import OrganizationForm from './OrganizationForm'
+import EventDisplay from './EventDisplay'
+import ProfileEditForm from '../ProfileEditForm'
+import {getOrganizationDetails} from '../api'
+
+function FetchAlert(props) {
+  return <Alert elevation={6} variant='filled' {...props} />;
+}
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -65,18 +75,46 @@ const useStyles = makeStyles((theme) => ({
   indicator: {
     backgroundColor: '#26A69A',
   },
+  tabpanel: {
+    flexGrow: '40'
+  },
+  titleStyle: {
+    fontSize: '20px',
+    fontWeight: 'bold',
+    color: '#26A69A',
+  },
 }));
 
-export default function VerticalTabs() {
+export default function VerticalTabs({profileData}) {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [details, setDetails] = useState('')
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    console.log(profileData.oId)
+    const fetchData = async() => {
+      const Data = await getOrganizationDetails(profileData.oId)
+      if (Data[0] === 200){
+        console.log(Data[1]);
+        setDetails(Data[1])
+      }
+      else{
+        setErrorMsg(Data[1])
+      }
+    }
+    fetchData()
+  }, [])
+
   return (
+    <>
+    {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
     <div className={classes.root}>
+      
       <Tabs
         orientation='vertical'
         variant='scrollable'
@@ -98,18 +136,24 @@ export default function VerticalTabs() {
           {...a11yProps(3)}
         />
       </Tabs>
-      <TabPanel value={value} index={0}>
-        Dashboard
+      <TabPanel value={value} index={0} className={classes.tabpanel}>
+        <Dashboard profileData={profileData}/>
       </TabPanel>
-      <TabPanel value={value} index={1}>
-        Homepage
+      <TabPanel value={value} index={1} className={classes.tabpanel}>
+      <EventDisplay profileData={profileData}/>
+        
       </TabPanel>
-      <TabPanel value={value} index={2}>
-        My events
+      <TabPanel value={value} index={2} className={classes.tabpanel}>
+      <OrganizationForm profileData={profileData}/>
       </TabPanel>
-      <TabPanel value={value} index={3}>
-        Account Setting
+      <TabPanel value={value} index={3} className={classes.tabpanel}>
+        <Box display='flex' justifyContent='center' alignItems='center' width='100%' flexDirection='column'>
+          <Typography className={classes.titleStyle}>Edit your Organization Name and Password</Typography>
+        <ProfileEditForm currentName={profileData.organizationName} oId={profileData.oId}/>
+        </Box>
+        
       </TabPanel>
     </div>
+    </>
   );
 }
