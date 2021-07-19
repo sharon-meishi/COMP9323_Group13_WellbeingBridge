@@ -297,7 +297,7 @@ class favourite(Resource):
         sql_update_favourite = f"Update User SET FavouriteId='{favourite_id}' WHERE UserId='{user_id}';"
         sql_command(sql_update_favourite)
 
-        favourite_id = [int(fid) for fid in favourite_id.split()]
+        favourite_id = [int(fid) for fid in favourite_id.split(',')]
 
         return {'favourite_id': favourite_id}, 200
 
@@ -324,22 +324,23 @@ class unfavourite(Resource):
             return output, 500
 
         new_favorate_id = []
+        event_id_str = str(eventid)
         if curr_favourite_id:
             ids = curr_favourite_id.split(',')
             for i, id_ in enumerate(ids):
-                if id_ == eventid:
+                if id_ == event_id_str:
                     new_favorate_id = ids[:i] + ids[i + 1:]
                     break
             if new_favorate_id or (not new_favorate_id and len(ids) == 1):
-                new_favorate_id = ','.join(new_favorate_id)
-                sql_update_favourite = f"Update User SET FavouriteId='{new_favorate_id}' WHERE UserId='{user_id}';"
+                new_favorate_id_str = ','.join(new_favorate_id)
+                sql_update_favourite = f"Update User SET FavouriteId='{new_favorate_id_str}' WHERE UserId='{user_id}';"
                 sql_command(sql_update_favourite)
-                new_favorate_id = [int(fid) for fid in new_favorate_id.split()]
+                new_favorate_id = [int(id_) for id_ in new_favorate_id]
 
                 return {'favourite_id': new_favorate_id}, 200
             else:
                 output = {
-                    "message": "Internal Error: user never liked this event with id: " + eventid
+                    "message": "Internal Error: user never liked this event with id: " + event_id_str
                 }
                 return output, 500
 
@@ -593,7 +594,10 @@ class GetUserProfilebyId(Resource):
         user_info = sql_command(user_sql)[0]
         bood_info = sql_command(book_sql)
         booking_lst = [info[0] for info in bood_info]
-        favourite_id = [int(fid) for fid in user_info[4].split()]
+        if user_info[4]:
+            favourite_id = [int(fid) for fid in user_info[4].split(',')]
+        else:
+            favourite_id = []
         output = {"UserId": user_id,
                   "Nickname": user_info[1],
                   "Email": user_info[2],
@@ -615,14 +619,14 @@ class GetUserProfilebyId(Resource):
             }
             return output, 400
         if data['Password'] == '':
-            sql = '''UPDATE User SET Nickname = '{}', 
+            sql = '''UPDATE User SET Nickname = '{}'
                     WHERE UserId = {}'''. \
                 format(data['Nickname'],
                        user_id)
         else:
            sql = '''UPDATE User SET
                              Nickname = '{}', 
-                             Password = '{}', 
+                             Password = '{}'
             WHERE UserId = {}'''. \
             format(data['Nickname'],
                    data['Password'],
