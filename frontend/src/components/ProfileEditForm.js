@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { updateOrganizationProfile, updateUserProfile} from '../components/api';
 
@@ -35,11 +34,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileEditForm({ currentName, oId, setOpen }) {
+function ProfileEditForm({ currentName, oId}) {
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [profileName, setProfileName] = useState(currentName);
 
   const {
     reset,
@@ -112,7 +110,6 @@ function ProfileEditForm({ currentName, oId, setOpen }) {
                 required
               />
             )}
-            defaultValue={profileName}
             name='name'
             control={control}
           />

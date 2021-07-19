@@ -127,9 +127,8 @@ export default function VerticalTabs({profileData}) {
         }}
       >
         <Tab icon={<BarChartIcon />} label='DashBoard' {...a11yProps(0)} />
-
         <Tab icon={<EventIcon />} label='My Events' {...a11yProps(2)} />
-        <Tab icon={<HomeIcon />} label='Organization Page' {...a11yProps(1)} />
+        <Tab icon={<HomeIcon />} label='Edit Page' {...a11yProps(1)} />
         <Tab
           icon={<SettingsIcon />}
           label='Account Setting'
@@ -141,7 +140,6 @@ export default function VerticalTabs({profileData}) {
       </TabPanel>
       <TabPanel value={value} index={1} className={classes.tabpanel}>
       <EventDisplay profileData={profileData}/>
-        
       </TabPanel>
       <TabPanel value={value} index={2} className={classes.tabpanel}>
       <OrganizationForm profileData={profileData}/>

@@ -6,7 +6,7 @@ import Alert from '@material-ui/lab/Alert';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import ProfileTabMenu from '../components/IndividualProfilePage/ProfileTabMenu';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Dialog from '@material-ui/core/Dialog';
@@ -130,7 +130,7 @@ function IndividualUserProfilePage() {
                 </Box>
               </Box>
               <Grid container item>
-                <ProfileTabMenu FavEvents={profileData.FavouritedId}/>
+                <ProfileTabMenu FavEvents={profileData.FavouriteId} BookEvents={profileData.BookingId}/>
               </Grid>
             </Grid>
           </Grid>
