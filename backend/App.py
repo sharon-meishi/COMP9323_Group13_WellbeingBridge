@@ -290,9 +290,9 @@ class favourite(Resource):
                     "message": "Internal Error: event is already favourited."
                 }
                 return output, 500
-            favourite_id = curr_favourite_id + ',' + eventid
+            favourite_id = curr_favourite_id + ',' + str(eventid)
         else:
-            favourite_id = eventid
+            favourite_id = str(eventid)
 
         sql_update_favourite = f"Update User SET FavouriteId='{favourite_id}' WHERE UserId='{user_id}';"
         sql_command(sql_update_favourite)
@@ -599,17 +599,17 @@ class GetUserProfilebyId(Resource):
     def put(self):
         data = json.loads(request.get_data())
         token = token_parser.parse_args()['Authorization']
+        user_id = get_user_id_by_token(token)
         if token is None:
             output = {
                 "message": "Invalid Input"
             }
             return output, 400
-        user_info = decode_token(token)
         if data['password'] == '':
             sql = '''UPDATE User SET Nickname = '{}', 
                     WHERE UserId = {}'''. \
                 format(data['Nickname'],
-                       data['UserId'])
+                       user_id)
         else:
            sql = '''UPDATE User SET
                              Nickname = '{}', 
@@ -617,7 +617,7 @@ class GetUserProfilebyId(Resource):
             WHERE UserId = {}'''. \
             format(data['Nickname'],
                    data['Password'],
-                   data['UserId'])
+                   user_id)
         sql_command(sql)
 
         output = {
