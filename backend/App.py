@@ -297,6 +297,8 @@ class favourite(Resource):
         sql_update_favourite = f"Update User SET FavouriteId='{favourite_id}' WHERE UserId='{user_id}';"
         sql_command(sql_update_favourite)
 
+        favourite_id = [int(fid) for fid in favourite_id.split()]
+
         return {'favourite_id': favourite_id}, 200
 
 
@@ -332,6 +334,8 @@ class unfavourite(Resource):
                 new_favorate_id = ','.join(new_favorate_id)
                 sql_update_favourite = f"Update User SET FavouriteId='{new_favorate_id}' WHERE UserId='{user_id}';"
                 sql_command(sql_update_favourite)
+                new_favorate_id = [int(fid) for fid in new_favorate_id.split()]
+
                 return {'favourite_id': new_favorate_id}, 200
             else:
                 output = {
@@ -573,6 +577,10 @@ class GetEventbyId(Resource):
             }
         return output, 200
 
+user_update_model = api.model("user", {
+    "Nickname": fields.String,
+    "Password": fields.String,
+})
 
 @api.route("/user/profile", doc={"description": "get current user profile"})
 @api.doc(parser=token_parser)
@@ -585,17 +593,18 @@ class GetUserProfilebyId(Resource):
         user_info = sql_command(user_sql)[0]
         bood_info = sql_command(book_sql)
         booking_lst = [info[0] for info in bood_info]
+        favourite_id = [int(fid) for fid in user_info[4].split()]
         output = {"UserId": user_id,
                   "Nickname": user_info[1],
                   "Email": user_info[2],
                   "Password": user_info[3],
-                  "FavouriteId": user_info[4],
+                  "FavouriteId": favourite_id,
                   "BookingId": booking_lst
                   }
 
         return output, 200
 
-    @api.expect(user_model)
+    @api.expect(user_update_model)
     def put(self):
         data = json.loads(request.get_data())
         token = token_parser.parse_args()['Authorization']
@@ -605,7 +614,7 @@ class GetUserProfilebyId(Resource):
                 "message": "Invalid Input"
             }
             return output, 400
-        if data['password'] == '':
+        if data['Password'] == '':
             sql = '''UPDATE User SET Nickname = '{}', 
                     WHERE UserId = {}'''. \
                 format(data['Nickname'],
