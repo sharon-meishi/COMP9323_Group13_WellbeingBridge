@@ -63,6 +63,7 @@ class IndividualRegister(Resource):
                 select_sql = f"SELECT UserId FROM User WHERE Email='{email}';"
                 id = sql_command(select_sql)[0][0]
                 token = encode_token(email, "individual")
+                print(token)
                 output = {
                     "message": "Success register",
                     "nickname": nickname,
@@ -573,7 +574,6 @@ class GetEventbyId(Resource):
         return output, 200
 
 
-############# User Profile ###################
 @api.route("/user/profile", doc={"description": "get current user profile"})
 @api.doc(parser=token_parser)
 class GetUserProfilebyId(Resource):
@@ -581,12 +581,16 @@ class GetUserProfilebyId(Resource):
         token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         user_sql = f"SELECT * FROM User WHERE UserId={user_id};"
+        book_sql = f"SELECT BookingID FROM Booking WHERE UserId={user_id};"
         user_info = sql_command(user_sql)[0]
+        bood_info = sql_command(book_sql)
+        booking_lst = [info[0] for info in bood_info]
         output = {"UserId": user_id,
                   "Nickname": user_info[1],
                   "Email": user_info[2],
                   "Password": user_info[3],
-                  "FavouriteId": user_info[4]
+                  "FavouriteId": user_info[4],
+                  "BookingId": booking_lst
                   }
 
         return output, 200
@@ -597,23 +601,25 @@ class GetUserProfilebyId(Resource):
         token = token_parser.parse_args()['Authorization']
         if token is None:
             output = {
-                "message": "Invalid input"
+                "message": "Invalid Input"
             }
             return output, 400
         user_info = decode_token(token)
-        sql = '''UPDATE User SET UserId = {}, 
-                                 Nickname = '{}', 
-                                 Email = '{}', 
-                                 Password = '{}', 
-                                 FavouriteId = '{}'
-                WHERE UserId = {}'''. \
-            format(data['UserId'],
-                   data['Nickname'],
-                   data['Email'],
+        if data['password'] == '':
+            sql = '''UPDATE User SET Nickname = '{}', 
+                    WHERE UserId = {}'''. \
+                format(data['Nickname'],
+                       data['UserId'])
+        else:
+           sql = '''UPDATE User SET
+                             Nickname = '{}', 
+                             Password = '{}', 
+            WHERE UserId = {}'''. \
+            format(data['Nickname'],
                    data['Password'],
-                   data['FavouriteId'],
                    data['UserId'])
         sql_command(sql)
+
         output = {
             "message": "success"
         }
