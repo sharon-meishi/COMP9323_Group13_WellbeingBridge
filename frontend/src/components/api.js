@@ -274,3 +274,46 @@ export const unbookEvent = async (data) => {
     return [error.response.status,error.response.data.message];
   }
 };
+export const getUserProfile = async () => {
+  const url =  baseUrl + '/user/profile';
+  console.log(sessionStorage.getItem('token'))
+  const headers = {
+    Authorization: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MjcyMzU1MDIsImVtYWlsIjoibWVpc2hpQGdtYWlsLmNvbSIsInR5cGUiOiJpbmRpdmlkdWFsIn0.-bJY1MfhSdGuVfJ1rDIASATzev9Vf_dHJ1rreYtQO-E',
+    'content-Type': 'application/json',
+    'accept': 'application/json'
+  };
+  try {
+    const res = await axios.get(url, {}, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
+
+export const updateUserProfile = async () => {
+  const url =  baseUrl + '/user/profile';
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.put(url, {}, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}

@@ -63,6 +63,7 @@ class IndividualRegister(Resource):
                 select_sql = f"SELECT UserId FROM User WHERE Email='{email}';"
                 id = sql_command(select_sql)[0][0]
                 token = encode_token(email, "individual")
+                print(token)
                 output = {
                     "message": "Success register",
                     "nickname": nickname,
@@ -289,9 +290,9 @@ class favourite(Resource):
                     "message": "Internal Error: event is already favourited."
                 }
                 return output, 500
-            favourite_id = curr_favourite_id + ',' + eventid
+            favourite_id = curr_favourite_id + ',' + str(eventid)
         else:
-            favourite_id = eventid
+            favourite_id = str(eventid)
 
         sql_update_favourite = f"Update User SET FavouriteId='{favourite_id}' WHERE UserId='{user_id}';"
         sql_command(sql_update_favourite)
@@ -573,7 +574,6 @@ class GetEventbyId(Resource):
         return output, 200
 
 
-############# User Profile ###################
 @api.route("/user/profile", doc={"description": "get current user profile"})
 @api.doc(parser=token_parser)
 class GetUserProfilebyId(Resource):
@@ -581,12 +581,16 @@ class GetUserProfilebyId(Resource):
         token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         user_sql = f"SELECT * FROM User WHERE UserId={user_id};"
+        book_sql = f"SELECT BookingID FROM Booking WHERE UserId={user_id};"
         user_info = sql_command(user_sql)[0]
+        bood_info = sql_command(book_sql)
+        booking_lst = [info[0] for info in bood_info]
         output = {"UserId": user_id,
                   "Nickname": user_info[1],
                   "Email": user_info[2],
                   "Password": user_info[3],
-                  "FavouriteId": user_info[4]
+                  "FavouriteId": user_info[4],
+                  "BookingId": booking_lst
                   }
 
         return output, 200
@@ -595,25 +599,27 @@ class GetUserProfilebyId(Resource):
     def put(self):
         data = json.loads(request.get_data())
         token = token_parser.parse_args()['Authorization']
+        user_id = get_user_id_by_token(token)
         if token is None:
             output = {
-                "message": "Invalid input"
+                "message": "Invalid Input"
             }
             return output, 400
-        user_info = decode_token(token)
-        sql = '''UPDATE User SET UserId = {}, 
-                                 Nickname = '{}', 
-                                 Email = '{}', 
-                                 Password = '{}', 
-                                 FavouriteId = '{}'
-                WHERE UserId = {}'''. \
-            format(data['UserId'],
-                   data['Nickname'],
-                   data['Email'],
+        if data['password'] == '':
+            sql = '''UPDATE User SET Nickname = '{}', 
+                    WHERE UserId = {}'''. \
+                format(data['Nickname'],
+                       user_id)
+        else:
+           sql = '''UPDATE User SET
+                             Nickname = '{}', 
+                             Password = '{}', 
+            WHERE UserId = {}'''. \
+            format(data['Nickname'],
                    data['Password'],
-                   data['FavouriteId'],
-                   data['UserId'])
+                   user_id)
         sql_command(sql)
+
         output = {
             "message": "success"
         }
@@ -751,17 +757,26 @@ class org(Resource):
         if len(output_org)==0:
             return 404, 'Not Found'
         org_info = output_org[0]
-        orgname=org_info[3]
-        orgtype=org_info[4]
-        logo=org_info[5]
-        contact=org_info[6]
-        orgintro=org_info[7]
-        detail=org_info[8]
-        video=org_info[9]
-        servicelist=org_info[10]
-        servicelist=servicelist.split(',')
-        website=org_info[11]
-        otherevent=org_info[12].split(',')
+
+        orgname=org_info[3].replace("\n",'')
+
+        orgtype=org_info[4].replace("\n",'')
+
+        logo=org_info[5].replace("\n",'')
+
+        contact=org_info[6].replace("\n",'')
+
+        orgintro=org_info[7].replace("\n",'')
+
+        detail=org_info[8].replace("\n",'')
+
+        video=org_info[9].replace("\n",'')
+        servicelist=org_info[10].replace("\n",'')
+        servicelist=servicelist.replace("\n",'').split(',')
+
+        website=org_info[11].replace("\n",'')
+
+        otherevent=org_info[12].replace("\n",'').split(',')
         output={
             'oId':orgid,
             'organizationName':orgname,
