@@ -97,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
   imgStyle: {
     height: '100%',
     width: '100%',
-    objectFit: 'cover',
+    objectFit: 'contain',
   },
   imgBoxLabel: {
     marginTop: '8px',
@@ -315,7 +315,6 @@ function EventForm({
         <Typography className={classes.centerStyle}>
           All fields are required.
         </Typography>
-        <Button onClick={() => setOpen(true)}>open</Button>
         <SuccessDialog
           open={open}
           setOpen={setOpen}
