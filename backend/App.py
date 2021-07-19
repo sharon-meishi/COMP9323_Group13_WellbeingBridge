@@ -771,25 +771,27 @@ class org(Resource):
             return 404, 'Not Found'
         org_info = output_org[0]
 
-        orgname=org_info[3].replace("\n",'')
+        orgname=value_check(org_info,3)
+        orgtype=value_check(org_info,4)
+        logo=value_check(org_info,5)
+        contact=value_check(org_info,6)
+        orgintro=value_check(org_info,7)
+        detail=value_check(org_info,8)
+        video=value_check(org_info,9)
 
-        orgtype=org_info[4].replace("\n",'')
+        if org_info[10] !=None:
+            servicelist=org_info[10]
+            servicelist=servicelist.replace("\n",'').split(',')
+        else:
+            servicelist=None
+        website=value_check(org_info,11)
 
-        logo=org_info[5].replace("\n",'')
-
-        contact=org_info[6].replace("\n",'')
-
-        orgintro=org_info[7].replace("\n",'')
-
-        detail=org_info[8].replace("\n",'')
-
-        video=org_info[9].replace("\n",'')
-        servicelist=org_info[10].replace("\n",'')
-        servicelist=servicelist.replace("\n",'').split(',')
-
-        website=org_info[11].replace("\n",'')
-
-        otherevent=org_info[12].replace("\n",'').split(',')
+        otherlist=[]
+        if org_info[12] !=None:
+            otherevent=org_info[12].replace("\n",'').split(',')
+            for i in otherevent:
+                otherlist.append(int(i))
+        
         output={
             'oId':orgid,
             'organizationName':orgname,
@@ -801,8 +803,13 @@ class org(Resource):
             "video":video,
             "serviceList":servicelist,
             "websiteLink":website,
-            "otherEvents":otherevent
+            "otherEvents":otherlist
         }
+
+        for key in list(output.keys()):
+            if not output.get(key):
+                del output[key]
+
         return output,200
 
     @api.expect(org_model)
@@ -860,6 +867,11 @@ class comment(Resource):
         except:
             return {"message": 'Wrong ID. Please try again.'}, 400
 
+def value_check(org_info,i):
+    result=None
+    if org_info[i] !=None:
+        result=org_info[i].replace("\n",'')
+    return result
 
 
 if __name__ == "__main__":
