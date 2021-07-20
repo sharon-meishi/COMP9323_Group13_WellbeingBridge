@@ -225,7 +225,7 @@ function EventDetailsPage({match}) {
                 What time: {detail.time}
               </Typography>
               <Typography variant="body1" className={classes.org}>
-                {/* Where: {detail.location.venue}<br/>{detail.location.street}<br/>{detail.location.suburb} */}
+                Where: {detail.location ? detail.location.address : ''}
               </Typography>
             </Grid>
             <Grid className={classes.intro}>
