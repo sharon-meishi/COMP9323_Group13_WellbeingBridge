@@ -11,7 +11,11 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import { getEventSummary } from './api';
+import { getEventSummary, likeEvent, unlikeEvent } from './api';
+import { useHistory } from 'react-router-dom';
+import LoginModal from '../components/LoginModal';
+import RegisterModal from '../components/RegisterModal';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.2rem',
     textDecoration: 'underline',
     fontWeight: 400,
+    '&:hover':{
+      cursor:'pointer',
+    }
   },
   location: {
     fontSize: '0.9rem',
@@ -64,19 +71,70 @@ function EventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);
   const preventDefault = (event) => event.preventDefault();
+  const [islike, setIslike] = React.useState(false);
+  const history = useHistory();
+  const [openLogin, setOpenLogin] = React.useState(false);
+  const [openRegister, setOpenRegister] = React.useState(false);
+  const token = sessionStorage.getItem('token');
   useEffect(() => {
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
         setInfo(res[1]);
+        console.log(res[1]);
+        console.log(res[1].favourite);
+        if(res[1].favourite){
+          console.log('initial liked')
+          setIslike(true);
+        }
       }
     };
     fetchData();
   }, []);
 
-
+  const checkDetail = ()=>{
+    history.push(`/event/${props.eventId}`);
+  }
+  const handleLike = async ()=>{
+    if (!token){
+      setOpenLogin(true);
+    }
+    if (islike){
+      console.log('now it is liked');
+      const res = await unlikeEvent(props.eventId);
+      if (res[0] === 200){
+        setIslike(false);
+        console.log('unlike success');
+      }else{
+        console.log('unlike error');
+      }
+    }else{
+      console.log('now it is not liked');
+      const res = await likeEvent(props.eventId);
+      if (res[0] === 200){
+        setIslike(true);
+        console.log('like success');
+      }else{
+        console.log('like error');
+      }
+    }
+  }
   return info ? (
     <Card className={classes.root}>
+      {openLogin ? (
+        <LoginModal
+          open={openLogin}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
+      {openRegister ? (
+        <RegisterModal
+          open={openRegister}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
       <CardMedia
         className={classes.media}
         image={info.thumbnail}
@@ -86,7 +144,7 @@ function EventCard(props) {
       <Box display='flex' flexDirection='column' height='100%' justifyContent='space-between'>
       <CardContent>
         <Grid container direction='column'>
-          <Typography className={classes.title}>{info.name}</Typography>
+          <Typography onClick={checkDetail}className={classes.title}>{info.name}</Typography>
           <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
             <Typography className={classes.date} color='textSecondary'>
               {info.date}
@@ -103,8 +161,10 @@ function EventCard(props) {
       </CardContent>
 
       <CardActions className={classes.actions} disableSpacing>
-        <IconButton aria-label='add to favorites'>
-          <FavoriteIcon />
+        <IconButton onClick={handleLike} aria-label='add to favorites'>
+          {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
+                  :<FavoriteIcon color="disabled" fontSize='medium'/>
+          }
         </IconButton>
         <IconButton aria-label='share'>
           <ShareIcon />

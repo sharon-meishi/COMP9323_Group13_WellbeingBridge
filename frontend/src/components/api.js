@@ -99,23 +99,54 @@ export const createEventRequest = async (uploadBody) => {
   }
 };
 
-export const getEventDetails = async (eventId) => {
-  const url = baseUrl + `/event/${eventId}`;
+export const getEventSummary = async (eventId) => {
+  const url = baseUrl + `/event/${eventId}/summary`;
   let headers = {};
   if (sessionStorage.getItem('token')) {
+    console.log(`token included:${sessionStorage.getItem('token')}`);
     headers = {
+      accept: 'application/json',
       Authorization: `${sessionStorage.getItem('token')}`,
       'content-Type': 'application/json',
     };
   } else {
     headers = {
+      accept: 'application/json',
       'content-Type': 'application/json',
     };
   }
   try {
     const res = await axios.get(
       url,
-      {},
+      {
+        headers: headers,
+      }
+    );
+    return [res.status, res.data];
+  } catch (error) {
+    return [error.response.status,error.response.data.message];
+  }
+};
+
+export const getEventDetails = async (eventId) => {
+  const url = baseUrl + `/event/${eventId}`;
+  let headers = {};
+  if (sessionStorage.getItem('token')) {
+    console.log(`token included:${sessionStorage.getItem('token')}`);
+    headers = {
+      accept: 'application/json',
+      Authorization: `${sessionStorage.getItem('token')}`,
+      'content-Type': 'application/json',
+    };
+  } else {
+    headers = {
+      accept: 'application/json',
+      'content-Type': 'application/json',
+    };
+  }
+  try {
+    const res = await axios.get(
+      url,
       {
         headers: headers,
       }
@@ -172,15 +203,37 @@ export const getPopularEventId = async () => {
   }
 };
 
-export const getEventSummary = async (eventId) => {
-  const url = baseUrl + `/event/${eventId}/summary`;
+
+
+// export const getEventDetail = async (data) => {
+//   console.log(data);
+//   const url = baseUrl + `/event/${data[0]}`;
+//   try {
+//     const res = await axios.get(url, {
+//       headers: {
+//         accept: 'application/json',
+//         'content-Type': 'application/json',
+//         Authorization: `${sessionStorage.getItem('token')}`,
+//       },
+//     });
+//     return [res.status, res.data];
+//   } catch (error) {
+//     return [error.response.status,error.response.data.message];
+//   }
+// };
+
+export const likeEvent = async (data) => {
+  console.log(data);
+  const url = baseUrl + `/event/${data}/favourite`;
   try {
-    const res = await axios.get(url, {
+    const res = await axios.put(url, {},{
       headers: {
         accept: 'application/json',
         'content-Type': 'application/json',
+        Authorization:`${sessionStorage.getItem('token')}`,
       },
     });
+
     return [res.status, res.data];
   } catch (error) {
     console.log(error);
@@ -192,40 +245,59 @@ export const getEventSummary = async (eventId) => {
   }
 };
 
-export const getEventDetail = async (data) => {
+export const unlikeEvent = async (data) => {
   console.log(data);
-  const url = baseUrl + `/event/${data[0]}`;
+  const url = baseUrl + `/event/${data}/unfavourite`;
   try {
-    const res = await axios.get(url, {
+    const res = await axios.put(url, {},{
       headers: {
         accept: 'application/json',
         'content-Type': 'application/json',
+        Authorization:`${sessionStorage.getItem('token')}`,
       },
     });
+
     return [res.status, res.data];
   } catch (error) {
     return [error.response.status, error.response.data.message];
   }
 };
 
-export const likeEvent = async (data) => {
+export const bookEvent = async (data) => {
   console.log(data);
-  const url = baseUrl + `/event/${data[1]}/favourite`;
+  const url = baseUrl + `/event/${data}/book`;
   try {
-    const res = await axios.put(url, {
+    const res = await axios.put(url, {},{
       headers: {
         accept: 'application/json',
         'content-Type': 'application/json',
-        token: data[0],
-        eventid: data[1],
+        Authorization:`${sessionStorage.getItem('token')}`,
       },
     });
+
     return [res.status, res.data];
   } catch (error) {
     return [error.response.status, error.response.data.message];
   }
 };
 
+export const unbookEvent = async (data) => {
+  console.log(data);
+  const url = baseUrl + `/event/${data}/unbook`;
+  try {
+    const res = await axios.put(url, {},{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+        Authorization:`${sessionStorage.getItem('token')}`,
+      },
+    });
+
+    return [res.status, res.data];
+  } catch (error) {
+    return [error.response.status,error.response.data.message];
+  }
+};
 export const getUserProfile = async () => {
   const url = baseUrl + '/user/profile';
   console.log(sessionStorage.getItem('token'));
