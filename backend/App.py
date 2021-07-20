@@ -428,8 +428,7 @@ org_model = api.model("org", {
     "details": fields.String,
     "video": fields.String,
     "serviceList": fields.String,
-    "websiteLink": fields.String,
-    "otherEvents": fields.String,
+    "websiteLink": fields.String
 })
 
 @api.route("/event", doc={"description": "publish details of an event"})
@@ -787,11 +786,16 @@ class org(Resource):
         website=value_check(org_info,11)
 
         otherlist=[]
-        if org_info[12] !=None:
-            otherevent=org_info[12].replace("\n",'').split(',')
-            for i in otherevent:
-                otherlist.append(int(i))
-        
+
+        event_sql_list=f"select EventId from Event inner join Organization on (Event.OrganizationId=Organization.OrganizationId) where Organization.OrganizationId={orgid};"
+        popular_list_top3=[]
+        result_event=sql_command(event_sql_list)
+        if len(result_event)>0:
+            for i in result_event:
+                otherlist.append(i[0])
+            else:
+                popular_list_top3=None
+
         event_popular={}
         for i in otherlist:
             event_sql=f'select count(userId) from Booking inner join Event on (Booking.EventId=Event.EventId) where Event.Eventid ={i};'
@@ -801,7 +805,6 @@ class org(Resource):
 
         new_dic=zip(event_popular.keys(),event_popular.values())
         new_dic=sorted(new_dic)
-        popular_list_top3=[]
         for i in new_dic:
             popular_list_top3.append(i[0])
             if len(popular_list_top3)>=3:
@@ -847,8 +850,7 @@ class org(Resource):
             Details='{data['details']}',\
             VideoUrl='{data['video']}',\
             ServiceList='{data['serviceList']}',\
-            WebsiteLink='{data['websiteLink']}',\
-            otherEvents='{data['otherEvents']}' WHERE OrganizationId={orgid};"
+            WebsiteLink='{data['websiteLink']}' WHERE OrganizationId={orgid};"
         sql_command(update_sql)
         output = {
                 "message": "Success"
