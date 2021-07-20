@@ -75,13 +75,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileTabMenu() {
+function ProfileTabMenu({FavEvents}) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+
   return (
     <div className={classes.root}>
       <AppBar position='static' className={classes.appBarStyle}>
@@ -111,7 +113,7 @@ function ProfileTabMenu() {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        My Favourites
+        My Favourites {FavEvents}
       </TabPanel>
       <TabPanel value={value} index={1}>
         My Bookings

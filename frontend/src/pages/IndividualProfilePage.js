@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import BackToTop from '../components/BackToTop';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,10 +6,9 @@ import Alert from '@material-ui/lab/Alert';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import { Typography } from '@material-ui/core';
-import ProfileTabMenu from '../components/ProfileTabMenu';
+import Typography from '@material-ui/core/Typography';
+import ProfileTabMenu from '../components/IndividualProfilePage/ProfileTabMenu';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { useHistory } from 'react-router-dom';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Divider from '@material-ui/core/Divider';
@@ -71,6 +70,9 @@ function IndividualUserProfilePage() {
         console.log(Data[1]);
         setProfileData(Data[1]);
       }
+      else{
+        setErrorMsg(Data[1]);
+      }
     };
     fetchData();
   }, []);
@@ -88,7 +90,7 @@ function IndividualUserProfilePage() {
                 Edit your nickname or password
               </Typography>
             </DialogContent>
-            <ProfileEditForm />
+            <ProfileEditForm currentName={profileData.Nickname} setOpen={setOpen}/>
           </Dialog>
           <Grid
             container
@@ -110,7 +112,7 @@ function IndividualUserProfilePage() {
               <Box display='flex' flexDirection='column' width='100%' mb={4}>
                 <Box display='flex' justifyContent='space-between' mb={3}>
                   <Typography variant='h4' className={classes.fontStyle}>
-                    Sharon
+                    {profileData.Nickname}
                   </Typography>
                   <Button
                     variant='outlined'
@@ -124,11 +126,11 @@ function IndividualUserProfilePage() {
                 <Divider />
                 <Box display='flex' justifyContent='space-between' mt={3}>
                   <Typography className={classes.fontStyle}>Email:</Typography>
-                  <Typography>meishichen1106@gmail.com</Typography>
+                  <Typography>{profileData.Email}</Typography>
                 </Box>
               </Box>
               <Grid container item>
-                <ProfileTabMenu />
+                <ProfileTabMenu FavEvents={profileData.FavouriteId} BookEvents={profileData.BookingId}/>
               </Grid>
             </Grid>
           </Grid>

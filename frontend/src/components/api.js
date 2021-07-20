@@ -18,7 +18,12 @@ export const loginRequest = async (data) => {
     });
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status, error.response.data.message];
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };
 
@@ -37,7 +42,12 @@ export const registerRequest = async (data) => {
     });
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status, error.response.data.message];
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };
 
@@ -60,7 +70,11 @@ export const organizationApplyRequest = async (data) => {
     return [res.status, res.data];
   } catch (error) {
     console.log(error);
-    return [error.response.status, error.response.data.message];
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };
 
@@ -180,7 +194,12 @@ export const getPopularEventId = async () => {
     });
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };
 
@@ -217,7 +236,12 @@ export const likeEvent = async (data) => {
 
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };
 
@@ -235,7 +259,7 @@ export const unlikeEvent = async (data) => {
 
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    return [error.response.status, error.response.data.message];
   }
 };
 
@@ -253,7 +277,7 @@ export const bookEvent = async (data) => {
 
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    return [error.response.status, error.response.data.message];
   }
 };
 
@@ -275,36 +299,35 @@ export const unbookEvent = async (data) => {
   }
 };
 export const getUserProfile = async () => {
-  const url =  baseUrl + '/user/profile';
-  console.log(sessionStorage.getItem('token'))
-  const headers = {
-    Authorization: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MjcyMzU1MDIsImVtYWlsIjoibWVpc2hpQGdtYWlsLmNvbSIsInR5cGUiOiJpbmRpdmlkdWFsIn0.-bJY1MfhSdGuVfJ1rDIASATzev9Vf_dHJ1rreYtQO-E',
-    'content-Type': 'application/json',
-    'accept': 'application/json'
-  };
-  try {
-    const res = await axios.get(url, {}, {
-      headers: headers,
-    });
-    return [res.status, ''];
-  } catch (error) {
-    console.log(error);
-    if (error.response) {
-      return [error.response.status, error.response.data.message];
-    } else {
-      return [error, ''];
-    }
-  }
-}
-
-export const updateUserProfile = async () => {
-  const url =  baseUrl + '/user/profile';
+  const url = baseUrl + '/user/profile';
+  console.log(sessionStorage.getItem('token'));
   const headers = {
     Authorization: `${sessionStorage.getItem('token')}`,
     'content-Type': 'application/json',
   };
   try {
-    const res = await axios.put(url, {}, {
+    const res = await axios.get(url, {
+      headers: headers,
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const updateUserProfile = async (updateBody) => {
+  const url = baseUrl + '/user/profile';
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.put(url, updateBody, {
       headers: headers,
     });
     return [res.status, ''];
@@ -316,4 +339,76 @@ export const updateUserProfile = async () => {
       return [error, ''];
     }
   }
-}
+};
+
+export const getOrganizationProfile = async (oId) => {
+  const url = baseUrl + `/organization/profile/${oId}`;
+  console.log(sessionStorage.getItem('token'));
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.get(url, {
+      headers: headers,
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const updateOrganizationProfile = async (oId, updateBody) => {
+  const url = baseUrl + `/organization/profile/${oId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.put(url, updateBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const getOrganizationDetails = async (oId) => {
+  const url = baseUrl + `/organization/${oId}`;
+  console.log(sessionStorage.getItem('token'))
+  let headers = {};
+  if (sessionStorage.getItem('token')) {
+    headers = {
+      Authorization: `${sessionStorage.getItem('token')}`,
+      'content-Type': 'application/json',
+    };
+  } else {
+    headers = {
+      'content-Type': 'application/json',
+    };
+  }
+  try {
+    const res = await axios.get(url, {
+      headers: headers,
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
