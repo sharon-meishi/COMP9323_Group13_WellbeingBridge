@@ -76,6 +76,7 @@ function EventCard(props) {
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
   const token = sessionStorage.getItem('token');
+  
   useEffect(() => {
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
