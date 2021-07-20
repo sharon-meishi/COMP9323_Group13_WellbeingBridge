@@ -792,6 +792,21 @@ class org(Resource):
             for i in otherevent:
                 otherlist.append(int(i))
         
+        event_popular={}
+        for i in otherlist:
+            event_sql=f'select count(userId) from Booking inner join Event on (Booking.EventId=Event.EventId) where Event.Eventid ={i};'
+            event_number=sql_command(event_sql)[0][0]
+            number=int(event_number)
+            event_popular[i]=number
+
+        new_dic=zip(event_popular.keys(),event_popular.values())
+        new_dic=sorted(new_dic)
+        popular_list_top3=[]
+        for i in new_dic:
+            popular_list_top3.append(i[0])
+            if len(popular_list_top3)>=3:
+                break
+        
         output={
             'oId':orgid,
             'organizationName':orgname,
@@ -803,12 +818,8 @@ class org(Resource):
             "video":video,
             "serviceList":servicelist,
             "websiteLink":website,
-            "otherEvents":otherlist
+            "otherEvents":popular_list_top3
         }
-
-        for key in list(output.keys()):
-            if not output.get(key):
-                del output[key]
 
         return output,200
 
