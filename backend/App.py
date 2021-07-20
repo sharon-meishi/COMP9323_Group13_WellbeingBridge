@@ -109,7 +109,7 @@ class OrganizationRegister(Resource):
                 return output, 403
             else:
                 organization_id = 0
-                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}',NULL,'{}','{}',NULL,NULL,NULL,NULL,NULL);". \
+                sql = "INSERT INTO Organization VALUES ({},'{}', '{}', '{}', '{}',NULL,'{}','{}',NULL,NULL,NULL,NULL);". \
                     format(organization_id, email, password, organization_name, organization_type, contact,
                            introduction)
                 sql_command(sql)
@@ -782,7 +782,7 @@ class org(Resource):
             servicelist=org_info[10]
             servicelist=servicelist.replace("\n",'').split(',')
         else:
-            servicelist=None
+            servicelist=[]
         website=value_check(org_info,11)
 
         otherlist=[]
@@ -793,8 +793,8 @@ class org(Resource):
         if len(result_event)>0:
             for i in result_event:
                 otherlist.append(i[0])
-            else:
-                popular_list_top3=None
+            # else:
+            #     popular_list_top3=None
 
         event_popular={}
         for i in otherlist:

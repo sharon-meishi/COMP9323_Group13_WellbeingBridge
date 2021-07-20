@@ -40,13 +40,12 @@ def create_database():
   `VideoUrl` varchar(256) DEFAULT NULL,
   `ServiceList` TEXT DEFAULT NULL,
   `WebsiteLink` TEXT DEFAULT NULL,
-  `otherEvents` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`OrganizationId`));'''
 
     insert_organization = '''
     INSERT INTO Organization 
     (OrganizationId,Email,Password,OrganizationName,OrganizationType,
-    Logo,Contact,Introduction,Details,VideoUrl,ServiceList,WebsiteLink,otherEvents) 
+    Logo,Contact,Introduction,Details,VideoUrl,ServiceList,WebsiteLink) 
     VALUES (0, "wellbeing@org.com", "abcd", "HeadSpace", "Youth",
     "https://sydneynorthhealthnetwork.org.au/wp-content/uploads/2016/04/Headspace-logo.png",
     "headspace@newhorizons.net.au",
@@ -54,7 +53,7 @@ def create_database():
     "Headspace is the National Youth Mental Health Foundation providing early intervention mental health services to 12-25 year olds, along with assistance in promoting young peoples’ wellbeing.",
     "https://youtu.be/DxIDKZHW3-E",
     'mental health counselling,education support,employment support,alcohol and other drug services', 
-    "https://headspace.org.au","1,2,3"), 
+    "https://headspace.org.au"), 
 
     (0, 'test@org.com', 'abcd', "My Aged Care", "Seniors", 
     "https://www.myagedcare.gov.au/themes/custom/myagedcare/logo.png",
@@ -62,7 +61,7 @@ def create_database():
      "My Aged Care will offer: prompt, reliable and confidential services; polite, helpful and knowledgeable staff; clear information, available in other languages if you speak another language; support to access information if you have hearing difficulties or a vision impairment; help to find government funded aged care services; prompt resolution of any complaint or concern you have with My Aged Care.", 
     "https://youtu.be/QkWMK7gDVkw", 
     'Information on the different types of aged care services available,An assessment of needs to identify eligibility and the right type of care,Referrals and support to find service providers that can meet your needs,Information on what you might need to pay towards the cost of your care', 
-    "https://www.myagedcare.gov.au", "1,2,3"), 
+    "https://www.myagedcare.gov.au"), 
 
     (0, '9323@org.com', 'abcd', "House to Grow", "Education", 
     "https://brizy.b-cdn.net/media/iW=70&iH=80&oX=0&oY=0&cW=70&cH=80/d1073b4eea3ad956e7750133d6091c22.png", 
@@ -70,7 +69,7 @@ def create_database():
     "House to Grow is a not-for-profit organisation that empowers vulnerable children in unhealthy environments and women affected by domestic violence through personal development, education for life and holistic health. We try not to limit who can come to us, we encourage and support any individual that seeks personal development, education for life and holistic health. We also deliver educational programs to organisations, community groups and people in need. ", 
     "https://www.youtube.com/watch?v=mxz8KyV3Ydc", 
     'Colouring Dreams - Creating an environment for children to dream,Growing Healthy International Students - More Self improvement for better societies,The Flight of the Butterflies - Empowering women, Building Emotionally Intelligent Communities - Get your volunteers ready for tomorrow’s job', 
-    "https://www.housetogrow.org", '1,2,3'); '''
+    "https://www.housetogrow.org"); '''
     event_table = '''
     CREATE TABLE IF NOT EXISTS `Event` (
   `EventId` int NOT NULL AUTO_INCREMENT,
@@ -95,7 +94,7 @@ def create_database():
     INSERT INTO Event
   (EventId,EventName,OrganizationId,OrganizationName,Thumbnail,Format,Category,Postcode,Address,Lat,
   Lng,Date,Time,Introduction,Details)
-VALUES(0,"Kids Yoga Class",2,"Innerwest Council" ,
+VALUES(0,"Kids Yoga Class",1,"HeadSpace" ,
 "https://www.indianyoga.school/public/uploads/gallery/kids-yoga-ttc.jpg","Class","Health and fitness",
 "ASHFIELD, NSW 2131","Ashfield Park, Parramatta Rd, Ashfield NSW, Australia","-33.884895","151.135696",
 "14-07-2021",
