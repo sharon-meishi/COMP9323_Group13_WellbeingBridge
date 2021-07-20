@@ -68,7 +68,6 @@ function EventEditPage(props) {
   }, [eventId]);
 
   
-
   return (
     <>
       <BackToTop showBelow={250} />
