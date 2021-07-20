@@ -88,6 +88,7 @@ const useStyles = makeStyles((theme) => ({
 export default function VerticalTabs({profileData}) {
   const classes = useStyles();
   const [value, setValue] = useState(0);
+  const [preloadValue, setPreloadValue] = useState({})
   const [details, setDetails] = useState('')
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -102,6 +103,17 @@ export default function VerticalTabs({profileData}) {
       if (Data[0] === 200){
         console.log(Data[1]);
         setDetails(Data[1])
+        const processedData = {
+          organizationName: Data[1].organizationName,
+          logo: Data[1].logo,
+          details: Data[1].details,
+          introduction: Data[1].introduction,
+          organizationType: Data[1].organizationType,
+          serviceList: Data[1].serviceList,
+          video: Data[1].video,
+          websiteLink: Data[1].websiteLink,
+        }
+        setPreloadValue(processedData)
       }
       else{
         setErrorMsg(Data[1])
@@ -142,7 +154,7 @@ export default function VerticalTabs({profileData}) {
       <EventDisplay profileData={profileData}/>
       </TabPanel>
       <TabPanel value={value} index={2} className={classes.tabpanel}>
-      <OrganizationForm profileData={profileData}/>
+      <OrganizationForm profileData={profileData} preloadValue={preloadValue}/>
       </TabPanel>
       <TabPanel value={value} index={3} className={classes.tabpanel}>
         <Box display='flex' justifyContent='center' alignItems='center' width='100%' flexDirection='column'>
