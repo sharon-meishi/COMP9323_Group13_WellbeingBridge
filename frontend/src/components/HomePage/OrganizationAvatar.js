@@ -20,7 +20,8 @@ const useStyles = makeStyles((theme) => ({
   linkStyle: {
     fontFamily: `'Gill Sans', 'Roboto'`,
     fontWeight: '500',
-    fontSize: '18px'
+    fontSize: '18px',
+    textAlign: 'center'
   }
 }));
 function OrganizationAvatar({ alt, src, title }) {

@@ -14,7 +14,7 @@ import EventEditPage from './pages/EventEditPage';
 import EventCreatePage from './pages/EventCreatePage';
 import OrganizationApplyPage from './pages/OrganizationApplyPage';
 import OrganizationDashboardPage from './pages/OrganizationDashboardPage';
-import OrganizationHomePage from './pages/OrganizationHomePage'
+import OrganizationHomePage from './pages/OrganizationHomePage';
 import IndividualProfilePage from './pages/IndividualProfilePage';
 
 function App() {
@@ -46,26 +46,22 @@ function App() {
             />
             <Route exact path='/event/:eventId' component={EventDetailsPage} />
 
-            <Route
-              exact
-              path='/profile'
-              component={IndividualProfilePage}
-            />
+            <Route exact path='/profile' component={IndividualProfilePage} />
             <Route
               exact
               path='/dashboard'
               component={OrganizationDashboardPage}
+            />
+            <Route
+              exact
+              path='/organization/apply'
+              component={OrganizationApplyPage}
             />
 
             <Route
               exact
               path='/organization/:oId'
               component={OrganizationHomePage}
-            />
-            <Route
-              exact
-              path='/organization/apply'
-              component={OrganizationApplyPage}
             />
 
             <Redirect to='/home' />

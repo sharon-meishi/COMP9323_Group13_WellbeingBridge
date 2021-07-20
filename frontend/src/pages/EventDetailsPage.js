@@ -1,6 +1,8 @@
 import React from 'react';
 import NavBar from '../components/NavBar';
-import { getEventDetail, likeEvent } from '../components/api';
+import LoginModal from '../components/LoginModal';
+import RegisterModal from '../components/RegisterModal';
+import { getEventDetails, likeEvent, unlikeEvent, bookEvent, unbookEvent } from '../components/api';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
@@ -10,7 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
 import CardActions from '@material-ui/core/CardActions';
-
+import { green } from '@material-ui/core/colors';
 
 const useStyles = makeStyles({
   card: {
@@ -42,16 +44,26 @@ const useStyles = makeStyles({
     alignItems:'start',
   },
   isbook:{
+    '&:hover': {
+      backgroundColor: '#166b3d',
+      // boxShadow: 'none',
+    },
     color:'white',
     backgroundColor:'green',
     height:'35px',
-    margin:'1.5% 3%',
+    margin:'1.5% 10%',
   },
   notbook:{
     color:'green',
     borderColor:'green',
+    // backgroundColor:'green',
+
     height:'35px',
-    margin:'1.5% 3%',
+    margin:'1.5% 10%',
+  },
+  notfavourite:{
+    backgroundColor:'white',
+    borderWidth:'1px',
   },
   photo:{
     overflow:'hidden',
@@ -95,46 +107,92 @@ function EventDetailsPage({match}) {
   const [detail, setDetail] = React.useState({});
   const [islike, setIslike] = React.useState(false);
   const [isbook, setIsbook] = React.useState(false);
+  const [openLogin, setOpenLogin] = React.useState(false);
+  const [openRegister, setOpenRegister] = React.useState(false);
+
   const token = sessionStorage.getItem('token');
   console.log(token);
   const getEvent = async ()=>{
-    const res = await getEventDetail([eventId]);
+    const res = await getEventDetails(eventId);
     if (res[0] === 200){
-      console.log(res[1]);
       setDetail(res[1]);
-      if(res[1].favorite){
+      console.log(res[1]);
+      if(res[1].favourite){
+          console.log('initial liked')
           setIslike(true);
       }
       if(res[1].booked){
         console.log('initial booked')
         setIsbook(true);
-    }
+      }
     }
   }
   console.log(detail.OrganizationName);
   React.useEffect(()=>getEvent(),[]);
-  const handleLike = ()=>{
-      if (islike){
+  
+  const handleLike = async ()=>{
+    if (!token){
+      setOpenLogin(true);
+    }
+    if (islike){
+      console.log('now it is liked');
+      const res = await unlikeEvent(eventId);
+      if (res[0] === 200){
         setIslike(false);
-        console.log('set like false');
+        console.log('unlike success');
       }else{
+        console.log('unlike error');
+      }
+    }else{
+      console.log('now it is not liked');
+      const res = await likeEvent(eventId);
+      if (res[0] === 200){
         setIslike(true);
-        console.log('set like true');
-      }
-      likeEvent([token,eventId]);
-  }
-  const handleBook = ()=>{
-      if (isbook){
-        setIsbook(false);
-        console.log('set like false');
+        console.log('like success');
       }else{
-        setIsbook(true);
-        console.log('set like true');
+        console.log('like error');
       }
+    }
+  }
+  const handleBook = async ()=>{
+    if (!token){
+      setOpenLogin(true);
+    }
+    if (isbook){
+      const res = await unbookEvent(eventId);
+      if (res[0] === 200){
+        setIsbook(false);
+        console.log('set unbook success');
+      }else{
+        console.log('set unbook error');
+      }
+    }else{
+      const res = await bookEvent(eventId);
+      if (res[0] === 200){
+        setIsbook(true);
+        console.log('set book success');
+      }else{
+        console.log('set book error');
+      }
+    }
   }
   return (
     <div>
       <NavBar />
+      {openLogin ? (
+        <LoginModal
+          open={openLogin}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
+      {openRegister ? (
+        <RegisterModal
+          open={openRegister}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
       <Card className={classes.card}>
         {/* <CardContent> */}
         <Grid className={classes.top}>
@@ -146,14 +204,14 @@ function EventDetailsPage({match}) {
               <CardActions className={classes.actions} disableSpacing>
                 <IconButton className={classes.like} onClick={handleLike} aria-label='add to favorites'>
                   {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
-                         :<FavoriteIcon fontSize='medium'/>
+                         :<FavoriteIcon color="disabled" fontSize='medium'/>
                   }
                 </IconButton>
-                <IconButton className={classes.book} onClick={handleBook} aria-label='add to favorites'>
+                <div className={classes.book} onClick={handleBook} aria-label='add to favorites'>
                   {isbook?<Button variant="contained" className={classes.isbook}>UNBOOK</Button>
                          :<Button variant="outlined" className={classes.notbook}>BOOK</Button>
                   }
-                </IconButton>
+                </div>
             </CardActions>
             </Grid>
             <Typography variant="body1" className={classes.org}>
@@ -167,7 +225,7 @@ function EventDetailsPage({match}) {
                 What time: {detail.time}
               </Typography>
               <Typography variant="body1" className={classes.org}>
-                {/* Where: {detail.location.venue}<br/>{detail.location.street}<br/>{detail.location.suburb} */}
+                Where: {detail.location ? detail.location.address : ''}
               </Typography>
             </Grid>
             <Grid className={classes.intro}>

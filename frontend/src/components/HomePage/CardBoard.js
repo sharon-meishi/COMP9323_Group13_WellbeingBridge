@@ -51,7 +51,6 @@ const CardBoard = () => {
       console.log('something wrong in CardBoard');
     }
   };
-
   useEffect(() => fetchOrigin(), []);
 
   return (

@@ -3,8 +3,8 @@ import { useForm, Controller } from 'react-hook-form';
 import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import { updateOrganizationProfile, updateUserProfile} from '../components/api';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     paddingTop: '15px',
+    width: '50%'
   },
   buttonStyle: {
     fontSize: '15px',
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileEditForm({ preloadedValues }) {
+function ProfileEditForm({ currentName, oId}) {
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -45,19 +46,52 @@ function ProfileEditForm({ preloadedValues }) {
     getValues,
     formState: { errors },
   } = useForm({
-    defaultValues: preloadedValues,
+    defaultValues: {
+      name: currentName,
+    },
   });
 
   const onSubmit = async (data) => {
-      console.log(data)
-      reset();
-  }
+    console.log(data);
 
+    const updateProfile = async() => {
+      let Data;
+      if (oId){
+        const updateBody = {
+          organizationName: data.name,
+          password: data.password || ''
+        }
+        console.log(updateBody)
+        Data = await updateOrganizationProfile(oId, updateBody)
+      } else {
+        const updateBody = {
+          Nickname: data.name,
+          Password: data.password || ''
+        }
+        console.log(updateBody)
+        Data = await updateUserProfile(updateBody)
+      }
+      if (Data[0] === 200) {
+        setSuccessMsg('Your profile has been updated successfully!')
+        reset({name: data.name})
+        sessionStorage.setItem('name',data.name)
+      } else{
+        setErrorMsg('Something Wrong, please try again')
+        setSuccessMsg('');
+      }
+    }
+    updateProfile()
+  };
+
+  
   return (
     <>
       {errorMsg ? <Alert severity='error'>{errorMsg}</Alert> : null}
-      {successMsg ? <Alert severity='success'>{errorMsg}</Alert> : null}
-      <form className={classes.backgroundStyle} onSubmit={handleSubmit(onSubmit)}>
+      {successMsg ? <Alert severity='success'>{successMsg}</Alert> : null}
+      <form
+        className={classes.backgroundStyle}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <section className={classes.formStyle}>
           <label>
             {sessionStorage.getItem('usergroup') === 'individual'
@@ -73,6 +107,7 @@ function ProfileEditForm({ preloadedValues }) {
                 variant='outlined'
                 size='small'
                 margin='dense'
+                required
               />
             )}
             name='name'
@@ -114,15 +149,17 @@ function ProfileEditForm({ preloadedValues }) {
             name='confirmpassword'
             control={control}
             rules={{
-              matchesPreviousPassword: (value) => {
-                const { password } = getValues();
-                return password === value || 'Passwords should match';
+              validate: {
+                matchesPreviousPassword: (value) => {
+                  const { password } = getValues();
+                  return password === value || 'Passwords should match';
+                },
               },
             }}
           />
         </section>
-        {errors?.EndDate?.type === 'matchesPreviousPassword' && (
-          <Alert severity='error'>{errors.EndDate.message}</Alert>
+        {errors?.confirmpassword && (
+          <Alert severity='error'>{errors.confirmpassword.message}</Alert>
         )}
         <Button
           type='submit'
