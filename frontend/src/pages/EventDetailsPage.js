@@ -2,7 +2,7 @@ import React from 'react';
 import NavBar from '../components/NavBar';
 import LoginModal from '../components/LoginModal';
 import RegisterModal from '../components/RegisterModal';
-import { getEventDetails, likeEvent, unlikeEvent, bookEvent, unbookEvent } from '../components/api';
+import { getEventDetails, likeEvent, unlikeEvent, bookEvent, unbookEvent, getOrganizationProfile } from '../components/api';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
@@ -12,7 +12,10 @@ import Grid from '@material-ui/core/Grid';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
 import CardActions from '@material-ui/core/CardActions';
-import { green } from '@material-ui/core/colors';
+import EventCard from '../components/EventCard';
+import Link from '@material-ui/core/Link';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import ShareIcon from '@material-ui/icons/Share';
 
 const useStyles = makeStyles({
   card: {
@@ -104,18 +107,24 @@ const useStyles = makeStyles({
 function EventDetailsPage({match}) {
   const classes = useStyles();
   const eventId = match.params.eventId;
+  console.log()
   const [detail, setDetail] = React.useState({});
   const [islike, setIslike] = React.useState(false);
   const [isbook, setIsbook] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
-
+  const [recomList, setRecomList] = React.useState([]);
+  const [editable, setEditable] = React.useState(false);
+  const usergroup = sessionStorage.getItem('usergroup');
+  const oid = sessionStorage.getItem('id');
+  console.log(`usergroup = ${usergroup}`);
   const token = sessionStorage.getItem('token');
   console.log(token);
   const getEvent = async ()=>{
     const res = await getEventDetails(eventId);
     if (res[0] === 200){
       setDetail(res[1]);
+      setRecomList(res[1].recommendation);
       console.log(res[1]);
       if(res[1].favourite){
           console.log('initial liked')
@@ -125,6 +134,13 @@ function EventDetailsPage({match}) {
         console.log('initial booked')
         setIsbook(true);
       }
+    }
+    const orgDetail = await getOrganizationProfile(oid);
+    console.log(orgDetail[1]);
+    console.log(eventId);
+    if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
+      setEditable(true);
+      console.log('set Editable True');
     }
   }
   console.log(detail.OrganizationName);
@@ -201,18 +217,35 @@ function EventDetailsPage({match}) {
               <Typography variant="h4" component="h2">
                 {detail.eventName}
               </Typography>
-              <CardActions className={classes.actions} disableSpacing>
-                <IconButton className={classes.like} onClick={handleLike} aria-label='add to favorites'>
-                  {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
-                         :<FavoriteIcon color="disabled" fontSize='medium'/>
-                  }
-                </IconButton>
-                <div className={classes.book} onClick={handleBook} aria-label='add to favorites'>
-                  {isbook?<Button variant="contained" className={classes.isbook}>UNBOOK</Button>
-                         :<Button variant="outlined" className={classes.notbook}>BOOK</Button>
-                  }
-                </div>
+              {usergroup === 'organization'?
+              <CardActions>   
+              {editable?<DeleteOutlinedIcon />:null}
+              {editable?<Link
+                  href={`/event/edit/${eventId}`}
+                  // onClick={preventDefault}
+                //   className={classes.view}
+                  variant='body2'
+                  // to={`/event/${eventId}`}
+                >
+                  Edit
+                </Link>:null}
             </CardActions>
+            :<CardActions className={classes.actions} disableSpacing>
+            <IconButton className={classes.like} onClick={handleLike} aria-label='add to favorites'>
+              {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
+                     :<FavoriteIcon color="disabled" fontSize='medium'/>
+              }
+            </IconButton>
+            <div className={classes.book} onClick={handleBook} aria-label='add to favorites'>
+              {isbook?<Button variant="contained" className={classes.isbook}>UNBOOK</Button>
+                     :<Button variant="outlined" className={classes.notbook}>BOOK</Button>
+              }
+            </div>
+            
+        </CardActions>   }
+          <IconButton aria-label='share'>
+            <ShareIcon />
+          </IconButton>
             </Grid>
             <Typography variant="body1" className={classes.org}>
                 By {detail.OrganizationName}
@@ -244,6 +277,23 @@ function EventDetailsPage({match}) {
                 {detail.details}
                 </Typography>
             </Grid>
+            <Grid className={classes.comment}>
+            <Typography variant="h6" >
+                Comments:
+              </Typography>
+            </Grid>
+            <Grid className={classes.recommendation}>
+            <Typography variant="h6" >
+                Recommendation:
+              </Typography>
+              {recomList.map((eventId) => (
+              <EventCard
+                key={eventId}
+                eventId={eventId}
+                // className={classes.item}
+              ></EventCard>
+            ))}
+            </Grid>
         </Grid>
 
         <CardMedia className={classes.photo}>
@@ -252,12 +302,8 @@ function EventDetailsPage({match}) {
         </Grid>
         <Grid className={classes.bottom}>
 
-            <Grid className={classes.comment}>
-            <Typography variant="h6" >
-                Comments:
-              </Typography>
-            </Grid>
         </Grid>
+        
       </Card>
     </div>
   )
