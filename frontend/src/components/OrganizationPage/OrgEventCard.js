@@ -12,7 +12,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import { getEventSummary} from '../api';
+import { getEventSummary, getOrganizationProfile} from '../api';
 import { useHistory } from 'react-router-dom';
 import LoginModal from '../LoginModal';
 import RegisterModal from '../RegisterModal';
@@ -71,28 +71,36 @@ const useStyles = makeStyles((theme) => ({
 function OrgEventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);
+  const eventId = props.eventId;
 //   const preventDefault = (event) => event.preventDefault();
 //   const [islike, setIslike] = React.useState(false);
+  const [editable, setEditable] = React.useState(false);
   const history = useHistory();
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
-
-//   const token = sessionStorage.getItem('token');
   const usergroup = sessionStorage.getItem('usergroup');
+  const oid = sessionStorage.getItem('id');
   console.log(`usergroup = ${usergroup}`);
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await getEventSummary(props.eventId);
-      if (res[0] === 200) {
-        setInfo(res[1]);
-        console.log(res[1]);
+  const fetchData = async () => {
+    const res = await getEventSummary(eventId);
+    if (res[0] === 200) {
+      setInfo(res[1]);
+      console.log(res[1]);
+    }
+    if (usergroup === 'organization'){
+      const orgDetail = await getOrganizationProfile(oid);
+      console.log(orgDetail[1]);
+      console.log(eventId);
+      if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
+        setEditable(true);
+        console.log(`${eventId}set Editable True`);
       }
-    };
-    fetchData();
-  }, []);
+    }
+  };
+  useEffect(() => {fetchData();}, []);
 
   const checkDetail = ()=>{
-    history.push(`/event/${props.eventId}`);
+    history.push(`/event/${eventId}`);
   }
   return info ? (
     <Card className={classes.root}>
@@ -142,21 +150,18 @@ function OrgEventCard(props) {
           } */}
         {/* </IconButton>
         :null} */}
-        <DeleteOutlinedIcon />
-        <Link
-          href={`/event/edit/${props.eventId}`}
-          // onClick={preventDefault}
-        //   className={classes.view}
+        {editable?<DeleteOutlinedIcon />:null}
+        {editable?<Link
+          href={`/event/edit/${eventId}`}
           variant='body2'
-          // to={`/event/${eventId}`}
         >
           Edit
-        </Link>
+        </Link>:null}
         <IconButton aria-label='share'>
           <ShareIcon />
         </IconButton>
         <Link
-          href={`/event/${props.eventId}`}
+          href={`/event/${eventId}`}
           // onClick={preventDefault}
           className={classes.view}
           variant='body2'

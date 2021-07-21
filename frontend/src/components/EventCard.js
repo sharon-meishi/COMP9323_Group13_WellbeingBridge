@@ -19,7 +19,8 @@ import RegisterModal from '../components/RegisterModal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 335,
+    minWidth: 335,
+    maxWidth: 335,
     margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
