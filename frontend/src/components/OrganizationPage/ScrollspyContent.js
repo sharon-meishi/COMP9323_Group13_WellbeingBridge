@@ -98,7 +98,7 @@ function ScrollspyContent() {
         </section>
         <section id='Contact' style={BottomSyle}>
           <h2>Video:</h2>
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/DxIDKZHW3-E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <iframe width="560" height="315" src={data.video} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </section>
         <section id='Events' style={BottomSyle}>
           <h2>Other Information:</h2>
