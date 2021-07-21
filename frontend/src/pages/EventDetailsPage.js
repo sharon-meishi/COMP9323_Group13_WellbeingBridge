@@ -350,11 +350,12 @@ function EventDetailsPage({ match }) {
                 />
               ))}
             </Grid>
-        </Grid>   
-        </Grid>
-        <CardMedia className={classes.photo}>
+          </Grid> 
+          <CardMedia className={classes.photo}>
             <img src={detail.thumbnail}/>
-        </CardMedia>
+        </CardMedia>  
+        </Grid>
+
       </Card>
     </div>
   );

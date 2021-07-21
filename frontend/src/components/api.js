@@ -463,3 +463,24 @@ export const deleteComment = async (eventId, commentId) => {
     }
   }
 }
+
+export const deleteEvent = async (eventId) => {
+  const url = baseUrl + `/event/${eventId}/summary`
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.delete(url, {
+      headers: headers
+    })
+    return [res.status, '']
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}

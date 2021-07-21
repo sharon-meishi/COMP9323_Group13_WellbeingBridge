@@ -7,15 +7,16 @@ import CardActions from '@material-ui/core/CardActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-// import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import { getEventSummary, getOrganizationProfile} from '../api';
+import { getEventSummary, deleteEvent} from '../api';
 import { useHistory } from 'react-router-dom';
 import LoginModal from '../LoginModal';
 import RegisterModal from '../RegisterModal';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import clsx from 'clsx';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
-    padding:'1%',
+    margin:'1%',
   },
   media: {
     height: 0,
@@ -50,7 +51,19 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'end',
     alignSelf: 'flex-end',
     fontWeight: 500,
-    
+  },
+  delete:{
+    cursor:'pointer',
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
   },
   date: {
     fontSize: '0.7rem',
@@ -64,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   view: {
-    paddingLeft: '35%',
+    paddingLeft: '30%',
   },
 }));
 
@@ -72,36 +85,37 @@ function OrgEventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);
   const eventId = props.eventId;
-//   const preventDefault = (event) => event.preventDefault();
-//   const [islike, setIslike] = React.useState(false);
-  const [editable, setEditable] = React.useState(false);
   const history = useHistory();
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
-  const usergroup = sessionStorage.getItem('usergroup');
+  const [orgid, setOrgid] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(false);
   const oid = sessionStorage.getItem('id');
-  console.log(`usergroup = ${usergroup}`);
+
   const fetchData = async () => {
     const res = await getEventSummary(eventId);
     if (res[0] === 200) {
       setInfo(res[1]);
       console.log(res[1]);
-    }
-    if (usergroup === 'organization'){
-      const orgDetail = await getOrganizationProfile(oid);
-      console.log(orgDetail[1]);
-      console.log(eventId);
-      if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
-        setEditable(true);
-        console.log(`${eventId}set Editable True`);
-      }
+      setOrgid(res[1].orgid);
     }
   };
+
   useEffect(() => {fetchData();}, []);
 
   const checkDetail = ()=>{
     history.push(`/event/${eventId}`);
   }
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+  const deleteEvent = async()=>{
+    // const res = await deleteEvent(eventId);
+    // if (res[0] === 200) {
+    //   console.log('delete success')
+    // }
+  }
+
   return info ? (
     <Card className={classes.root}>
       {openLogin ? (
@@ -123,7 +137,6 @@ function OrgEventCard(props) {
         image={info.thumbnail}
         title='Event Image'
       />
-
       <Box display='flex' flexDirection='column' height='100%' justifyContent='space-between'>
       <CardContent>
         <Grid container direction='column'>
@@ -137,21 +150,13 @@ function OrgEventCard(props) {
             </Typography>
           </Box>
         </Grid>
-
         <Grid className={classes.detail}>
           <Typography>{info.introduction}</Typography>
         </Grid>
       </CardContent>
-
       <CardActions className={classes.actions} disableSpacing>
-        {/* {usergroup === 'orgnazition'? <IconButton onClick={handleLike} aria-label='add to favorites'>
-          {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
-                  :<FavoriteIcon color="disabled" fontSize='medium'/>
-          } */}
-        {/* </IconButton>
-        :null} */}
-        {editable?<DeleteOutlinedIcon />:null}
-        {editable?<Link
+        {oid == orgid?<DeleteOutlinedIcon onClick={deleteEvent} className={classes.delete}/>:null}
+        {oid == orgid?<Link
           href={`/event/edit/${eventId}`}
           variant='body2'
         >
@@ -169,7 +174,25 @@ function OrgEventCard(props) {
         >
           Discover More
         </Link>
+        <IconButton
+          className={clsx(classes.expand, {
+            [classes.expandOpen]: expanded,
+          })}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+        >
+          <ExpandMoreIcon />
+        </IconButton>
       </CardActions>
+      {expanded?          <Typography paragraph>
+            Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
+            without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
+            medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
+            again without stirring, until mussels have opened and rice is just tender, 5 to 7
+            minutes more. (Discard any mussels that don’t open.)
+          </Typography>
+          :null}
       </Box>
     </Card>
  

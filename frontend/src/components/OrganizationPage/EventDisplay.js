@@ -16,6 +16,7 @@ function EventDisplay(props) {
     console.log('coming into eventdisplay')
     console.log(props.profileData);
     console.log(props.profileData.publishedEvent);
+    // const oid = props.profileData.oId;
     const event_list = props.profileData.publishedEvent;
     const classes = useStyles();
     return (
@@ -24,6 +25,7 @@ function EventDisplay(props) {
             <OrgEventCard
               key={eventId}
               eventId={eventId}
+            //   oId={oid}
               className={classes.item}
             ></OrgEventCard>))}
         </div>
