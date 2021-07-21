@@ -12,7 +12,6 @@ import Grid from '@material-ui/core/Grid';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
 import CardActions from '@material-ui/core/CardActions';
-import { green } from '@material-ui/core/colors';
 
 const useStyles = makeStyles({
   card: {
@@ -109,7 +108,8 @@ function EventDetailsPage({match}) {
   const [isbook, setIsbook] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
-
+  const usergroup = sessionStorage.getItem('usergroup');
+  console.log(`usergroup = ${usergroup}`);
   const token = sessionStorage.getItem('token');
   console.log(token);
   const getEvent = async ()=>{
@@ -201,7 +201,7 @@ function EventDetailsPage({match}) {
               <Typography variant="h4" component="h2">
                 {detail.eventName}
               </Typography>
-              <CardActions className={classes.actions} disableSpacing>
+              {usergroup === 'orgnazition'? <CardActions className={classes.actions} disableSpacing>
                 <IconButton className={classes.like} onClick={handleLike} aria-label='add to favorites'>
                   {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
                          :<FavoriteIcon color="disabled" fontSize='medium'/>
@@ -212,7 +212,7 @@ function EventDetailsPage({match}) {
                          :<Button variant="outlined" className={classes.notbook}>BOOK</Button>
                   }
                 </div>
-            </CardActions>
+            </CardActions>:null}
             </Grid>
             <Typography variant="body1" className={classes.org}>
                 By {detail.OrganizationName}
