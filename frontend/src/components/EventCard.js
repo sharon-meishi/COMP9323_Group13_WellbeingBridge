@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
-    
+    padding:'1%',
   },
   media: {
     height: 0,
@@ -76,7 +76,8 @@ function EventCard(props) {
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
   const token = sessionStorage.getItem('token');
-  
+  // const usergroup = sessionStorage.getItem('usergroup');
+  // console.log(`usergroup = ${usergroup}`);
   useEffect(() => {
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
