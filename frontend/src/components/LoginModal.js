@@ -95,6 +95,9 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
       sessionStorage.setItem('id', res[1].userId);
       sessionStorage.setItem('usergroup', res[1].usergroup)
       context.setIsLoginState(true)
+      if (res[1].usergroup === 'organization'){
+        history.push('/dashboard')
+      }
     } else {
       setErrorMsg(res[1])
     }

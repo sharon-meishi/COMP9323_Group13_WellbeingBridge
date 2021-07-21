@@ -393,3 +393,73 @@ export const getOrganizationDetails = async (oId) => {
     }
   }
 };
+
+export const postComment = async(eventId, comment) => {
+  const url = baseUrl + `/event/${eventId}/comment`
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const commentBody = {
+    comment: comment
+  }
+  try {
+    const res = await axios.post(url, commentBody, {
+      headers: headers
+    })
+    return [res.status, '']
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
+
+export const updateComment = async(eventId, comment, commentId) => {
+  const url = baseUrl + `/event/${eventId}/comment/${commentId}`
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const commentBody = {
+    comment: comment
+  }
+  try {
+    const res = await axios.put(url, commentBody, {
+      headers: headers
+    })
+    return [res.status, '']
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
+
+
+export const deleteComment = async (eventId, commentId) => {
+  const url = baseUrl + `/event/${eventId}/comment/${commentId}`
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.delete(url, {
+      headers: headers
+    })
+    return [res.status, '']
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
