@@ -76,6 +76,7 @@ function OrgEventCard(props) {
   const history = useHistory();
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
+
 //   const token = sessionStorage.getItem('token');
   const usergroup = sessionStorage.getItem('usergroup');
   console.log(`usergroup = ${usergroup}`);
@@ -85,11 +86,6 @@ function OrgEventCard(props) {
       if (res[0] === 200) {
         setInfo(res[1]);
         console.log(res[1]);
-        console.log(res[1].favourite);
-        if(res[1].favourite){
-          console.log('initial liked')
-        //   setIslike(true);
-        }
       }
     };
     fetchData();
@@ -98,30 +94,6 @@ function OrgEventCard(props) {
   const checkDetail = ()=>{
     history.push(`/event/${props.eventId}`);
   }
-  // const handleLike = async ()=>{
-  //   if (!token){
-  //     setOpenLogin(true);
-  //   }
-  //   if (islike){
-  //     console.log('now it is liked');
-  //     const res = await unlikeEvent(props.eventId);
-  //     if (res[0] === 200){
-  //       setIslike(false);
-  //       console.log('unlike success');
-  //     }else{
-  //       console.log('unlike error');
-  //     }
-  //   }else{
-  //     console.log('now it is not liked');
-  //     const res = await likeEvent(props.eventId);
-  //     if (res[0] === 200){
-  //       setIslike(true);
-  //       console.log('like success');
-  //     }else{
-  //       console.log('like error');
-  //     }
-  //   }
-  // }
   return info ? (
     <Card className={classes.root}>
       {openLogin ? (
