@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Form, Comment } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
-import DeleteReminder from './DeleteReminder';
 import { Avatar } from '@material-ui/core';
+import DeleteReminder from './DeleteReminder';
+import { updateComment, deleteComment } from './api';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   avatarStyle: {
     width: '2.5em',
     height: '2.5em',
@@ -29,25 +30,23 @@ function SingleComment({ content, eventId, setUpdate }) {
 
   const handleSubmit = async () => {
     console.log(comment);
-    // const Data = await updateComment(recipeId, comment, content.comment_id)
-    // if (Data[0] === 200){
-    //     setEditMode(false);
-    //     setUpdate(true);
-    // }else{
-    //     console.log(Data[1])
-    // }
+    const Data = await updateComment(eventId, comment, content.commentId)
+    if (Data[0] === 200){
+        setEditMode(false);
+        setUpdate(true);
+    }else{
+        console.log(Data[1])
+    }
   };
 
   const handleDelete = async () => {
-    console.log('confirm delete');
-    setOpen(false);
-    // const Data = await deleteComment(recipeId, content.comment_id);
-    // if (Data[0] === 200) {
-    //   setOpen(false);
-    //   setUpdate(true);
-    // } else {
-    //   console.log(Data[1]);
-    // }
+    const Data = await deleteComment(eventId, content.commentId);
+    if (Data[0] === 200) {
+      setOpen(false);
+      setUpdate(true);
+    } else {
+      console.log(Data[1]);
+    }
   };
 
   return (
@@ -80,6 +79,7 @@ function SingleComment({ content, eventId, setUpdate }) {
                 />
               </Form.Field>
               <Form.Button
+                type='submit'
                 color='blue'
                 size='mini'
                 floated='right'
@@ -90,7 +90,7 @@ function SingleComment({ content, eventId, setUpdate }) {
             content.comment
           )}
         </Comment.Text>
-        {sessionStorage.getItem('id') === content.userId ? (
+        {sessionStorage.getItem('id') == content.userId ? (
             <Comment.Actions>
               <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>

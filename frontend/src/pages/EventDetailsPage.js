@@ -9,6 +9,7 @@ import {
   unlikeEvent,
   bookEvent,
   unbookEvent,
+  postComment
 } from '../components/api';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -122,7 +123,7 @@ function EventDetailsPage({ match }) {
   const context = useContext(AppContext);
 
   const token = sessionStorage.getItem('token');
-  console.log(token);
+  // console.log(token);
   const getEvent = async () => {
     const res = await getEventDetails(eventId);
     if (res[0] === 200) {
@@ -138,8 +139,12 @@ function EventDetailsPage({ match }) {
       }
     }
   };
-  console.log(detail.OrganizationName);
-  React.useEffect(() => getEvent(), [update]);
+  // console.log(detail.OrganizationName);
+  React.useEffect(() => {
+    getEvent();
+    setUpdate(false);
+  }, [update])
+  // React.useEffect(() => getEvent(), [update]);
 
   const handleLike = async () => {
     if (!token) {
@@ -190,6 +195,13 @@ function EventDetailsPage({ match }) {
 
   const submitNewComment = async () => {
     console.log(comment);
+    const Data = await postComment(eventId, comment);
+    if (Data[0] === 200){
+      setComment('');
+      setUpdate(true);
+    }else {
+
+    }
   };
 
   return (
@@ -225,9 +237,9 @@ function EventDetailsPage({ match }) {
                   aria-label='add to favorites'
                 >
                   {islike ? (
-                    <FavoriteIcon color='secondary' fontSize='medium' />
+                    <FavoriteIcon color='secondary' />
                   ) : (
-                    <FavoriteIcon color='disabled' fontSize='medium' />
+                    <FavoriteIcon color='disabled'  />
                   )}
                 </IconButton>
                 <div
@@ -283,7 +295,7 @@ function EventDetailsPage({ match }) {
           <Grid className={classes.comment}>
             <Typography variant='h6'>Comments:</Typography>
             <Comment.Group size='large' style={{ maxWidth: '100%' }}>
-              {context.isLoginState ? (
+              {context.isLoginState && sessionStorage.getItem('usergroup') === 'individual'? (
                 <Form onSubmit={submitNewComment}>
                   <Form.TextArea
                     placeholder='Please leave your comment here'
