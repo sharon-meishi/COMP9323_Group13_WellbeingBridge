@@ -7,15 +7,14 @@ import CardActions from '@material-ui/core/CardActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-// import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import { getEventSummary, getOrganizationProfile} from '../api';
+import { getEventSummary, likeEvent, unlikeEvent } from './api';
 import { useHistory } from 'react-router-dom';
-import LoginModal from '../LoginModal';
-import RegisterModal from '../RegisterModal';
+import LoginModal from '../components/LoginModal';
+import RegisterModal from '../components/RegisterModal';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
-    padding:'1%',
+    
   },
   media: {
     height: 0,
@@ -71,37 +70,57 @@ const useStyles = makeStyles((theme) => ({
 function OrgEventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);
-  const eventId = props.eventId;
-//   const preventDefault = (event) => event.preventDefault();
-//   const [islike, setIslike] = React.useState(false);
-  const [editable, setEditable] = React.useState(false);
+  const preventDefault = (event) => event.preventDefault();
+  const [islike, setIslike] = React.useState(false);
   const history = useHistory();
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
+  const token = sessionStorage.getItem('token');
   const usergroup = sessionStorage.getItem('usergroup');
-  const oid = sessionStorage.getItem('id');
   console.log(`usergroup = ${usergroup}`);
-  const fetchData = async () => {
-    const res = await getEventSummary(eventId);
-    if (res[0] === 200) {
-      setInfo(res[1]);
-      console.log(res[1]);
-    }
-    if (usergroup === 'organization'){
-      const orgDetail = await getOrganizationProfile(oid);
-      console.log(orgDetail[1]);
-      console.log(eventId);
-      if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
-        setEditable(true);
-        console.log(`${eventId}set Editable True`);
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getEventSummary(props.eventId);
+      if (res[0] === 200) {
+        setInfo(res[1]);
+        console.log(res[1]);
+        console.log(res[1].favourite);
+        if(res[1].favourite){
+          console.log('initial liked')
+          setIslike(true);
+        }
       }
-    }
-  };
-  useEffect(() => {fetchData();}, []);
+    };
+    fetchData();
+  }, []);
 
   const checkDetail = ()=>{
-    history.push(`/event/${eventId}`);
+    history.push(`/event/${props.eventId}`);
   }
+  // const handleLike = async ()=>{
+  //   if (!token){
+  //     setOpenLogin(true);
+  //   }
+  //   if (islike){
+  //     console.log('now it is liked');
+  //     const res = await unlikeEvent(props.eventId);
+  //     if (res[0] === 200){
+  //       setIslike(false);
+  //       console.log('unlike success');
+  //     }else{
+  //       console.log('unlike error');
+  //     }
+  //   }else{
+  //     console.log('now it is not liked');
+  //     const res = await likeEvent(props.eventId);
+  //     if (res[0] === 200){
+  //       setIslike(true);
+  //       console.log('like success');
+  //     }else{
+  //       console.log('like error');
+  //     }
+  //   }
+  // }
   return info ? (
     <Card className={classes.root}>
       {openLogin ? (
@@ -150,18 +169,11 @@ function OrgEventCard(props) {
           } */}
         {/* </IconButton>
         :null} */}
-        {editable?<DeleteOutlinedIcon />:null}
-        {editable?<Link
-          href={`/event/edit/${eventId}`}
-          variant='body2'
-        >
-          Edit
-        </Link>:null}
         <IconButton aria-label='share'>
           <ShareIcon />
         </IconButton>
         <Link
-          href={`/event/${eventId}`}
+          href={`/event/${props.eventId}`}
           // onClick={preventDefault}
           className={classes.view}
           variant='body2'

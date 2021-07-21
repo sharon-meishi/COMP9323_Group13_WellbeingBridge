@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import EventCard from '../EventCard';
+import OrgEventCard from '../OrganizationPage/OrgEventCard';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import HomePageButton from '../HomePageButton';
@@ -42,7 +43,8 @@ const useStyles = makeStyles((theme) => ({
 const CardBoard = () => {
   const [event_list, setEventlist] = useState([]);
   const classes = useStyles();
-
+  const usergroup = sessionStorage.getItem('usergroup');
+  console.log(`usergroup = ${usergroup}`);
   const fetchOrigin = async () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {
@@ -68,7 +70,17 @@ const CardBoard = () => {
             </Typography>
             <HomePageButton text='Find Event' />
           </Box>
-          <Box className={classes.eventBox} >
+          {usergroup === 'organization'?
+            <Box className={classes.eventBox} >
+              {event_list.map((eventId) => (
+                <OrgEventCard
+                  key={eventId}
+                  eventId={eventId}
+                  className={classes.item}
+                ></OrgEventCard>
+              ))}
+            </Box>
+            :<Box className={classes.eventBox} >
             {event_list.map((eventId) => (
               <EventCard
                 key={eventId}
@@ -76,7 +88,7 @@ const CardBoard = () => {
                 className={classes.item}
               ></EventCard>
             ))}
-          </Box>
+          </Box>}
         </Grid>
       </Grid>
     </Box>
