@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles(() => ({
@@ -76,7 +75,8 @@ function Dashboard({ profileData }) {
         <Button href='#' onClick={toMyPage} variant="outlined" className={classes.ButtonStyle}>Organization Page</Button>
       </Box>
       <Box mt={3}>
-        <Typography variant='h5'className={classes.titleStyle}>Welcome to your dashboard!</Typography>
+        <Typography variant='h5'className={classes.titleStyle}>Welcome to your dashboard! Here you can:</Typography>
+
         <ul className={classes.listItem}>
           <li>Manage events you created</li>
           <li>Edit your organization page</li>

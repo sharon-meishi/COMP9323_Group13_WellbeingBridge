@@ -93,7 +93,7 @@ function OrgEventCard(props) {
       console.log(eventId);
       if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
         setEditable(true);
-        console.log('set Editable True');
+        console.log(`${eventId}set Editable True`);
       }
     }
   };

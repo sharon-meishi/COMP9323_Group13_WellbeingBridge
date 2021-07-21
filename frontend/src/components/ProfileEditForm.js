@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { updateOrganizationProfile, updateUserProfile} from '../components/api';
@@ -31,10 +32,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '15px',
     marginTop: '20px',
     marginBottom: '10px',
+    marginRight: '5px'
   },
 }));
 
-function ProfileEditForm({ currentName, oId}) {
+function ProfileEditForm({ currentName, oId, setOpen}) {
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -161,6 +163,15 @@ function ProfileEditForm({ currentName, oId}) {
         {errors?.confirmpassword && (
           <Alert severity='error'>{errors.confirmpassword.message}</Alert>
         )}
+        <Box display='flex' justifyContent='space-between'>
+        <Button
+          variant='outlined'
+          color='primary'
+          className={classes.buttonStyle}
+          onClick={() => setOpen(false)}
+        >
+          Cancel
+        </Button>
         <Button
           type='submit'
           variant='contained'
@@ -169,6 +180,8 @@ function ProfileEditForm({ currentName, oId}) {
         >
           Save
         </Button>
+        </Box>
+
       </form>
     </>
   );
