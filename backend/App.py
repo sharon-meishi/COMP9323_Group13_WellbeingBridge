@@ -63,7 +63,6 @@ class IndividualRegister(Resource):
                 select_sql = f"SELECT UserId FROM User WHERE Email='{email}';"
                 id = sql_command(select_sql)[0][0]
                 token = encode_token(email, "individual")
-                print(token)
                 output = {
                     "message": "Success register",
                     "nickname": nickname,
@@ -206,7 +205,7 @@ token_parser.add_argument('Authorization', type=str, location='headers')
 class event(Resource):
     def get(self, eventid):
         token = token_parser.parse_args()['Authorization']
-        event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Address,Lat,Lng, Introduction,Time,Category FROM Event WHERE EventId='{eventid}';"
+        event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
 
         if token is None:
@@ -233,6 +232,7 @@ class event(Resource):
                              "thumbnail": result[0][1],
                              "category": result[0][10],
                              "name": result[0][2],
+                             "orgid":result[0][11],
                              "date": result[0][3],
                              "time": result[0][9],
                              "location": {
@@ -521,7 +521,7 @@ class GetEventbyId(Resource):
         for i in booked_userid:
             booked_event_user.append(i[0])
 
-        other_event_sql = f"SELECT * FROM Event WHERE OrganizationId={event_info[2]} and EventId!={eventid};"
+        other_event_sql = f"SELECT * FROM Event WHERE Category='{event_info[6]}' and EventId!={eventid};"
         other_event = sql_command(other_event_sql)
         recommendation = []
         if len(other_event) != 0:
