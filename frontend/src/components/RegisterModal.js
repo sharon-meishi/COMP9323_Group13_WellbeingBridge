@@ -133,7 +133,7 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
           >
             Welcome to Wellbeing Bridge!
           </Typography>
-          <DialogContentText>Create your account</DialogContentText>
+          <DialogContentText>Create your individual account</DialogContentText>
         </Box>
         {errorMsg ? <Alert severity='error'>{errorMsg}</Alert> : null}
         <form
