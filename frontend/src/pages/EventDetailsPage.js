@@ -135,12 +135,14 @@ function EventDetailsPage({match}) {
         setIsbook(true);
       }
     }
-    const orgDetail = await getOrganizationProfile(oid);
-    console.log(orgDetail[1]);
-    console.log(eventId);
-    if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
-      setEditable(true);
-      console.log('set Editable True');
+    if (usergroup === 'organization'){
+      const orgDetail = await getOrganizationProfile(oid);
+      console.log(orgDetail[1]);
+      console.log(eventId);
+      if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
+        setEditable(true);
+        console.log('set Editable True');
+      }
     }
   }
   console.log(detail.OrganizationName);
@@ -290,8 +292,7 @@ function EventDetailsPage({match}) {
               <EventCard
                 key={eventId}
                 eventId={eventId}
-                // className={classes.item}
-              ></EventCard>
+              />
             ))}
             </Grid>
         </Grid>
@@ -299,11 +300,7 @@ function EventDetailsPage({match}) {
         <CardMedia className={classes.photo}>
             <img src={detail.thumbnail}/>
           </CardMedia>
-        </Grid>
-        <Grid className={classes.bottom}>
-
-        </Grid>
-        
+        </Grid>     
       </Card>
     </div>
   )
