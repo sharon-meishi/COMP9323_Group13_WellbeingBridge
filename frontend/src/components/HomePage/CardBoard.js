@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import EventCard from '../EventCard';
-import OrgEventCard from '../OrgEventCard';
+import OrgEventCard from '../OrganizationPage/OrgEventCard';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import HomePageButton from '../HomePageButton';
