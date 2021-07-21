@@ -10,7 +10,7 @@ import {
   bookEvent,
   unbookEvent,
   postComment,
-  getOrganizationProfile
+  getOrganizationProfile,
 } from '../components/api';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -26,8 +26,6 @@ import EventCard from '../components/EventCard';
 import Link from '@material-ui/core/Link';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import ShareIcon from '@material-ui/icons/Share';
-
-import { green } from '@material-ui/core/colors';
 import { Comment, Form, Header } from 'semantic-ui-react';
 import SingleComment from '../components/SingleComment';
 const useStyles = makeStyles({
@@ -119,12 +117,12 @@ const useStyles = makeStyles({
 function EventDetailsPage({ match }) {
   const classes = useStyles();
   const eventId = match.params.eventId;
-  console.log()
   const [detail, setDetail] = React.useState({});
   const [islike, setIslike] = React.useState(false);
   const [isbook, setIsbook] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
+
   const [recomList, setRecomList] = React.useState([]);
   const [editable, setEditable] = React.useState(false);
   const usergroup = sessionStorage.getItem('usergroup');
@@ -135,7 +133,7 @@ function EventDetailsPage({ match }) {
   const context = useContext(AppContext);
 
   const token = sessionStorage.getItem('token');
-  // console.log(token);
+
   const getEvent = async () => {
     const res = await getEventDetails(eventId);
     if (res[0] === 200) {
@@ -151,24 +149,24 @@ function EventDetailsPage({ match }) {
         setIsbook(true);
       }
     }
-    if (usergroup === 'organization'){
+    if (usergroup === 'organization') {
       const orgDetail = await getOrganizationProfile(oid);
       console.log(orgDetail[1]);
       console.log(eventId);
-      if (orgDetail[1].publishedEvent.indexOf(eventId)>0){
+      if (orgDetail[1].publishedEvent.indexOf(eventId) > 0) {
         setEditable(true);
         console.log('set Editable True');
       }
     }
-  }
-  console.log(detail.OrganizationName);
-  // React.useEffect(()=>getEvent(),[]);
+  };
+
   React.useEffect(() => {
     getEvent();
     setUpdate(false);
-  }, [update])
-  const handleLike = async ()=>{
-    if (!token){
+  }, [update]);
+
+  const handleLike = async () => {
+    if (!token) {
       setOpenLogin(true);
     }
     if (islike) {
@@ -191,6 +189,7 @@ function EventDetailsPage({ match }) {
       }
     }
   };
+
   const handleBook = async () => {
     if (!token) {
       setOpenLogin(true);
@@ -217,7 +216,7 @@ function EventDetailsPage({ match }) {
   const submitNewComment = async () => {
     console.log(comment);
     const Data = await postComment(eventId, comment);
-    if (Data[0] === 200){
+    if (Data[0] === 200) {
       setComment('');
       setUpdate(true);
     }
@@ -240,8 +239,6 @@ function EventDetailsPage({ match }) {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
-
-
       <Card className={classes.card}>
         {/* <CardContent> */}
         <Grid className={classes.top}>
@@ -250,33 +247,48 @@ function EventDetailsPage({ match }) {
               <Typography variant='h4' component='h2'>
                 {detail.eventName}
               </Typography>
-              {usergroup === 'organization'
-                ?
-                <CardActions>   
-                {editable?<DeleteOutlinedIcon />:null}
-                {editable
-                  ?<Link
-                  href={`/event/edit/${eventId}`}
-                  variant='body2'>
-                  Edit</Link>
-                  :null}
+              {usergroup === 'organization' ? (
+                <CardActions>
+                  {editable ? <DeleteOutlinedIcon /> : null}
+                  {editable ? (
+                    <Link href={`/event/edit/${eventId}`} variant='body2'>
+                      Edit
+                    </Link>
+                  ) : null}
                 </CardActions>
-                :
+              ) : (
                 <CardActions className={classes.actions} disableSpacing>
-                  <IconButton className={classes.like} onClick={handleLike} aria-label='add to favorites'>
-                  {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
-                     :<FavoriteIcon color="disabled" fontSize='medium'/>
-                  }
+                  <IconButton
+                    className={classes.like}
+                    onClick={handleLike}
+                    aria-label='add to favorites'
+                  >
+                    {islike ? (
+                      <FavoriteIcon color='secondary' fontSize='medium' />
+                    ) : (
+                      <FavoriteIcon color='disabled' fontSize='medium' />
+                    )}
                   </IconButton>
-                  <div className={classes.book} onClick={handleBook} aria-label='add to favorites'>
-                    {isbook?<Button variant="contained" className={classes.isbook}>UNBOOK</Button>
-                          :<Button variant="outlined" className={classes.notbook}>BOOK</Button>
-                    }
-                  </div>   
-                </CardActions>}
-                <IconButton aria-label='share'>
-                  <ShareIcon />
-                </IconButton>
+                  <div
+                    className={classes.book}
+                    onClick={handleBook}
+                    aria-label='add to favorites'
+                  >
+                    {isbook ? (
+                      <Button variant='contained' className={classes.isbook}>
+                        UNBOOK
+                      </Button>
+                    ) : (
+                      <Button variant='outlined' className={classes.notbook}>
+                        BOOK
+                      </Button>
+                    )}
+                  </div>
+                </CardActions>
+              )}
+              <IconButton aria-label='share'>
+                <ShareIcon />
+              </IconButton>
             </Grid>
             <Typography variant='body1' className={classes.org}>
               By {detail.OrganizationName}
@@ -307,47 +319,47 @@ function EventDetailsPage({ match }) {
             <Grid className={classes.comment}>
               <Typography variant='h6'>Comments:</Typography>
               <Comment.Group size='large' style={{ maxWidth: '100%' }}>
-              {context.isLoginState && sessionStorage.getItem('usergroup') === 'individual'? (
-                <Form onSubmit={submitNewComment}>
-                  <Form.TextArea
-                    placeholder='Please leave your comment here'
-                    name='comment'
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    required
-                  />
-                  <Box display='flex' justifyContent='flex-end'>
-                    <Form.Button
-                      size='tiny'
-                      content='Add Reply'
-                      labelPosition='left'
-                      icon='edit'
-                      primary
+                {context.isLoginState &&
+                sessionStorage.getItem('usergroup') === 'individual' ? (
+                  <Form onSubmit={submitNewComment}>
+                    <Form.TextArea
+                      placeholder='Please leave your comment here'
+                      name='comment'
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      required
                     />
-                  </Box>
-                </Form>
-              ) : (
-                <div>Please Login as an individual user to post comment</div>
-              )}
-              {detail.comments ? detail.comments.map((eachComment, idx) => {
-                return <SingleComment 
-                key={idx}
-                content={eachComment}
-                eventId={eventId}
-                setUpdate={setUpdate}
-                />;
-              }): null}
-            </Comment.Group>
-            </Grid> 
+                    <Box display='flex' justifyContent='flex-end'>
+                      <Form.Button
+                        size='tiny'
+                        content='Add Reply'
+                        labelPosition='left'
+                        icon='edit'
+                        primary
+                      />
+                    </Box>
+                  </Form>
+                ) : (
+                  <div>Please Login as an individual user to post comment</div>
+                )}
+                {detail.comments
+                  ? detail.comments.map((eachComment, idx) => {
+                      return (
+                        <SingleComment
+                          key={idx}
+                          content={eachComment}
+                          eventId={eventId}
+                          setUpdate={setUpdate}
+                        />
+                      );
+                    })
+                  : null}
+              </Comment.Group>
+            </Grid>
             <Grid className={classes.recommendation}>
-              <Typography variant="h6" >
-                  Recommendation:
-                </Typography>
-                {recomList.map((eventId) => (
-                <EventCard
-                  key={eventId}
-                  eventId={eventId}
-                />
+              <Typography variant='h6'>Recommendation:</Typography>
+              {recomList.map((eventId) => (
+                <EventCard key={eventId} eventId={eventId} />
               ))}
             </Grid>
           </Grid> 
@@ -355,7 +367,6 @@ function EventDetailsPage({ match }) {
             <img src={detail.thumbnail}/>
         </CardMedia>  
         </Grid>
-
       </Card>
     </div>
   );
