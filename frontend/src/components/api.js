@@ -32,7 +32,7 @@ export const registerRequest = async (data) => {
   const signupBody = {
     nickname: data.nickname,
     email: data.email,
-    password: data.nickname,
+    password: data.password,
   };
   try {
     const res = await axios.post(url, signupBody, {
