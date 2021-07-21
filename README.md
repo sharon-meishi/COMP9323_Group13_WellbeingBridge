@@ -35,9 +35,18 @@ python3 -m venv env
 
 2. Active env (Every time)
 
+For Mac users:
 ```shell
 source env/bin/activate
 ```
+
+For Windows users:
+```shell
+cd env
+cd Scripts
+activate
+```
+
 3. Install requirement library(First time)
 ```shell
 pip3 install -r requirements.txt
