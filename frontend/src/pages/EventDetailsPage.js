@@ -3,6 +3,7 @@ import NavBar from '../components/NavBar';
 import { AppContext } from '../utils/store';
 import LoginModal from '../components/LoginModal';
 import RegisterModal from '../components/RegisterModal';
+
 import {
   getEventDetails,
   likeEvent,
@@ -22,6 +23,9 @@ import Box from '@material-ui/core/Box';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
 import CardActions from '@material-ui/core/CardActions';
+import { green } from '@material-ui/core/colors';
+import { Comment, Form, Header } from 'semantic-ui-react';
+import SingleComment from '../components/SingleComment';
 import EventCard from '../components/EventCard';
 import Link from '@material-ui/core/Link';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
@@ -125,6 +129,9 @@ function EventDetailsPage({ match }) {
   const [isbook, setIsbook] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
+  const [comment, setComment] = React.useState('');
+  const [update, setUpdate] = React.useState(false);
+  const context = useContext(AppContext);
   const [recomList, setRecomList] = React.useState([]);
   const [editable, setEditable] = React.useState(false);
   const usergroup = sessionStorage.getItem('usergroup');
@@ -240,8 +247,6 @@ function EventDetailsPage({ match }) {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
-
-
       <Card className={classes.card}>
         {/* <CardContent> */}
         <Grid className={classes.top}>
@@ -303,6 +308,38 @@ function EventDetailsPage({ match }) {
               <Typography variant='body1' className={classes.description}>
                 {detail.details}
               </Typography>
+              <Comment.Group size='large' style={{ maxWidth: '100%' }}>
+              {context.isLoginState && sessionStorage.getItem('usergroup') === 'individual'? (
+                <Form onSubmit={submitNewComment}>
+                  <Form.TextArea
+                    placeholder='Please leave your comment here'
+                    name='comment'
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    required
+                  />
+                  <Box display='flex' justifyContent='flex-end'>
+                    <Form.Button
+                      size='tiny'
+                      content='Add Reply'
+                      labelPosition='left'
+                      icon='edit'
+                      primary
+                    />
+                  </Box>
+                </Form>
+              ) : (
+                <div>Please Login as an individual user to post comment</div>
+              )}
+              {detail.comments ? detail.comments.map((eachComment, idx) => {
+                return <SingleComment 
+                key={idx}
+                content={eachComment}
+                eventId={eventId}
+                setUpdate={setUpdate}
+                />;
+              }): null}
+            </Comment.Group>
             </Grid>
             <Grid className={classes.comment}>
               <Typography variant='h6'>Comments:</Typography>
@@ -355,7 +392,9 @@ function EventDetailsPage({ match }) {
         <CardMedia className={classes.photo}>
             <img src={detail.thumbnail}/>
         </CardMedia>
+
       </Card>
+      : null}
     </div>
   );
 }
