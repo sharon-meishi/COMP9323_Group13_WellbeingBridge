@@ -203,25 +203,6 @@ export const getPopularEventId = async () => {
   }
 };
 
-
-
-// export const getEventDetail = async (data) => {
-//   console.log(data);
-//   const url = baseUrl + `/event/${data[0]}`;
-//   try {
-//     const res = await axios.get(url, {
-//       headers: {
-//         accept: 'application/json',
-//         'content-Type': 'application/json',
-//         Authorization: `${sessionStorage.getItem('token')}`,
-//       },
-//     });
-//     return [res.status, res.data];
-//   } catch (error) {
-//     return [error.response.status,error.response.data.message];
-//   }
-// };
-
 export const likeEvent = async (data) => {
   console.log(data);
   const url = baseUrl + `/event/${data}/favourite`;
