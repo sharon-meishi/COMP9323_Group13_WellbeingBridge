@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import Button from '@material-ui/core/Button';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
@@ -60,23 +61,22 @@ const useStyles = makeStyles((theme) => ({
   },
   actions: {
     display: 'flex',
+    justifyContent: 'space-between',
   },
   view: {
-    paddingLeft: '35%',
+    fontSize: '10px',
   },
 }));
 
 function EventCard(props) {
   const classes = useStyles();
   const [info, setInfo] = useState(null);
-  const preventDefault = (event) => event.preventDefault();
   const [islike, setIslike] = React.useState(false);
   const history = useHistory();
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
   const token = sessionStorage.getItem('token');
-  // const usergroup = sessionStorage.getItem('usergroup');
-  // console.log(`usergroup = ${usergroup}`);
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
@@ -169,25 +169,28 @@ function EventCard(props) {
         </CardContent>
 
         <CardActions className={classes.actions} disableSpacing>
-          <IconButton onClick={handleLike} aria-label='add to favorites'>
-            {islike ? (
-              <FavoriteIcon color='secondary' fontSize='medium' />
-            ) : (
-              <FavoriteIcon color='disabled' fontSize='medium' />
-            )}
-          </IconButton>
-          <IconButton aria-label='share'>
-            <ShareIcon />
-          </IconButton>
-          <Link
-            href={`/event/${props.eventId}`}
-            // onClick={preventDefault}
+          <Box>
+            {sessionStorage.getItem('usergroup') === 'individual' ? (
+              <IconButton onClick={handleLike} aria-label='add to favorites'>
+                {islike ? (
+                  <FavoriteIcon color='secondary' fontSize='medium' />
+                ) : (
+                  <FavoriteIcon color='disabled' fontSize='medium' />
+                )}
+              </IconButton>
+            ) : null}
+            <IconButton aria-label='share'>
+              <ShareIcon />
+            </IconButton>
+          </Box>
+          <Button
+            onClick={checkDetail}
+            size='small'
+            color='primary'
             className={classes.view}
-            variant='body2'
-            // to={`/event/${eventId}`}
           >
             Discover More
-          </Link>
+          </Button>
         </CardActions>
       </Box>
     </Card>

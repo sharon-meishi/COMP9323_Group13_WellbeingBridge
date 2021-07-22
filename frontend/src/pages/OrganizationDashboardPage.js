@@ -13,6 +13,7 @@ function FetchAlert(props) {
 function OrganizationDashboardPage() {
   const [profileData, setProfileData] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,19 +21,20 @@ function OrganizationDashboardPage() {
       if (Data[0] === 200) {
         console.log(Data[1]);
         setProfileData(Data[1]);
+        setUpdate(false);
       } else {
         setErrorMsg(Data[1]);
       }
     };
     fetchData();
-  }, []);
+  }, [update]);
 
   return (
     <>
       <BackToTop showBelow={250} />
       <NavBar />
       {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
-      {profileData ? <VerticalTab profileData={profileData} /> : null}
+      {profileData ? <VerticalTab profileData={profileData} setUpdate={setUpdate}/> : null}
     </>
   );
 }

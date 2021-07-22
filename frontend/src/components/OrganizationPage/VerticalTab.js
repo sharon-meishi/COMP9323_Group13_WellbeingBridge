@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function VerticalTabs({ profileData }) {
+export default function VerticalTabs({ profileData, setUpdate }) {
   const classes = useStyles();
   const [value, setValue] = useState(0);
   const [preloadValue, setPreloadValue] = useState({});
@@ -171,6 +171,7 @@ export default function VerticalTabs({ profileData }) {
             <ProfileEditForm
               currentName={profileData.organizationName}
               oId={profileData.oId}
+              setUpdate={setUpdate}
             />
           </Box>
         </TabPanel>
