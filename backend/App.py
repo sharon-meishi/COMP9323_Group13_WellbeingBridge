@@ -515,6 +515,7 @@ class GetEventbyId(Resource):
             comment_temp['comment'] = data[4]
             # comment_temp = json.dumps(comment_temp)
             comments.append(comment_temp)
+        comments.reverse()
         book_sql = f"SELECT UserId FROM Booking WHERE EventId={eventid};"
         booked_userid = sql_command(book_sql)
         booked_event_user = []
@@ -597,6 +598,8 @@ class GetUserProfilebyId(Resource):
             favourite_id = [int(fid) for fid in user_info[4].split(',')]
         else:
             favourite_id = []
+        favourite_id.reverse()
+        booking_lst.reverse()
         output = {"UserId": user_id,
                   "Nickname": user_info[1],
                   "Email": user_info[2],
@@ -671,6 +674,7 @@ class Organization_profile(Resource):
             if len(event_list):
                 for i in event_list:
                     event_id.append(i[0])
+            event_id.reverse()
             if len(result):
                 output = {
                     "oId": oid,
