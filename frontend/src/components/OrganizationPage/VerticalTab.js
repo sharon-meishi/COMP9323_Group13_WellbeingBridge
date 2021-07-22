@@ -6,6 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import SettingsIcon from '@material-ui/icons/Settings';
 import HomeIcon from '@material-ui/icons/Home';
 import EventIcon from '@material-ui/icons/Event';
@@ -14,7 +15,8 @@ import Dashboard from './Dashboard';
 import OrganizationForm from './OrganizationForm';
 import EventDisplay from './EventDisplay';
 import ProfileEditForm from '../IndividualProfilePage/ProfileEditForm';
-import { getOrganizationDetails } from '../api';
+import OrgEventCard from './OrgEventCard';
+import { getOrganizationDetails, getEventSummary } from '../api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;
@@ -61,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
   },
   tabs: {
+    minWidth: '180px',
     paddingTop: '30px',
     height: '100%',
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -83,21 +86,67 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     color: '#26A69A',
   },
+  eventBox: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    width: '75%',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  item: {
+    width: '100%',
+  },
 }));
 
 export default function VerticalTabs({ profileData, setUpdate }) {
   const classes = useStyles();
+  const event_list = profileData.publishedEvent;
   const [value, setValue] = useState(0);
   const [preloadValue, setPreloadValue] = useState({});
   const [details, setDetails] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [start, setStart] = useState(0);
+  const [eventList, setEventList] = useState([]);
+  const [loadMore, setLoadMore] = useState(
+    event_list.length > 3 ? true : false
+  );
+  const [end, setEnd] = useState(event_list.length > 3 ? 3 : event_list.length);
+
+  const loadMoreHandler = () => {
+    if (end + 3 >= event_list.length) {
+      setEnd(event_list.length);
+      setStart(end);
+      setLoadMore(false);
+    } else {
+      setEnd(end + 3);
+      setStart(start + 3);
+    }
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   useEffect(() => {
-    console.log(profileData.oId);
+    const fetchData = async () => {
+      const data = await Promise.all(
+        event_list.slice(start, end).map((id) => getEventSummary(id, true))
+      );
+      setEventList((prevEvents) => prevEvents.concat(data));
+    };
+    if (end > start) {
+      fetchData();
+    }
+  }, [start]);
+
+  useEffect(() => {
+    setLoadMore(event_list.length > 3 ? true : false);
+  }, [event_list]);
+
+  console.log(eventList);
+
+  useEffect(() => {
     const fetchData = async () => {
       const Data = await getOrganizationDetails(profileData.oId);
       if (Data[0] === 200) {
@@ -149,7 +198,40 @@ export default function VerticalTabs({ profileData, setUpdate }) {
           <Dashboard profileData={profileData} />
         </TabPanel>
         <TabPanel value={value} index={1} className={classes.tabpanel}>
-          <EventDisplay profileData={profileData} />
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            width='100%'
+            flexDirection='column'
+          >
+            <div className={classes.eventBox}>
+              {eventList.map((event) => (
+                <OrgEventCard
+                  key={event.eventId}
+                  eventId={event.eventId}
+                  eventName={event.name}
+                  eventDate={event.date}
+                  postcode={event.location.postcode}
+                  introduction={event.introduction}
+                  thumbnail={event.thumbnail}
+                  eventList={eventList}
+                  setEventList={setEventList}
+                />
+              ))}
+            </div>
+            <Box>
+              <Button
+                color='primary'
+                variant='contained'
+                onClick={loadMoreHandler}
+                disabled={!loadMore}
+              >
+                Load More
+              </Button>
+            </Box>
+            {/* <EventDisplay profileData={profileData} /> */}
+          </Box>
         </TabPanel>
         <TabPanel value={value} index={2} className={classes.tabpanel}>
           <OrganizationForm

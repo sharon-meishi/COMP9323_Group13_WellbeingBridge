@@ -30,12 +30,12 @@ function SingleComment({ content, eventId, setUpdate }) {
 
   const handleSubmit = async () => {
     console.log(comment);
-    const Data = await updateComment(eventId, comment, content.commentId)
-    if (Data[0] === 200){
-        setEditMode(false);
-        setUpdate(true);
-    }else{
-        console.log(Data[1])
+    const Data = await updateComment(eventId, comment, content.commentId);
+    if (Data[0] === 200) {
+      setEditMode(false);
+      setUpdate(true);
+    } else {
+      console.log(Data[1]);
     }
   };
 
@@ -90,12 +90,13 @@ function SingleComment({ content, eventId, setUpdate }) {
             content.comment
           )}
         </Comment.Text>
-        {parseInt(sessionStorage.getItem('id')) === content.userId ? (
-            <Comment.Actions>
-              <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
-              <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
-            </Comment.Actions>
-          ) : null}
+        {parseInt(sessionStorage.getItem('id')) === content.userId &&
+        sessionStorage.getItem('usergroup') === 'individual' ? (
+          <Comment.Actions>
+            <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
+            <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
+          </Comment.Actions>
+        ) : null}
       </Comment.Content>
     </Comment>
   );

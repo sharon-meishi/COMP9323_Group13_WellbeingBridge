@@ -135,7 +135,7 @@ function EventForm({
   const [loading, setLoading] = useState(false);
 
   // event location
-  const [eventFormat, setEventFormat] = useState('');
+  const [eventFormat, setEventFormat] = useState(eventId ? preloadedValues.EventFormat : '');
   const [lat, setLat] = useState(eventId ? preloadedValues.lat : null);
   const [lng, setlng] = useState(eventId ? preloadedValues.lng : null);
 
