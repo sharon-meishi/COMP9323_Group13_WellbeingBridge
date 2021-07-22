@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 
 const StyledButton = withStyles({
   root: {
@@ -17,7 +17,7 @@ const StyledButton = withStyles({
   },
 })(Button);
 
-function HomePageButton({text, onClick}) {
+function HomePageButton({ text, onClick }) {
   return (
     <StyledButton variant='contained' color='primary' onClick={onClick}>
       {text}

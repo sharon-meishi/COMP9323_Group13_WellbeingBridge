@@ -28,17 +28,18 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   item: {
-    width: '100%'
+    width: '100%',
   },
   eventBox: {
-    display:'flex',
-    width:'100%',
-    justifyContent:'space-between',
-    flexWrap:'wrap',
+    display: 'flex',
+    padding:'0 16px',
+    width: '100%',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
     [theme.breakpoints.down('md')]: {
-      justifyContent:'center',
+      justifyContent: 'center',
     },
-  }
+  },
 }));
 const CardBoard = () => {
   const [event_list, setEventlist] = useState([]);
@@ -70,17 +71,7 @@ const CardBoard = () => {
             </Typography>
             <HomePageButton text='Find Event' />
           </Box>
-          {usergroup === 'organization'?
-            <Box className={classes.eventBox} >
-              {event_list.map((eventId) => (
-                <OrgEventCard
-                  key={eventId}
-                  eventId={eventId}
-                  className={classes.item}
-                ></OrgEventCard>
-              ))}
-            </Box>
-            :<Box className={classes.eventBox} >
+          <Box className={classes.eventBox}>
             {event_list.map((eventId) => (
               <EventCard
                 key={eventId}
@@ -88,7 +79,7 @@ const CardBoard = () => {
                 className={classes.item}
               ></EventCard>
             ))}
-          </Box>}
+          </Box>
         </Grid>
       </Grid>
     </Box>

@@ -189,7 +189,9 @@ function EventForm({
   };
 
   const handleUpload = async () => {
-    const ref = storage.ref(`/images/${file.name}`);
+    const date = new Date();
+    const fileName = `${sessionStorage.getItem('id')}-${date.toLocaleString()}-${file.name}`
+    const ref = storage.ref(`/images/${fileName}`);
     const uploadTask = ref.put(file);
     uploadTask.on('state_changed', console.log, console.error, () => {
       ref.getDownloadURL().then((url) => {

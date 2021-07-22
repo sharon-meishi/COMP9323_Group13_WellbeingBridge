@@ -90,7 +90,7 @@ function SingleComment({ content, eventId, setUpdate }) {
             content.comment
           )}
         </Comment.Text>
-        {sessionStorage.getItem('id') == content.userId ? (
+        {parseInt(sessionStorage.getItem('id')) === content.userId ? (
             <Comment.Actions>
               <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>

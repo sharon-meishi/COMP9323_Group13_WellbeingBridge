@@ -1,24 +1,19 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Alert from '@material-ui/lab/Alert';
 import NavBar from '../components/NavigationBar/NavBar';
 import BackToTop from '../components/BackToTop';
-import { makeStyles } from '@material-ui/core/styles';
-import VerticalTab from '../components/OrganizationPage/VerticalTab'
-import { getOrganizationProfile } from '../components/api'
+import VerticalTab from '../components/OrganizationPage/VerticalTab';
+import { getOrganizationProfile } from '../components/api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;
 }
 
-const useStyles = makeStyles(() => ({
-
-}))
 
 function OrganizationDashboardPage() {
-  const classes = useStyles();
   const [profileData, setProfileData] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,21 +21,20 @@ function OrganizationDashboardPage() {
       if (Data[0] === 200) {
         console.log(Data[1]);
         setProfileData(Data[1]);
-      }
-      else{
-        setErrorMsg(Data[1])
+        setUpdate(false);
+      } else {
+        setErrorMsg(Data[1]);
       }
     };
     fetchData();
-  }, []);
-
+  }, [update]);
 
   return (
     <>
-    <BackToTop showBelow={250} />
-    <NavBar/>
-    {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
-    {profileData ? <VerticalTab profileData={profileData}/> : null}
+      <BackToTop showBelow={250} />
+      <NavBar />
+      {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
+      {profileData ? <VerticalTab profileData={profileData} setUpdate={setUpdate}/> : null}
     </>
   );
 }

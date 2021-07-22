@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import parse from 'date-fns/parse';
+import Alert from '@material-ui/lab/Alert';
 import NavBar from '../components/NavigationBar/NavBar';
 import BackToTop from '../components/BackToTop';
-import { getEventDetails } from '../components/api';
-import Alert from '@material-ui/lab/Alert';
 import EventForm from '../components/EventEditPage/EventForm';
-import parse from 'date-fns/parse';
+import { getEventDetails } from '../components/api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;
@@ -55,11 +55,11 @@ function EventEditPage(props) {
           EndTime: endTime,
           Postcode: Data[1].location.postcode,
           lat: Data[1].location.lat,
-          lng: Data[1].location.lng
+          lng: Data[1].location.lng,
         };
         setData(processedData);
       } else {
-        setErrorMsg(`Something wrong ${Data[1]}`)
+        setErrorMsg(`Something wrong ${Data[1]}`);
       }
     };
     if (eventId) {
@@ -67,7 +67,6 @@ function EventEditPage(props) {
     }
   }, [eventId]);
 
-  
   return (
     <>
       <BackToTop showBelow={250} />
@@ -80,9 +79,7 @@ function EventEditPage(props) {
           preloadedImg={rawData.thumbnail}
           preloadedAddress={rawData.location.address}
         />
-      ) : (
-       null
-      )}
+      ) : null}
     </>
   );
 }

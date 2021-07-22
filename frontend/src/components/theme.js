@@ -1,13 +1,13 @@
-import { createMuiTheme} from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
+
 const theme = createMuiTheme({
- overrides: {
+  overrides: {
     MuiOutlinedInput: {
-        multiline: {
-            color: 'black',
-            width: '100%'
-        }
-    }
-}
-  
+      multiline: {
+        color: 'black',
+        width: '100%',
+      },
+    },
+  },
 });
 export default theme;
