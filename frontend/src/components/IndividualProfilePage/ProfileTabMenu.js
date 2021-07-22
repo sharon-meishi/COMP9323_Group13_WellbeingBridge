@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import Box from '@material-ui/core/Box';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import EventCard from '../EventCard';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -57,9 +58,9 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiSvgIcon-root': {
       marginRight: '3px',
     },
-    '& .MuiTab-labelIcon':{
-        minHeight: '55px'
-    }
+    '& .MuiTab-labelIcon': {
+      minHeight: '55px',
+    },
   },
   tabStyle: {
     color: 'black',
@@ -75,14 +76,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileTabMenu({FavEvents}) {
+function ProfileTabMenu({ FavEvents }) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
 
   return (
     <div className={classes.root}>

@@ -4,20 +4,20 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles(() => ({
-    toTop: {
-        zIndex: 2,
-        position: 'fixed',
-        bottom: '2vh',
-        backgroundColor: '#DCDCDC',
-        color: 'black',
-        "&: hover, &.Mui-focusVisible": {
-            transition: '0.3s',
-            color: '#397BA6',
-            backgroundColor: '#DCDCDC'
-        },
-        right: '3%'
-    }
-}))
+  toTop: {
+    zIndex: 2,
+    position: 'fixed',
+    bottom: '2vh',
+    backgroundColor: '#DCDCDC',
+    color: 'black',
+    '&: hover, &.Mui-focusVisible': {
+      transition: '0.3s',
+      color: '#397BA6',
+      backgroundColor: '#DCDCDC',
+    },
+    right: '3%',
+  },
+}));
 
 function BackToTop({ showBelow }) {
   const classes = useStyles();
@@ -44,11 +44,11 @@ function BackToTop({ showBelow }) {
 
   return (
     <div>
-      { show &&
+      {show && (
         <IconButton onClick={handleClick} className={classes.toTop}>
           <ExpandLessIcon />
         </IconButton>
-      }
+      )}
     </div>
   );
 }

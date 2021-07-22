@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -11,11 +12,9 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import { getEventSummary, likeEvent, unlikeEvent } from './api';
-import { useHistory } from 'react-router-dom';
 import LoginModal from './NavigationBar/LoginModal';
 import RegisterModal from './NavigationBar/RegisterModal';
-
+import { getEventSummary, likeEvent, unlikeEvent } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
-    padding:'1%',
+    padding: '1%',
   },
   media: {
     height: 0,
@@ -41,20 +40,19 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.2rem',
     textDecoration: 'underline',
     fontWeight: 400,
-    '&:hover':{
-      cursor:'pointer',
-    }
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   location: {
     fontSize: '0.9rem',
     justifyContent: 'end',
     alignSelf: 'flex-end',
     fontWeight: 500,
-    
   },
   date: {
     fontSize: '0.7rem',
-    fontStyle:'italic'
+    fontStyle: 'italic',
   },
   detail: {
     paddingTop: '2%',
@@ -86,8 +84,8 @@ function EventCard(props) {
         setInfo(res[1]);
         console.log(res[1]);
         console.log(res[1].favourite);
-        if(res[1].favourite){
-          console.log('initial liked')
+        if (res[1].favourite) {
+          console.log('initial liked');
           setIslike(true);
         }
       }
@@ -95,33 +93,33 @@ function EventCard(props) {
     fetchData();
   }, []);
 
-  const checkDetail = ()=>{
+  const checkDetail = () => {
     history.push(`/event/${props.eventId}`);
-  }
-  const handleLike = async ()=>{
-    if (!token){
+  };
+  const handleLike = async () => {
+    if (!token) {
       setOpenLogin(true);
     }
-    if (islike){
+    if (islike) {
       console.log('now it is liked');
       const res = await unlikeEvent(props.eventId);
-      if (res[0] === 200){
+      if (res[0] === 200) {
         setIslike(false);
         console.log('unlike success');
-      }else{
+      } else {
         console.log('unlike error');
       }
-    }else{
+    } else {
       console.log('now it is not liked');
       const res = await likeEvent(props.eventId);
-      if (res[0] === 200){
+      if (res[0] === 200) {
         setIslike(true);
         console.log('like success');
-      }else{
+      } else {
         console.log('like error');
       }
     }
-  }
+  };
   return info ? (
     <Card className={classes.root}>
       {openLogin ? (
@@ -144,47 +142,55 @@ function EventCard(props) {
         title='Event Image'
       />
 
-      <Box display='flex' flexDirection='column' height='100%' justifyContent='space-between'>
-      <CardContent>
-        <Grid container direction='column'>
-          <Typography onClick={checkDetail}className={classes.title}>{info.name}</Typography>
-          <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
-            <Typography className={classes.date} color='textSecondary'>
-              {info.date}
+      <Box
+        display='flex'
+        flexDirection='column'
+        height='100%'
+        justifyContent='space-between'
+      >
+        <CardContent>
+          <Grid container direction='column'>
+            <Typography onClick={checkDetail} className={classes.title}>
+              {info.name}
             </Typography>
-            <Typography className={classes.location}>
-              {info.location.postcode}
-            </Typography>
-          </Box>
-        </Grid>
+            <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
+              <Typography className={classes.date} color='textSecondary'>
+                {info.date}
+              </Typography>
+              <Typography className={classes.location}>
+                {info.location.postcode}
+              </Typography>
+            </Box>
+          </Grid>
 
-        <Grid className={classes.detail}>
-          <Typography>{info.introduction}</Typography>
-        </Grid>
-      </CardContent>
+          <Grid className={classes.detail}>
+            <Typography>{info.introduction}</Typography>
+          </Grid>
+        </CardContent>
 
-      <CardActions className={classes.actions} disableSpacing>
-        <IconButton onClick={handleLike} aria-label='add to favorites'>
-          {islike?<FavoriteIcon color='secondary' fontSize='medium'/>
-                  :<FavoriteIcon color="disabled" fontSize='medium'/>
-          }
-        </IconButton>
-        <IconButton aria-label='share'>
-          <ShareIcon />
-        </IconButton>
-        <Link
-          href={`/event/${props.eventId}`}
-          // onClick={preventDefault}
-          className={classes.view}
-          variant='body2'
-          // to={`/event/${eventId}`}
-        >
-          Discover More
-        </Link>
-      </CardActions>
+        <CardActions className={classes.actions} disableSpacing>
+          <IconButton onClick={handleLike} aria-label='add to favorites'>
+            {islike ? (
+              <FavoriteIcon color='secondary' fontSize='medium' />
+            ) : (
+              <FavoriteIcon color='disabled' fontSize='medium' />
+            )}
+          </IconButton>
+          <IconButton aria-label='share'>
+            <ShareIcon />
+          </IconButton>
+          <Link
+            href={`/event/${props.eventId}`}
+            // onClick={preventDefault}
+            className={classes.view}
+            variant='body2'
+            // to={`/event/${eventId}`}
+          >
+            Discover More
+          </Link>
+        </CardActions>
       </Box>
     </Card>
- 
   ) : null;
 }
 

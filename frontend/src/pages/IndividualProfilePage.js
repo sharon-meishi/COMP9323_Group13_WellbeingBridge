@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import NavBar from '../components/NavigationBar/NavBar';
-import BackToTop from '../components/BackToTop';
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
 import Grid from '@material-ui/core/Grid';
@@ -12,6 +10,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Divider from '@material-ui/core/Divider';
+import NavBar from '../components/NavigationBar/NavBar';
+import BackToTop from '../components/BackToTop';
 import ProfileEditForm from '../components/IndividualProfilePage/ProfileEditForm';
 import { getUserProfile } from '../components/api';
 
@@ -69,8 +69,7 @@ function IndividualUserProfilePage() {
       if (Data[0] === 200) {
         console.log(Data[1]);
         setProfileData(Data[1]);
-      }
-      else{
+      } else {
         setErrorMsg(Data[1]);
       }
     };
@@ -90,7 +89,10 @@ function IndividualUserProfilePage() {
                 Edit your nickname or password
               </Typography>
             </DialogContent>
-            <ProfileEditForm currentName={profileData.Nickname} setOpen={setOpen}/>
+            <ProfileEditForm
+              currentName={profileData.Nickname}
+              setOpen={setOpen}
+            />
           </Dialog>
           <Grid
             container
@@ -130,7 +132,10 @@ function IndividualUserProfilePage() {
                 </Box>
               </Box>
               <Grid container item>
-                <ProfileTabMenu FavEvents={profileData.FavouriteId} BookEvents={profileData.BookingId}/>
+                <ProfileTabMenu
+                  FavEvents={profileData.FavouriteId}
+                  BookEvents={profileData.BookingId}
+                />
               </Grid>
             </Grid>
           </Grid>

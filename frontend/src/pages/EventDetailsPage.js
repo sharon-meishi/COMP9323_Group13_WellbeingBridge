@@ -1,8 +1,24 @@
 import React, { useContext } from 'react';
-import NavBar from '../components/NavigationBar/NavBar';
 import { AppContext } from '../utils/store';
+import { makeStyles } from '@material-ui/core/styles';
+import { Comment, Form } from 'semantic-ui-react';
+import Card from '@material-ui/core/Card';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import CardMedia from '@material-ui/core/CardMedia';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import IconButton from '@material-ui/core/IconButton';
+import ShareIcon from '@material-ui/icons/Share';
+import CardActions from '@material-ui/core/CardActions';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import EventCard from '../components/EventCard';
+import NavBar from '../components/NavigationBar/NavBar';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
+import SingleComment from '../components/EventDetailPage/SingleComment';
 import {
   getEventDetails,
   likeEvent,
@@ -12,22 +28,7 @@ import {
   postComment,
   getOrganizationProfile,
 } from '../components/api';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import CardMedia from '@material-ui/core/CardMedia';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import IconButton from '@material-ui/core/IconButton';
-import CardActions from '@material-ui/core/CardActions';
-import EventCard from '../components/EventCard';
-import Link from '@material-ui/core/Link';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import ShareIcon from '@material-ui/icons/Share';
-import { Comment, Form, Header } from 'semantic-ui-react';
-import SingleComment from '../components/EventDetailPage/SingleComment';
+
 const useStyles = makeStyles({
   card: {
     margin: '3% 10%',
@@ -362,10 +363,10 @@ function EventDetailsPage({ match }) {
                 <EventCard key={eventId} eventId={eventId} />
               ))}
             </Grid>
-          </Grid> 
+          </Grid>
           <CardMedia className={classes.photo}>
-            <img src={detail.thumbnail}/>
-        </CardMedia>  
+            <img src={detail.thumbnail} />
+          </CardMedia>
         </Grid>
       </Card>
     </div>
