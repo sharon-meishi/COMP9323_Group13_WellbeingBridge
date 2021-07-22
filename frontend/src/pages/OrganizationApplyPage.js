@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/NavigationBar/NavBar';
 import { AppContext } from '../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';

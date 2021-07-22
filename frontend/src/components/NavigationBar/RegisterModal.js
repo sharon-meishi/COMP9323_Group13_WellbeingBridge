@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { AppContext } from '../utils/store';
+import { AppContext } from '../../utils/store';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,12 +8,13 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
-import LoginIcon from '../Assets/LoginIcon.svg';
+import RegisterIcon from '../../Assets/RegisterIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
-import { loginRequest } from './api'
+import { registerRequest } from '../api';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -41,7 +42,7 @@ const useStyles = makeStyles({
   },
 
   topStyle: {
-    margin: '30px 70px 10px 70px',
+    margin: '30px 60px 10px 60px',
   },
   titleStyle: {
     fontFamily: `'Noto Sans', 'Roboto'`,
@@ -54,7 +55,7 @@ const useStyles = makeStyles({
   buttonStyle: {
     fontSize: '16px',
     marginTop: '20px',
-    marginBottom: '10px'
+    marginBottom: '10px',
   },
   linkStyle: {
     fontSize: '13px',
@@ -63,61 +64,57 @@ const useStyles = makeStyles({
   },
 });
 
-function LoginModal({ open, setOpenLogin, setOpenRegister }) {
+function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
   const classes = useStyles();
   const history = useHistory();
+
   const context = useContext(AppContext);
 
   const {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm();
 
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleClose = () => {
-    setOpenLogin(false);
+    setOpenRegister(false);
   };
 
-  const loginHandeler = async (data) => {
+  const registerHandeler = async (data) => {
     console.log(data);
-    const res = await loginRequest(data)
-    if (res[0] === 200){
+    const res = await registerRequest(data);
+    if (res[0] === 200) {
       reset();
-      console.log('login success')
-      handleClose()
-      console.log(res)
-      setErrorMsg('')
+      console.log('register success');
+      handleClose();
+      setErrorMsg('');
       sessionStorage.setItem('token', res[1].token);
-      sessionStorage.setItem('name', res[1].name)
+      sessionStorage.setItem('name', data.nickname);
       sessionStorage.setItem('id', res[1].userId);
-      sessionStorage.setItem('usergroup', res[1].usergroup)
-      context.setIsLoginState(true)
-      if (res[1].usergroup === 'organization'){
-        history.push('/dashboard')
-      }
+      sessionStorage.setItem('usergroup', 'individual');
+      context.setIsLoginState(true);
     } else {
-      setErrorMsg(res[1])
+      setErrorMsg(res[1]);
     }
-
   };
 
   const handleSwitch = (event) => {
     event.preventDefault();
     reset();
-    setOpenLogin(false); 
-    setOpenRegister(true)
-  }
+    setOpenRegister(false);
+    setOpenLogin(true);
+  };
 
   const toOrganizationApplyPage = (event) => {
     event.preventDefault();
     reset();
-    setOpenLogin(false);
+    setOpenRegister(false);
     history.push('/organization/apply');
   };
-
 
   return (
     <Dialog
@@ -128,21 +125,37 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
     >
       <DialogContent className={classes.flexStyle}>
         <Box className={classes.topStyle}>
-          <img alt='loginIcon' src={LoginIcon} />
+          <img alt='RegisterIcon' src={RegisterIcon} />
           <Typography
             id='form-dialog-title'
             variant='h6'
             className={classes.titleStyle}
           >
-            Welcome Back!
+            Welcome to Wellbeing Bridge!
           </Typography>
-          <DialogContentText>Log in to your account</DialogContentText>
+          <DialogContentText>Create your individual account</DialogContentText>
         </Box>
         {errorMsg ? <Alert severity='error'>{errorMsg}</Alert> : null}
         <form
           className={classes.formStyle}
-          onSubmit={handleSubmit(loginHandeler)}
+          onSubmit={handleSubmit(registerHandeler)}
         >
+          <TextField
+            {...register('nickname', {
+              required: true,
+            })}
+            autoFocus
+            margin='normal'
+            id='nickname'
+            label='Nickname'
+            type='text'
+            variant='outlined'
+            className={classes.textFieldStyle}
+            required
+          />
+          {errors?.nickname?.type === 'required' && (
+            <Alert severity='error'>This field is required</Alert>
+          )}
           <TextField
             {...register('email', {
               required: true,
@@ -159,12 +172,9 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             required
           />
           {errors?.emailRegister?.type === 'required' && (
-              <Alert severity='error'>This field is required</Alert>
+            <Alert severity='error'>This field is required</Alert>
           )}
-          {errors?.emailRegister?.type === 'pattern' && (
-            <Alert severity='error'> Invalid email input</Alert>
-           
-          )}
+          {errors?.emailRegister?.type === 'pattern' && 'Invalid email input'}
           <TextField
             {...register('password', {
               required: true,
@@ -181,6 +191,30 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
           {errors?.password?.type === 'required' && (
             <Alert severity='error'>This field is required</Alert>
           )}
+          <TextField
+            {...register('passwordConfirmation', {
+              required: true,
+              validate: {
+                matchesPreviousPassword: (value) => {
+                  const { password } = getValues();
+                  return password === value || 'Passwords should match';
+                },
+              },
+            })}
+            autoFocus
+            margin='normal'
+            id='passwordConfirm'
+            label='Confirm Password'
+            type='password'
+            variant='outlined'
+            className={classes.textFieldStyle}
+            required
+          />
+          {errors?.passwordConfirmation && (
+            <Alert severity='error'>
+              {errors.passwordConfirmation.message}
+            </Alert>
+          )}
           <Button
             type='submit'
             variant='contained'
@@ -190,14 +224,14 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
             Submit
           </Button>
           <Box m={1} className={classes.linkStyle}>
-            Don't have an account?
+            Already have an account?
             <Link
               href='#'
               onClick={handleSwitch}
               color='inherit'
               underline='always'
             >
-              Register here!
+              Login here!
             </Link>
             <Box m={1}>
               <Link
@@ -212,8 +246,9 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
           </Box>
         </form>
       </DialogContent>
+      <DialogActions className={classes.flexStyle}></DialogActions>
     </Dialog>
   );
 }
 
-export default LoginModal;
+export default RegisterModal;

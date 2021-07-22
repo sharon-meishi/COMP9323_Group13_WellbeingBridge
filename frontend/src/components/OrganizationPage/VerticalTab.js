@@ -13,7 +13,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import Dashboard from './Dashboard'
 import OrganizationForm from './OrganizationForm'
 import EventDisplay from './EventDisplay'
-import ProfileEditForm from '../ProfileEditForm'
+import ProfileEditForm from '../IndividualProfilePage/ProfileEditForm'
 import {getOrganizationDetails} from '../api'
 
 function FetchAlert(props) {

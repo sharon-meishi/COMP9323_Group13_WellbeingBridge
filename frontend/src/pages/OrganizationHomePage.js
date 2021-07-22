@@ -1,6 +1,6 @@
 import React from 'react';
 import BackToTop from '../components/BackToTop';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/NavigationBar/NavBar';
 import ScrollspyContent from '../components/OrganizationPage/ScrollspyContent';
 
 function OrganizationHomePage() {

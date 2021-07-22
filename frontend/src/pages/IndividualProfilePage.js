@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/NavigationBar/NavBar';
 import BackToTop from '../components/BackToTop';
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
@@ -12,7 +12,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Divider from '@material-ui/core/Divider';
-import ProfileEditForm from '../components/ProfileEditForm';
+import ProfileEditForm from '../components/IndividualProfilePage/ProfileEditForm';
 import { getUserProfile } from '../components/api';
 
 function FetchAlert(props) {

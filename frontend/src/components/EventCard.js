@@ -13,8 +13,8 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import { getEventSummary, likeEvent, unlikeEvent } from './api';
 import { useHistory } from 'react-router-dom';
-import LoginModal from '../components/LoginModal';
-import RegisterModal from '../components/RegisterModal';
+import LoginModal from './NavigationBar/LoginModal';
+import RegisterModal from './NavigationBar/RegisterModal';
 
 
 const useStyles = makeStyles((theme) => ({
