@@ -13,8 +13,8 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import { getEventSummary, deleteEvent} from '../api';
 import { useHistory } from 'react-router-dom';
-import LoginModal from '../LoginModal';
-import RegisterModal from '../RegisterModal';
+import LoginModal from '../NavigationBar/LoginModal';
+import RegisterModal from '../NavigationBar/RegisterModal';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
 

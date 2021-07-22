@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/NavigationBar/NavBar';
 import { AppContext } from '../utils/store';
-import LoginModal from '../components/LoginModal';
-import RegisterModal from '../components/RegisterModal';
+import LoginModal from '../components/NavigationBar/LoginModal';
+import RegisterModal from '../components/NavigationBar/RegisterModal';
 import {
   getEventDetails,
   likeEvent,
@@ -27,7 +27,7 @@ import Link from '@material-ui/core/Link';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import ShareIcon from '@material-ui/icons/Share';
 import { Comment, Form, Header } from 'semantic-ui-react';
-import SingleComment from '../components/SingleComment';
+import SingleComment from '../components/EventDetailPage/SingleComment';
 const useStyles = makeStyles({
   card: {
     margin: '3% 10%',

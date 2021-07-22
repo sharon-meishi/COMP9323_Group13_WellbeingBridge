@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { AppContext } from '../utils/store';
+import { AppContext } from '../../utils/store';
 import ProfileMenu from './ProfileMenu';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,7 +12,7 @@ import {
   Link,
   Box,
 } from '@material-ui/core';
-import HomePageButton from './HomePageButton';
+import HomePageButton from '../HomePageButton';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 import LogoButton from './LogoButton';

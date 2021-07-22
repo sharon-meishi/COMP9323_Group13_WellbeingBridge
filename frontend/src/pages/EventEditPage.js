@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/NavigationBar/NavBar';
 import BackToTop from '../components/BackToTop';
 import { getEventDetails } from '../components/api';
 import Alert from '@material-ui/lab/Alert';

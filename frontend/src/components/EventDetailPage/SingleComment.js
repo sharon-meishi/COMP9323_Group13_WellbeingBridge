@@ -3,7 +3,7 @@ import { Form, Comment } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Avatar } from '@material-ui/core';
 import DeleteReminder from './DeleteReminder';
-import { updateComment, deleteComment } from './api';
+import { updateComment, deleteComment } from '../api';
 
 const useStyles = makeStyles(() => ({
   avatarStyle: {
