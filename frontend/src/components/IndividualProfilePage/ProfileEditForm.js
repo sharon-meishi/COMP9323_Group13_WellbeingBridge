@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
+import Link from '@material-ui/core/Link';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { updateOrganizationProfile, updateUserProfile} from '../api';
@@ -34,24 +35,40 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '10px',
     marginRight: '5px'
   },
+  linkStyle: {
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    width: '50%',
+    marginTop: '8px'
+  }
 }));
 
-function ProfileEditForm({ currentName, oId, setOpen}) {
+function ProfileEditForm({ currentName, oId, setOpen, setUpdate}) {
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [show, setShow] = useState(false);
 
   const {
     reset,
     control,
     handleSubmit,
     getValues,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
       name: currentName,
     },
   });
+
+  const toggleShow = () => {
+    setShow(!show);
+    setValue('password', '');
+    setValue('confirmpassword', '');
+    setSuccessMsg('');
+    setErrorMsg('')
+  }
 
   const onSubmit = async (data) => {
     console.log(data);
@@ -77,6 +94,7 @@ function ProfileEditForm({ currentName, oId, setOpen}) {
         setSuccessMsg('Your profile has been updated successfully!')
         reset({name: data.name})
         sessionStorage.setItem('name',data.name)
+        setUpdate(true);
       } else{
         setErrorMsg('Something Wrong, please try again')
         setSuccessMsg('');
@@ -116,6 +134,8 @@ function ProfileEditForm({ currentName, oId, setOpen}) {
             control={control}
           />
         </section>
+        <Link onClick={toggleShow} className={classes.linkStyle}>Edit Password</Link>
+        {show ? <Box width='100%' display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
         <section className={classes.formStyle}>
           <label>New Password:</label>
           <Controller
@@ -163,6 +183,7 @@ function ProfileEditForm({ currentName, oId, setOpen}) {
         {errors?.confirmpassword && (
           <Alert severity='error'>{errors.confirmpassword.message}</Alert>
         )}
+        </Box> : null}
         <Box display='flex' justifyContent='space-between'>
         <Button
           variant='outlined'

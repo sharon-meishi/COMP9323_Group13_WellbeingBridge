@@ -58,6 +58,7 @@ function IndividualUserProfilePage() {
   const [open, setOpen] = useState(false);
   const [profileData, setProfileData] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [update, setUpdate] = useState(false)
 
   const handleClose = () => {
     setOpen(false);
@@ -69,12 +70,14 @@ function IndividualUserProfilePage() {
       if (Data[0] === 200) {
         console.log(Data[1]);
         setProfileData(Data[1]);
+        setUpdate(false);
       } else {
         setErrorMsg(Data[1]);
       }
     };
     fetchData();
-  }, []);
+   
+  }, [update]);
 
   return (
     <>
@@ -92,6 +95,7 @@ function IndividualUserProfilePage() {
             <ProfileEditForm
               currentName={profileData.Nickname}
               setOpen={setOpen}
+              setUpdate={setUpdate}
             />
           </Dialog>
           <Grid
@@ -107,8 +111,6 @@ function IndividualUserProfilePage() {
               xs={11}
               sm={9}
               md={8}
-              lg={7}
-              xl={6}
               className={classes.itemStyle}
             >
               <Box display='flex' flexDirection='column' width='100%' mb={4}>

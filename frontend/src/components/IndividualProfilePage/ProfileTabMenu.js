@@ -74,9 +74,19 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: '20px',
     alignSelf: 'center',
   },
+  tabPanel: {
+    width:'100%'
+  },
+  feedStyle: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    flexWrap: 'wrap',
+    width: '100%',
+  }
 }));
 
-function ProfileTabMenu({ FavEvents }) {
+function ProfileTabMenu({ FavEvents, BookEvents }) {
+  console.log(FavEvents, BookEvents)
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -112,11 +122,19 @@ function ProfileTabMenu({ FavEvents }) {
           />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
-        My Favourites {FavEvents}
+      <TabPanel value={value} index={0} className={classes.tabPanel}>
+        <Box className={classes.feedStyle}>
+        {FavEvents.map((eventId) => (
+          <EventCard key={eventId} eventId={eventId}/>
+        ))}
+        </Box>
       </TabPanel>
-      <TabPanel value={value} index={1}>
-        My Bookings
+      <TabPanel value={value} index={1}  className={classes.tabPanel}>
+      <Box className={classes.feedStyle}>
+        {BookEvents.map((eventId) => (
+          <EventCard key={eventId} eventId={eventId}/>
+        ))}
+        </Box>
       </TabPanel>
     </div>
   );
