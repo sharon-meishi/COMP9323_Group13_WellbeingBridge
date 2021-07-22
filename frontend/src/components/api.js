@@ -99,11 +99,10 @@ export const createEventRequest = async (uploadBody) => {
   }
 };
 
-export const getEventSummary = async (eventId) => {
+export const getEventSummary = async (eventId, dataOnly) => {
   const url = baseUrl + `/event/${eventId}/summary`;
   let headers = {};
   if (sessionStorage.getItem('token')) {
-    console.log(`token included:${sessionStorage.getItem('token')}`);
     headers = {
       accept: 'application/json',
       Authorization: `${sessionStorage.getItem('token')}`,
@@ -116,15 +115,16 @@ export const getEventSummary = async (eventId) => {
     };
   }
   try {
-    const res = await axios.get(
-      url,
-      {
-        headers: headers,
-      }
-    );
-    return [res.status, res.data];
+    const res = await axios.get(url, {
+      headers: headers,
+    });
+    if (dataOnly){
+      return res.data
+    }else{
+      return [res.status, res.data];
+    }
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    return [error.response.status, error.response.data.message];
   }
 };
 
@@ -145,12 +145,9 @@ export const getEventDetails = async (eventId) => {
     };
   }
   try {
-    const res = await axios.get(
-      url,
-      {
-        headers: headers,
-      }
-    );
+    const res = await axios.get(url, {
+      headers: headers,
+    });
     return [res.status, res.data];
   } catch (error) {
     console.log(error);
@@ -203,36 +200,21 @@ export const getPopularEventId = async () => {
   }
 };
 
-
-
-// export const getEventDetail = async (data) => {
-//   console.log(data);
-//   const url = baseUrl + `/event/${data[0]}`;
-//   try {
-//     const res = await axios.get(url, {
-//       headers: {
-//         accept: 'application/json',
-//         'content-Type': 'application/json',
-//         Authorization: `${sessionStorage.getItem('token')}`,
-//       },
-//     });
-//     return [res.status, res.data];
-//   } catch (error) {
-//     return [error.response.status,error.response.data.message];
-//   }
-// };
-
 export const likeEvent = async (data) => {
   console.log(data);
   const url = baseUrl + `/event/${data}/favourite`;
   try {
-    const res = await axios.put(url, {},{
-      headers: {
-        accept: 'application/json',
-        'content-Type': 'application/json',
-        Authorization:`${sessionStorage.getItem('token')}`,
-      },
-    });
+    const res = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          accept: 'application/json',
+          'content-Type': 'application/json',
+          Authorization: `${sessionStorage.getItem('token')}`,
+        },
+      }
+    );
 
     return [res.status, res.data];
   } catch (error) {
@@ -249,13 +231,17 @@ export const unlikeEvent = async (data) => {
   console.log(data);
   const url = baseUrl + `/event/${data}/unfavourite`;
   try {
-    const res = await axios.put(url, {},{
-      headers: {
-        accept: 'application/json',
-        'content-Type': 'application/json',
-        Authorization:`${sessionStorage.getItem('token')}`,
-      },
-    });
+    const res = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          accept: 'application/json',
+          'content-Type': 'application/json',
+          Authorization: `${sessionStorage.getItem('token')}`,
+        },
+      }
+    );
 
     return [res.status, res.data];
   } catch (error) {
@@ -267,13 +253,17 @@ export const bookEvent = async (data) => {
   console.log(data);
   const url = baseUrl + `/event/${data}/book`;
   try {
-    const res = await axios.put(url, {},{
-      headers: {
-        accept: 'application/json',
-        'content-Type': 'application/json',
-        Authorization:`${sessionStorage.getItem('token')}`,
-      },
-    });
+    const res = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          accept: 'application/json',
+          'content-Type': 'application/json',
+          Authorization: `${sessionStorage.getItem('token')}`,
+        },
+      }
+    );
 
     return [res.status, res.data];
   } catch (error) {
@@ -285,17 +275,21 @@ export const unbookEvent = async (data) => {
   console.log(data);
   const url = baseUrl + `/event/${data}/unbook`;
   try {
-    const res = await axios.put(url, {},{
-      headers: {
-        accept: 'application/json',
-        'content-Type': 'application/json',
-        Authorization:`${sessionStorage.getItem('token')}`,
-      },
-    });
+    const res = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          accept: 'application/json',
+          'content-Type': 'application/json',
+          Authorization: `${sessionStorage.getItem('token')}`,
+        },
+      }
+    );
 
     return [res.status, res.data];
   } catch (error) {
-    return [error.response.status,error.response.data.message];
+    return [error.response.status, error.response.data.message];
   }
 };
 export const getUserProfile = async () => {
@@ -386,7 +380,7 @@ export const updateOrganizationProfile = async (oId, updateBody) => {
 
 export const getOrganizationDetails = async (oId) => {
   const url = baseUrl + `/organization/${oId}`;
-  console.log(sessionStorage.getItem('token'))
+  console.log(sessionStorage.getItem('token'));
   let headers = {};
   if (sessionStorage.getItem('token')) {
     headers = {
@@ -403,6 +397,97 @@ export const getOrganizationDetails = async (oId) => {
       headers: headers,
     });
     return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const postComment = async (eventId, comment) => {
+  const url = baseUrl + `/event/${eventId}/comment`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const commentBody = {
+    comment: comment,
+  };
+  try {
+    const res = await axios.post(url, commentBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const updateComment = async (eventId, comment, commentId) => {
+  const url = baseUrl + `/event/${eventId}/comment/${commentId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const commentBody = {
+    comment: comment,
+  };
+  try {
+    const res = await axios.put(url, commentBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const deleteComment = async (eventId, commentId) => {
+  const url = baseUrl + `/event/${eventId}/comment/${commentId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.delete(url, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const deleteEvent = async (eventId) => {
+  console.log('delete')
+  const url = baseUrl + `/event/${eventId}/summary`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.delete(url, {
+      headers: headers,
+    });
+    return [res.status, ''];
   } catch (error) {
     console.log(error);
     if (error.response) {

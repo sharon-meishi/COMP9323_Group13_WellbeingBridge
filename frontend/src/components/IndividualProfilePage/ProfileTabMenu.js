@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import Box from '@material-ui/core/Box';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import EventCard from '../EventCard';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -57,9 +58,9 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiSvgIcon-root': {
       marginRight: '3px',
     },
-    '& .MuiTab-labelIcon':{
-        minHeight: '55px'
-    }
+    '& .MuiTab-labelIcon': {
+      minHeight: '55px',
+    },
   },
   tabStyle: {
     color: 'black',
@@ -73,16 +74,25 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: '20px',
     alignSelf: 'center',
   },
+  tabPanel: {
+    width:'100%'
+  },
+  feedStyle: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    flexWrap: 'wrap',
+    width: '100%',
+  }
 }));
 
-function ProfileTabMenu({FavEvents}) {
+function ProfileTabMenu({ FavEvents, BookEvents }) {
+  console.log(FavEvents, BookEvents)
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
 
   return (
     <div className={classes.root}>
@@ -112,11 +122,19 @@ function ProfileTabMenu({FavEvents}) {
           />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
-        My Favourites {FavEvents}
+      <TabPanel value={value} index={0} className={classes.tabPanel}>
+        <Box className={classes.feedStyle}>
+        {FavEvents.map((eventId) => (
+          <EventCard key={eventId} eventId={eventId}/>
+        ))}
+        </Box>
       </TabPanel>
-      <TabPanel value={value} index={1}>
-        My Bookings
+      <TabPanel value={value} index={1}  className={classes.tabPanel}>
+      <Box className={classes.feedStyle}>
+        {BookEvents.map((eventId) => (
+          <EventCard key={eventId} eventId={eventId}/>
+        ))}
+        </Box>
       </TabPanel>
     </div>
   );

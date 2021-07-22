@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import EventCard from '../EventCard';
+import OrgEventCard from '../OrganizationPage/OrgEventCard';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import HomePageButton from '../HomePageButton';
@@ -27,22 +28,24 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   item: {
-    width: '100%'
+    width: '100%',
   },
   eventBox: {
-    display:'flex',
-    width:'100%',
-    justifyContent:'space-between',
-    flexWrap:'wrap',
+    display: 'flex',
+    padding:'0 16px',
+    width: '100%',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
     [theme.breakpoints.down('md')]: {
-      justifyContent:'center',
+      justifyContent: 'center',
     },
-  }
+  },
 }));
 const CardBoard = () => {
   const [event_list, setEventlist] = useState([]);
   const classes = useStyles();
-
+  const usergroup = sessionStorage.getItem('usergroup');
+  console.log(`usergroup = ${usergroup}`);
   const fetchOrigin = async () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {
@@ -68,7 +71,7 @@ const CardBoard = () => {
             </Typography>
             <HomePageButton text='Find Event' />
           </Box>
-          <Box className={classes.eventBox} >
+          <Box className={classes.eventBox}>
             {event_list.map((eventId) => (
               <EventCard
                 key={eventId}

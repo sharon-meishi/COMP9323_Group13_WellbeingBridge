@@ -33,8 +33,8 @@ function SuccessDialog({ open, setOpen, message, onClick, }) {
       history.push('/home');
     }
 
-    const backToProfile = () => {
-      history.push(`/profile/${sessionStorage.getItem('id')}`);
+    const backToDashboard = () => {
+      history.push('/dashboard');
     }
   return (
     <Dialog
@@ -53,8 +53,8 @@ function SuccessDialog({ open, setOpen, message, onClick, }) {
         <Button onClick={backToHome} color='primary' >
           Back to HomePage
         </Button>
-        <Button onClick={backToProfile} color='primary' >
-          Back to MyProfile
+        <Button onClick={backToDashboard} color='primary' >
+          Back to Dashboard
         </Button>
 
       </DialogActions>
