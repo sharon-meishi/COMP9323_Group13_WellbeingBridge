@@ -362,10 +362,10 @@ function EventDetailsPage({ match }) {
                 <EventCard key={eventId} eventId={eventId} />
               ))}
             </Grid>
-          </Grid>
+          </Grid> 
           <CardMedia className={classes.photo}>
-          <img src={detail.thumbnail} />
-        </CardMedia>
+            <img src={detail.thumbnail}/>
+        </CardMedia>  
         </Grid>
       </Card>
     </div>
