@@ -1,32 +1,91 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import OrgEventCard from './OrgEventCard';
 import { makeStyles } from '@material-ui/core/styles';
+import { getEventSummary } from '../api';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  eventBox: {
     display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    alignItems: 'center',
+    flexWrap: 'wrap',
+    width: '75%',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+    alignSelf: 'center',
   },
   item: {
     width: '100%',
   },
 }));
 function EventDisplay(props) {
-  const event_list = props.profileData.publishedEvent;
   const classes = useStyles();
+  const event_list = props.profileData.publishedEvent;
+  console.log(event_list)
+  const [start, setStart] = useState(0);
+  const [eventList, setEventList] = useState([]);
+  const [loadMore, setLoadMore] = useState(event_list.length > 3 ? true : false);
+  const [end, setEnd] = useState(event_list.length > 3 ? 3 : event_list.length);
+
+  const loadMoreHandler = () => {
+    if (end + 3 >= event_list.length) {
+      setEnd(event_list.length);
+      setStart(end);
+      setLoadMore(false);
+    } else {
+      setEnd(end + 3);
+      setStart(start + 3);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async() => {
+      const data = await Promise.all(
+        event_list.slice(start, end).map((id) => getEventSummary(id, true))
+      );
+      setEventList((prevEvents) => prevEvents.concat(data));
+    }
+    if (end > start){
+      fetchData()
+    }
+  }, [start])
+
+  useEffect(() => {
+    setLoadMore(event_list.length > 3 ? true : false)
+  }, [event_list])
+
+  console.log(eventList)
+
+
   return (
-    <div className={classes.root}>
-      {event_list.map((eventId) => (
+    <>
+    <div className={classes.eventBox}>
+      {eventList.map((event) => (
+        <OrgEventCard 
+        key={event.eventId}
+        eventId={event.eventId}
+        eventName={event.name}
+        eventDate={event.date}
+        postcode={event.location.postcode}
+        introduction={event.introduction}
+        thumbnail={event.thumbnail}
+         />
+      ))}
+
+      {/* {event_list.map((eventId) => (
         <OrgEventCard
           key={eventId}
           eventId={eventId}
           className={classes.item}
         ></OrgEventCard>
-      ))}
+      ))} */}
     </div>
+    <Box>
+        <Button color='primary' variant='contained' onClick={loadMoreHandler}>
+          Load More
+        </Button>
+      </Box>
+    </>
   );
 }
 

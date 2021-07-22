@@ -99,11 +99,10 @@ export const createEventRequest = async (uploadBody) => {
   }
 };
 
-export const getEventSummary = async (eventId) => {
+export const getEventSummary = async (eventId, dataOnly) => {
   const url = baseUrl + `/event/${eventId}/summary`;
   let headers = {};
   if (sessionStorage.getItem('token')) {
-    console.log(`token included:${sessionStorage.getItem('token')}`);
     headers = {
       accept: 'application/json',
       Authorization: `${sessionStorage.getItem('token')}`,
@@ -119,7 +118,11 @@ export const getEventSummary = async (eventId) => {
     const res = await axios.get(url, {
       headers: headers,
     });
-    return [res.status, res.data];
+    if (dataOnly){
+      return res.data
+    }else{
+      return [res.status, res.data];
+    }
   } catch (error) {
     return [error.response.status, error.response.data.message];
   }
@@ -474,6 +477,7 @@ export const deleteComment = async (eventId, commentId) => {
 };
 
 export const deleteEvent = async (eventId) => {
+  console.log('delete')
   const url = baseUrl + `/event/${eventId}/summary`;
   const headers = {
     Authorization: `${sessionStorage.getItem('token')}`,
