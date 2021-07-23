@@ -11,7 +11,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import LoginModal from './NavigationBar/LoginModal';
 import RegisterModal from './NavigationBar/RegisterModal';
@@ -25,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: '1%',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 280,
+    },
   },
   media: {
     height: 0,
@@ -91,7 +93,7 @@ function EventCard(props) {
       }
     };
     fetchData();
-  }, []);
+  }, [props.eventId]);
 
   const checkDetail = () => {
     history.push(`/event/${props.eventId}`);

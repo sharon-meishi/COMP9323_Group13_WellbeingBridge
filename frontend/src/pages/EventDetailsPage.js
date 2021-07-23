@@ -128,43 +128,41 @@ function EventDetailsPage({ match }) {
   const [editable, setEditable] = React.useState(false);
   const usergroup = sessionStorage.getItem('usergroup');
   const oid = sessionStorage.getItem('id');
-  console.log(`usergroup = ${usergroup}`);
   const [comment, setComment] = React.useState('');
   const [update, setUpdate] = React.useState(false);
   const context = useContext(AppContext);
 
   const token = sessionStorage.getItem('token');
 
-  const getEvent = async () => {
-    const res = await getEventDetails(eventId);
-    if (res[0] === 200) {
-      setDetail(res[1]);
-      setRecomList(res[1].recommendation);
-      console.log(res[1]);
-      if (res[1].favourite) {
-        console.log('initial liked');
-        setIslike(true);
-      }
-      if (res[1].booked) {
-        console.log('initial booked');
-        setIsbook(true);
-      }
-    }
-    if (usergroup === 'organization') {
-      const orgDetail = await getOrganizationProfile(oid);
-      console.log(orgDetail[1]);
-      console.log(eventId);
-      if (orgDetail[1].publishedEvent.indexOf(eventId) > 0) {
-        setEditable(true);
-        console.log('set Editable True');
-      }
-    }
-  };
-
   React.useEffect(() => {
+    const getEvent = async () => {
+      const res = await getEventDetails(eventId);
+      if (res[0] === 200) {
+        setDetail(res[1]);
+        setRecomList(res[1].recommendation);
+        console.log(res[1]);
+        if (res[1].favourite) {
+          console.log('initial liked');
+          setIslike(true);
+        }
+        if (res[1].booked) {
+          console.log('initial booked');
+          setIsbook(true);
+        }
+      }
+      if (usergroup === 'organization') {
+        const orgDetail = await getOrganizationProfile(oid);
+        console.log(orgDetail[1]);
+        console.log(eventId);
+        if (orgDetail[1].publishedEvent.indexOf(eventId) > 0) {
+          setEditable(true);
+          console.log('set Editable True');
+        }
+      }
+    };
     getEvent();
     setUpdate(false);
-  }, [update]);
+  }, [eventId, oid, usergroup, update]);
 
   const handleLike = async () => {
     if (!token) {
@@ -365,7 +363,7 @@ function EventDetailsPage({ match }) {
             </Grid>
           </Grid>
           <CardMedia className={classes.photo}>
-            <img src={detail.thumbnail} />
+            <img alt='event_image' src={detail.thumbnail} />
           </CardMedia>
         </Grid>
       </Card>
