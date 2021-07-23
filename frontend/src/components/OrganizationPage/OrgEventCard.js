@@ -20,7 +20,6 @@ import clsx from 'clsx';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 280,
-    margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
     margin: '1%',
@@ -28,13 +27,6 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: '85%', // 16:9
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
   },
   title: {
     fontSize: '1.2rem',

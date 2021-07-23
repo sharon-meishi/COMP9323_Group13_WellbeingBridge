@@ -13,7 +13,6 @@ import EventIcon from '@material-ui/icons/Event';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import Dashboard from './Dashboard';
 import OrganizationForm from './OrganizationForm';
-import EventDisplay from './EventDisplay';
 import ProfileEditForm from '../IndividualProfilePage/ProfileEditForm';
 import OrgEventCard from './OrgEventCard';
 import { getOrganizationDetails, getEventSummary } from '../api';
@@ -104,7 +103,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
   const event_list = profileData.publishedEvent;
   const [value, setValue] = useState(0);
   const [preloadValue, setPreloadValue] = useState({});
-  const [details, setDetails] = useState('');
+  // const [details, setDetails] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [start, setStart] = useState(0);
   const [eventList, setEventList] = useState([]);
@@ -151,7 +150,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
       const Data = await getOrganizationDetails(profileData.oId);
       if (Data[0] === 200) {
         console.log(Data[1]);
-        setDetails(Data[1]);
+        // setDetails(Data[1]);
         const processedData = {
           organizationName: Data[1].organizationName,
           logo: Data[1].logo,
@@ -168,7 +167,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
       }
     };
     fetchData();
-  }, []);
+  }, [profileData.oId]);
 
   return (
     <>

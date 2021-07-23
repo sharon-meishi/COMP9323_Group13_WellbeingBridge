@@ -286,7 +286,7 @@ function EventForm({
       setOpen(true);
       sendData(uploadBody);
     }
-  }, [url, eventId, reset]);
+  }, [url]);
 
   useEffect(() => {
     reset();
@@ -296,7 +296,7 @@ function EventForm({
     });
     setURL('');
     setLoading(false);
-  }, []);
+  }, [preloadedImg, reset]);
 
   return (
     <Grid container className={classes.backgroundStyle}>

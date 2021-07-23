@@ -222,7 +222,7 @@ function OrganizationApplyPage() {
             </section>
 
             <section className={classes.formStyle}>
-              <label>Contact:</label>
+              <label>Contact (Email or Phone number):</label>
               <Controller
                 render={({ field }) => (
                   <TextField
