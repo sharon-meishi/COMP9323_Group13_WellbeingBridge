@@ -520,7 +520,13 @@ class GetEventbyId(Resource):
         booked_userid = sql_command(book_sql)
         booked_event_user = []
         for i in booked_userid:
-            booked_event_user.append(i[0])
+            booked_temp = {}
+            id=i[0]
+            sql=f"SELECT NickName,Email FROM User WHERE UserId={id};"
+            result=sql_command(sql)[0]
+            booked_temp['username']=result[0]
+            booked_temp['email']=result[1]
+            booked_event_user.append(booked_temp)
 
         other_event_sql = f"SELECT * FROM Event WHERE Category='{event_info[6]}' and EventId!={eventid};"
         other_event = sql_command(other_event_sql)
