@@ -15,12 +15,13 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DeleteModal from './DeleteModal';
+import ShareModal from '../ShareModal';
 import clsx from 'clsx';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 280,
-    margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
     margin: '1%',
@@ -28,13 +29,6 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: '85%', // 16:9
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
   },
   title: {
     fontSize: '1.2rem',
@@ -63,6 +57,14 @@ const useStyles = makeStyles((theme) => ({
   },
   expandOpen: {
     transform: 'rotate(180deg)',
+  },
+  tip:{
+    bottom:'10px',
+    '&:hover':{
+      backgroundColor:'green',
+      top:'10px',
+
+    }
   },
   date: {
     fontSize: '0.7rem',
@@ -94,6 +96,7 @@ function OrgEventCard({
   const classes = useStyles();
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
+  const [share, setShare] = React.useState(false);
   const [expanded, setExpanded] = React.useState(false);
 
   const editEvent = () => {
@@ -111,6 +114,10 @@ function OrgEventCard({
   const handleDelete = () => {
     setOpen(true);
   };
+  const handleShare = () => {
+    setShare(true);
+    console.log('handleShare');
+  };
 
 
   return (
@@ -122,6 +129,11 @@ function OrgEventCard({
         eventName={eventName}
         eventList={eventList}
         setEventList={setEventList}
+      />
+      <ShareModal
+        open={share}
+        setShare={setShare}
+        eventId={eventId}
       />
       <CardMedia
         className={classes.media}
@@ -141,16 +153,20 @@ function OrgEventCard({
               justifyContent='space-between'
               alignItems='center'
             >
-              <Typography onClick={checkDetail} className={classes.title}>
+              <Typography onClick={checkDetail} >
                 {eventName}
               </Typography>
               <Box display='flex'>
-                <IconButton onClick={editEvent}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton onClick={handleDelete}>
-                  <DeleteOutlinedIcon />
-                </IconButton>
+                <Tooltip title="Edit" placement="left"  >
+                  <IconButton onClick={editEvent}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete" placement="top">
+                  <IconButton onClick={handleDelete} >
+                    <DeleteOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
               </Box>
             </Box>
             <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
@@ -167,8 +183,10 @@ function OrgEventCard({
           </Grid>
         </CardContent>
         <CardActions className={classes.actions} disableSpacing>
-          <IconButton aria-label='share'>
+          <IconButton onClick={handleShare} aria-label='share'>
+            <Tooltip title="Share" placement="right">
             <ShareIcon />
+            </Tooltip>
           </IconButton>
           <Box display='flex'>
             <Button

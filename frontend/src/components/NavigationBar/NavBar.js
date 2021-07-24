@@ -23,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     backgroundColor: '#C5EDE9',
-    paddingTop: '10px',
-    paddingBottom: '10px',
+    paddingTop: '15px',
+    paddingBottom: '15px',
     fontFamily: 'Noto Sans',
     fontSize: '20px',
     fontWeight: 400,
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NavBar({ profile }) {
+export default function NavBar() {
   const classes = useStyles();
   const history = useHistory();
 
@@ -130,7 +130,6 @@ export default function NavBar({ profile }) {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
-      {profile ? null : (
         <Box className={classes.title}>
           <Link
             href='#'
@@ -141,11 +140,10 @@ export default function NavBar({ profile }) {
             Want to list your organization and events? Apply here!
           </Link>
         </Box>
-      )}
 
       <div className={classes.border}>
         <div className={classes.leftBox}>
-          {profile ? null : <LogoButton />}
+          <LogoButton />
           <div className={classes.searchBox}>
             <FormControl className={classes.select}>
               <Select value={type} onChange={handleChange} defaultValue={type}>

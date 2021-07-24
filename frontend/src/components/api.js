@@ -497,3 +497,24 @@ export const deleteEvent = async (eventId) => {
     }
   }
 };
+
+export const updateOrgPage = async (oId, uploadBody) => {
+  const url = baseUrl + `/organization/${oId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.put(url, uploadBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};

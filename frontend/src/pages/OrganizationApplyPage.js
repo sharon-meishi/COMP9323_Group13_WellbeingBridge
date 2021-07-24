@@ -92,7 +92,7 @@ function OrganizationApplyPage() {
       sessionStorage.setItem('name', data.OrganizationName);
       sessionStorage.setItem('usergroup', 'organization');
       context.setIsLoginState(true);
-      history.push('/home');
+      history.push('/dashboard');
     } else {
       setErrorMsg(res[1]);
     }
@@ -222,7 +222,7 @@ function OrganizationApplyPage() {
             </section>
 
             <section className={classes.formStyle}>
-              <label>Contact:</label>
+              <label>Contact (Email or Phone number):</label>
               <Controller
                 render={({ field }) => (
                   <TextField

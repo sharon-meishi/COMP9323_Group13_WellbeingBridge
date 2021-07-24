@@ -9,22 +9,26 @@ import CardActions from '@material-ui/core/CardActions';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
+import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
 import RegisterModal from './NavigationBar/RegisterModal';
 import { getEventSummary, likeEvent, unlikeEvent } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 335,
+    // minWidth: 335,
     maxWidth: 335,
     margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
     padding: '1%',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 280,
+    },
   },
   media: {
     height: 0,
@@ -75,6 +79,7 @@ function EventCard(props) {
   const history = useHistory();
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
+  const [share, setShare] = React.useState(false);
   const token = sessionStorage.getItem('token');
 
   useEffect(() => {
@@ -91,11 +96,14 @@ function EventCard(props) {
       }
     };
     fetchData();
-  }, []);
+  }, [props.eventId]);
 
   const checkDetail = () => {
     history.push(`/event/${props.eventId}`);
   };
+  const handleShare = () => {
+    setShare(true);
+  }
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
@@ -136,6 +144,11 @@ function EventCard(props) {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
+      <ShareModal
+        open={share}
+        setShare={setShare}
+        eventId={props.eventId}
+      />
       <CardMedia
         className={classes.media}
         image={info.thumbnail}
@@ -179,8 +192,10 @@ function EventCard(props) {
                 )}
               </IconButton>
             ) : null}
-            <IconButton aria-label='share'>
-              <ShareIcon />
+            <IconButton aria-label='share' onClick={handleShare}>
+              <Tooltip title="Share" placement="right">
+                <ShareIcon />
+              </Tooltip>
             </IconButton>
           </Box>
           <Button
