@@ -16,7 +16,9 @@ import CardActions from '@material-ui/core/CardActions';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import EventCard from '../components/EventCard';
 import NavBar from '../components/NavigationBar/NavBar';
+import ShareModal from '../components/ShareModal';
 import LoginModal from '../components/NavigationBar/LoginModal';
+import Tooltip from '@material-ui/core/Tooltip';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
 import {
@@ -123,7 +125,7 @@ function EventDetailsPage({ match }) {
   const [isbook, setIsbook] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
-
+  const [share, setShare] = React.useState(false);
   const [recomList, setRecomList] = React.useState([]);
   const [editable, setEditable] = React.useState(false);
   const usergroup = sessionStorage.getItem('usergroup');
@@ -188,7 +190,9 @@ function EventDetailsPage({ match }) {
       }
     }
   };
-
+  const handleShare = () => {
+    setShare(true);
+  }
   const handleBook = async () => {
     if (!token) {
       setOpenLogin(true);
@@ -238,6 +242,11 @@ function EventDetailsPage({ match }) {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
+      <ShareModal
+        open={share}
+        setShare={setShare}
+        eventId={eventId}
+      />
       <Card className={classes.card}>
         {/* <CardContent> */}
         <Grid className={classes.top}>
@@ -285,8 +294,10 @@ function EventDetailsPage({ match }) {
                   </div>
                 </CardActions>
               )}
-              <IconButton aria-label='share'>
-                <ShareIcon />
+              <IconButton onClick={handleShare} aria-label='share'>
+                <Tooltip title="Share" placement="right">
+                  <ShareIcon />
+                </Tooltip>
               </IconButton>
             </Grid>
             <Typography variant='body1' className={classes.org}>
