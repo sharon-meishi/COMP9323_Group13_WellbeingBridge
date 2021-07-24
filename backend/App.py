@@ -790,7 +790,7 @@ class org(Resource):
 
         if org_info[10] !=None:
             servicelist=org_info[10]
-            servicelist=servicelist.replace("\n",'').split(',')
+            servicelist=servicelist.replace("\n",'').split('@')
         else:
             servicelist=[]
         website=value_check(org_info,11)

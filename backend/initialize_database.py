@@ -52,7 +52,7 @@ def create_database():
     "The Centre is open to assist young people with health advice and support and information, around a range of matters including: caring for others, stress, relationships, employment and depression",
     "Headspace is the National Youth Mental Health Foundation providing early intervention mental health services to 12-25 year olds, along with assistance in promoting young peoples’ wellbeing.",
     "https://youtu.be/DxIDKZHW3-E",
-    'mental health counselling,education support,employment support,alcohol and other drug services', 
+    'mental health counselling@education support@employment support@alcohol and other drug services', 
     "https://headspace.org.au"), 
 
     (0, 'test@org.com', 'abcd', "My Aged Care", "Seniors", 
@@ -60,7 +60,7 @@ def create_database():
      "1800-200-422", "My Aged Care is the Australian Government's starting point on your aged care journey. Find and access the government-funded services you need.", 
      "My Aged Care will offer: prompt, reliable and confidential services; polite, helpful and knowledgeable staff; clear information, available in other languages if you speak another language; support to access information if you have hearing difficulties or a vision impairment; help to find government funded aged care services; prompt resolution of any complaint or concern you have with My Aged Care.", 
     "https://youtu.be/QkWMK7gDVkw", 
-    'Information on the different types of aged care services available,An assessment of needs to identify eligibility and the right type of care,Referrals and support to find service providers that can meet your needs,Information on what you might need to pay towards the cost of your care', 
+    'Information on the different types of aged care services available@An assessment of needs to identify eligibility and the right type of care@Referrals and support to find service providers that can meet your needs@Information on what you might need to pay towards the cost of your care', 
     "https://www.myagedcare.gov.au"), 
 
     (0, '9323@org.com', 'abcd', "House to Grow", "Education", 
@@ -68,7 +68,7 @@ def create_database():
     "info@housetogrow.org", "Empowering communities through education for life, holistic health and wellbeing ", 
     "House to Grow is a not-for-profit organisation that empowers vulnerable children in unhealthy environments and women affected by domestic violence through personal development, education for life and holistic health. We try not to limit who can come to us, we encourage and support any individual that seeks personal development, education for life and holistic health. We also deliver educational programs to organisations, community groups and people in need. ", 
     "https://www.youtube.com/watch?v=mxz8KyV3Ydc", 
-    'Colouring Dreams - Creating an environment for children to dream,Growing Healthy International Students - More Self improvement for better societies,The Flight of the Butterflies - Empowering women, Building Emotionally Intelligent Communities - Get your volunteers ready for tomorrow’s job', 
+    'Colouring Dreams - Creating an environment for children to dream@Growing Healthy International Students - More Self improvement for better societies@The Flight of the Butterflies - Empowering women@Building Emotionally Intelligent Communities - Get your volunteers ready for tomorrow’s job', 
     "https://www.housetogrow.org"); '''
     event_table = '''
     CREATE TABLE IF NOT EXISTS `Event` (

@@ -102,8 +102,8 @@ export default function VerticalTabs({ profileData, setUpdate }) {
   const classes = useStyles();
   const event_list = profileData.publishedEvent;
   const [value, setValue] = useState(0);
-  const [preloadValue, setPreloadValue] = useState({});
-  // const [details, setDetails] = useState('');
+  const [preloadValues, setPreloadValues] = useState({});
+  const [details, setDetails] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [start, setStart] = useState(0);
   const [eventList, setEventList] = useState([]);
@@ -150,18 +150,18 @@ export default function VerticalTabs({ profileData, setUpdate }) {
       const Data = await getOrganizationDetails(profileData.oId);
       if (Data[0] === 200) {
         console.log(Data[1]);
-        // setDetails(Data[1]);
+        setDetails(Data[1]);
         const processedData = {
-          organizationName: Data[1].organizationName,
-          logo: Data[1].logo,
-          details: Data[1].details,
-          introduction: Data[1].introduction,
-          organizationType: Data[1].organizationType,
-          serviceList: Data[1].serviceList,
+          OrgName: Data[1].organizationName,
+          Contact: Data[1].contact,
+          OrganizationDetail: Data[1].details,
+          OrganizationIntroduction: Data[1].introduction,
+          OrganizationType: Data[1].organizationType,
+          serviceList: Data[1].serviceList.map((x) => ({ service: x })),
           video: Data[1].video,
           websiteLink: Data[1].websiteLink,
         };
-        setPreloadValue(processedData);
+        setPreloadValues(processedData);
       } else {
         setErrorMsg(Data[1]);
       }
@@ -233,10 +233,13 @@ export default function VerticalTabs({ profileData, setUpdate }) {
           </Box>
         </TabPanel>
         <TabPanel value={value} index={2} className={classes.tabpanel}>
-          <OrganizationForm
-            profileData={profileData}
-            preloadValue={preloadValue}
-          />
+          {details ? (
+            <OrganizationForm
+              oId={profileData.oId}
+              preloadValues={preloadValues}
+              preloadImg={details.logo}
+            />
+          ) : null}
         </TabPanel>
         <TabPanel value={value} index={3} className={classes.tabpanel}>
           <Box
