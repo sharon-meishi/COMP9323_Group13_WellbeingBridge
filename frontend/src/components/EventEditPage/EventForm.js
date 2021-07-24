@@ -273,6 +273,7 @@ function EventForm({
       if (Data[0] === 200) {
         console.log('create/update success');
         setLoading(false);
+        setOpen(true);
         reset();
       } else {
         setErrorMsg(`Something wrong ${Data[1]}`);
@@ -282,8 +283,6 @@ function EventForm({
     if (url) {
       const uploadBody = buildBody();
       console.log(uploadBody);
-      setLoading(false);
-      setOpen(true);
       sendData(uploadBody);
     }
   }, [url]);
@@ -320,6 +319,7 @@ function EventForm({
         <SuccessDialog
           open={open}
           setOpen={setOpen}
+          eventId={eventId}
           message={
             eventId
               ? 'Thank you! Your event information has been updated successfully!'

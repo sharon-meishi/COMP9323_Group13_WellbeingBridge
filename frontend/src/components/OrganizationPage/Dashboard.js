@@ -8,15 +8,15 @@ import Button from '@material-ui/core/Button';
 const useStyles = makeStyles(() => ({
   titleStyle: {
     fontFamily: 'Noto Sans',
-    fontWeight:'bold'
+    fontWeight: 'bold',
   },
-  Hi:{
+  Hi: {
     fontFamily: 'Noto Sans',
   },
   nameBox: {
     borderBottom: '2px solid #DCDCDC',
-    paddingRight:'8px',
-    paddingBottom: '8px'
+    paddingRight: '8px',
+    paddingBottom: '8px',
   },
   nameStyle: {
     fontFamily: 'Noto Sans',
@@ -25,9 +25,10 @@ const useStyles = makeStyles(() => ({
   },
   listItem: {
     fontFamily: 'Noto Sans',
-    fontSize:'20px'
+    fontSize: '20px',
   },
   ButtonStyle: {
+    marginLeft: '10px',
     color: '#216991',
     boxShadow: '0',
     borderColor: '#216991',
@@ -36,7 +37,7 @@ const useStyles = makeStyles(() => ({
       backgroundColor: '#216991',
       color: 'white',
     },
-  }
+  },
 }));
 
 function Dashboard({ profileData }) {
@@ -44,8 +45,8 @@ function Dashboard({ profileData }) {
   const history = useHistory();
 
   const toMyPage = () => {
-      history.push(`/organization/${profileData.oId}`)
-  }
+    history.push(`/organization/${profileData.oId}`);
+  };
   return (
     <Box
       display='flex'
@@ -64,7 +65,7 @@ function Dashboard({ profileData }) {
         width='80%'
         flexWrap='wrap'
       >
-        <Box display='flex' alignItems='baseline' >
+        <Box display='flex' alignItems='baseline'>
           <Typography variant='h2' className={classes.Hi}>
             Hi,
           </Typography>
@@ -72,10 +73,25 @@ function Dashboard({ profileData }) {
             {profileData.organizationName}:)
           </Typography>
         </Box>
-        <Button href='#' onClick={toMyPage} variant="outlined" className={classes.ButtonStyle}>Organization Page</Button>
       </Box>
-      <Box mt={3}>
-        <Typography variant='h5'className={classes.titleStyle}>Welcome to your dashboard! Here you can:</Typography>
+      <Box mt={3} width='80%'>
+        <Box display='flex'>
+          <Typography variant='h5' className={classes.titleStyle}>
+            Welcome to your dashboard! Here is your organization page
+          </Typography>
+          <Button
+            href='#'
+            onClick={toMyPage}
+            variant='outlined'
+            className={classes.ButtonStyle}
+          >
+            Organization Page
+          </Button>
+        </Box>
+
+        <Typography variant='h5' className={classes.titleStyle}>
+          And here are what you can do in dashboard:
+        </Typography>
 
         <ul className={classes.listItem}>
           <li>Manage events you created</li>

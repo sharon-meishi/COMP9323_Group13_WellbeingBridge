@@ -1,41 +1,48 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box'
-import Typography from '@material-ui/core/Typography'
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
-    titleStyle: {
-        display: 'flex',
-        justifyContent:'center',
-        marginTop: '10px'
-    },
-    iconStyle: {
-        height: '100px',
-        width: '100px',
-        color: '#26A69A'
-    }
-}))
+  titleStyle: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '10px',
+  },
+  iconStyle: {
+    height: '100px',
+    width: '100px',
+    color: '#26A69A',
+  },
+}));
 
+function SuccessDialog({ eventId, oId, open, setOpen, message }) {
+  const history = useHistory();
+  const classes = useStyles();
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-function SuccessDialog({ open, setOpen, message, onClick, }) {
-    const history = useHistory();
-    const classes = useStyles();
-    const handleClose = () => {
-      setOpen(false);
-    };
+  const backToHome = () => {
+    history.push('/home');
+  };
 
-    const backToHome = () => {
-      history.push('/home');
-    }
+  const backToDashboard = () => {
+    history.push('/dashboard');
+  };
 
-    const backToDashboard = () => {
-      history.push('/dashboard');
-    }
+  const toEventPage = () => {
+    history.push(`/event/${eventId}`);
+  };
+
+  const toOrgPage = () => {
+    history.push(`/organization/${oId}`);
+  };
   return (
     <Dialog
       open={open}
@@ -44,19 +51,24 @@ function SuccessDialog({ open, setOpen, message, onClick, }) {
       aria-describedby='alert-dialog-description'
     >
       <Box id='alert-dialog-title' className={classes.titleStyle}>
-      <CheckCircleOutlineIcon className={classes.iconStyle}/>
+        <CheckCircleOutlineIcon className={classes.iconStyle} />
       </Box>
       <Box m={3}>
-           <Typography variant='subtitle1'>{message}</Typography> 
+        <Typography variant='subtitle1'>{message}</Typography>
       </Box>
       <DialogActions>
-        <Button onClick={backToHome} color='primary' >
+        <Button onClick={backToHome} color='primary'>
           Back to HomePage
         </Button>
-        <Button onClick={backToDashboard} color='primary' >
-          Back to Dashboard
-        </Button>
-
+        {oId ? (
+          <Button onClick={toOrgPage} color='primary'>
+            To Organization Page
+          </Button>
+        ) : (
+          <Button onClick={backToDashboard} color='primary'>
+            Back to Dashboard
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Scrollspy from 'react-scrollspy';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import logoPlaceholder from '../../Assets/logo-placeholder.png';
 import comingSoon from '../../Assets/video-coming-soon.gif';
@@ -57,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '10px',
   },
   logo: {
-    width: '100%',
     height: '100px',
     [theme.breakpoints.down('md')]: {
       height: '80px',
@@ -78,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
   },
   eventcard: {
     display: 'flex',
+    justifyContent: 'space-between',
   },
   video: {
     marginBottom: '15px',
@@ -104,6 +105,16 @@ function ScrollspyContent({ oId }) {
     marginBottom: '30px',
   };
   const [data, setData] = useState(null);
+
+  const matchYoutubeUrl = (url) => {
+    const p =
+      /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    const matches = url.match(p);
+    if (matches) {
+      return matches[1];
+    }
+    return false;
+  };
 
   useEffect(() => {
     const getOrganization = async () => {
@@ -144,14 +155,7 @@ function ScrollspyContent({ oId }) {
               Events
             </Link>
           </Scrollspy>
-          <Grid
-            item
-            xs={8}
-            md={7}
-            lg={6}
-            xl={5}
-            className={classes.content}
-          >
+          <Grid item xs={8} md={7} lg={6} xl={5} className={classes.content}>
             <section id='Name' style={BottomSyle}>
               <div className={classes.box}>
                 <h2>{data.organizationName}</h2>
@@ -186,7 +190,7 @@ function ScrollspyContent({ oId }) {
             <section id='Contact' style={BottomSyle}>
               <h2>Video:</h2>
               {data.video ? (
-                <YoutubeVideo vId={data.video.split('https://youtu.be/')[1]} />
+                <YoutubeVideo vId={matchYoutubeUrl(data.video)} />
               ) : (
                 <img
                   alt='video coming soon'
@@ -212,10 +216,11 @@ function ScrollspyContent({ oId }) {
                 ) : (
                   data.otherEvents.map((item) => {
                     return (
-                      <EventCard
-                        style={{ marginLeft: '20px' }}
-                        eventId={item}
-                      />
+                      <Box key={item} ml={1} mr={1}>
+                        <EventCard
+                          eventId={item}
+                        />
+                      </Box>
                     );
                   })
                 )}
