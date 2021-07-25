@@ -51,11 +51,17 @@ class IndividualRegister(Resource):
             return output, 400
         else:
             sql = f"SELECT * FROM User WHERE Email='{email}';"
+            org_sql=f"SELECT * FROM Organization WHERE Email='{email}';"
             if sql_command(sql):
                 output = {
                     "message": "email already used as individual"
                 }
                 return output, 403
+            elif sql_command(org_sql):
+                output = {
+                    "message": "email already used as organization"
+                }
+                return output,403
             else:
                 userid = 0
                 sql = "INSERT INTO User VALUES ({},'{}', '{}', '{}', NULL);".format(userid, nickname, email, password)
@@ -101,9 +107,15 @@ class OrganizationRegister(Resource):
             return output, 400
         else:
             sql = f"SELECT * FROM Organization WHERE Email='{email}';"
+            user_sql = f"SELECT * FROM User WHERE Email='{email}';"
             if sql_command(sql):
                 output = {
                     "message": "email already used as organization"
+                }
+                return output, 403
+            elif sql_command(user_sql):
+                output = {
+                    "message": "email already used as individual"
                 }
                 return output, 403
             else:
@@ -227,6 +239,11 @@ class event(Resource):
                     else:
                         favourite = False
         if result:
+            book_sql = f"SELECT UserId FROM Booking WHERE EventId={eventid};"
+            booked_userid = sql_command(book_sql)
+            booked_event_user = []
+            for i in booked_userid:
+                booked_event_user.append(i[0])
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
                              "thumbnail": result[0][1],
@@ -242,7 +259,8 @@ class event(Resource):
                                  "Lng": result[0][7]
                              },
                              "introduction": result[0][8],
-                             "favourite": favourite}
+                             "favourite": favourite,
+                             "bookedUser":booked_event_user}
             return result_output, 200
         else:
             output = {
@@ -461,8 +479,11 @@ class PublishEvent(Resource):
                        data['location']['lat'], data['location']['lng'], data['date'], data['time'],
                        data['introduction'], data['details'])
             sql_command(sql)
+            event_sql=f"SELECT EventId FROM Event WHERE EventName='{data['eventName']}' and OrganizationId={org_result[0]};"
+            eventid=sql_command(event_sql)[0][0]
             output = {
-                "message": "success"
+                "message": "success",
+                "eventid":eventid
             }
         return output, 200
 
