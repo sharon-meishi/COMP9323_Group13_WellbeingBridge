@@ -17,6 +17,7 @@ import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import EventCard from '../components/EventCard';
 import NavBar from '../components/NavigationBar/NavBar';
 import ShareModal from '../components/ShareModal';
+import BookedUserTable from '../components/BookedUserTable';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import Tooltip from '@material-ui/core/Tooltip';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
@@ -128,6 +129,7 @@ function EventDetailsPage({ match }) {
   const [share, setShare] = React.useState(false);
   const [recomList, setRecomList] = React.useState([]);
   const [editable, setEditable] = React.useState(false);
+  const [bookedUsers, setBookedUsers] = React.useState([]);
   const usergroup = sessionStorage.getItem('usergroup');
   const oid = sessionStorage.getItem('id');
   const [comment, setComment] = React.useState('');
@@ -142,6 +144,8 @@ function EventDetailsPage({ match }) {
       if (res[0] === 200) {
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
+        setBookedUsers(res[1].bookedUser);
+        console.log(res[1].bookedUser);
         console.log(res[1]);
         if (res[1].favourite) {
           console.log('initial liked');
@@ -366,6 +370,11 @@ function EventDetailsPage({ match }) {
                   : null}
               </Comment.Group>
             </Grid>
+            {usergroup?
+              <Grid className={classes.bookedUser}>
+               <Typography variant='h6'>Booked Users:</Typography>
+               <BookedUserTable bookedUsers = {bookedUsers}/>        
+              </Grid>: null}
             <Grid className={classes.recommendation}>
               <Typography variant='h6'>Recommendation:</Typography>
               {recomList.map((eventId) => (
