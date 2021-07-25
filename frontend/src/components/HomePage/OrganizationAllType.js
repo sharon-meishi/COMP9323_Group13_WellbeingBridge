@@ -1,9 +1,9 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import OrganizationAvatar from './OrganizationAvatar';
+import Typography from '@material-ui/core/Typography';
 import youth from '../../Assets/OrganizationType/youth.jpeg';
 import senior from '../../Assets/OrganizationType/senior.jpeg';
 import family from '../../Assets/OrganizationType/family.jpeg';
@@ -14,6 +14,7 @@ import education from '../../Assets/OrganizationType/education.jpeg';
 import employment from '../../Assets/OrganizationType/employment.jpeg';
 import money from '../../Assets/OrganizationType/money.jpeg';
 import community from '../../Assets/OrganizationType/community.jpeg';
+import OrganizationAvatar from './OrganizationAvatar';
 import HomePageButton from '../HomePageButton';
 
 const useStyles = makeStyles((theme) => ({
@@ -28,9 +29,6 @@ const useStyles = makeStyles((theme) => ({
   },
   item: {
     width: '100%',
-    // display: 'flex',
-    // flexDirection: 'column',
-    // justifyContent: 'space-between',
   },
   title: {
     width: '100%',
@@ -47,6 +45,11 @@ const useStyles = makeStyles((theme) => ({
 
 function OrganizationAllType() {
   const classes = useStyles();
+  const history = useHistory();
+
+  const toOrgSearch = () => {
+    history.push('/organization/search')
+  }
 
   return (
     <Box className={classes.box}>
@@ -56,7 +59,7 @@ function OrganizationAllType() {
             <Typography variant='h5' className={classes.titleStyle}>
               What type of organization you are looking for?
             </Typography>
-            <HomePageButton text='Find Organization' />
+            <HomePageButton text='Find Organization' onClick={toOrgSearch}/>
           </Box>
           <Box display='flex' width='100%' justifyContent='space-between' mb={1}>
             <OrganizationAvatar

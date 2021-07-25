@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import EventCard from '../EventCard';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import EventCard from '../EventCard';
 import HomePageButton from '../HomePageButton';
-import Box from '@material-ui/core/Box';
 import { getPopularEventId } from '../api';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,9 +41,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
 const CardBoard = () => {
-  const [event_list, setEventlist] = useState([]);
+  const history = useHistory();
   const classes = useStyles();
+  const [event_list, setEventlist] = useState([]);
   const usergroup = sessionStorage.getItem('usergroup');
   console.log(`usergroup = ${usergroup}`);
   const fetchOrigin = async () => {
@@ -54,6 +57,10 @@ const CardBoard = () => {
     }
   };
   useEffect(() => fetchOrigin(), []);
+
+  const toEventSearch = () => {
+    history.push('/event/search')
+  }
 
   return (
     <Box
@@ -68,7 +75,7 @@ const CardBoard = () => {
             <Typography variant='h4' className={classes.text}>
               What's on
             </Typography>
-            <HomePageButton text='Find Event' />
+            <HomePageButton text='Find Event' onClick={toEventSearch}/>
           </Box>
           <Box className={classes.eventBox}>
             {event_list.map((eventId) => (
