@@ -402,10 +402,7 @@ function EventForm({
                     return (
                       <Select
                         value={field.value || ''}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setEventFormat(e.target.value);
-                        }}
+                        onChange={field.onChange}
                         ref={field.ref}
                         variant='outlined'
                         className={classes.selectStyle}
