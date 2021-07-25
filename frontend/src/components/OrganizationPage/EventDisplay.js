@@ -53,7 +53,7 @@ function EventDisplay(props) {
   useEffect(() => {
     setLoadMore(event_list.length > 3 ? true : false)
   }, [event_list])
-
+  console.log('eventlist');
   console.log(eventList)
 
 
