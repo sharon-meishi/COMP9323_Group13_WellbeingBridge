@@ -25,6 +25,7 @@ import BookedUserTable from '../components/BookedUserTable';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
+
 import {
   getEventDetails,
   likeEvent,
@@ -89,6 +90,7 @@ const useStyles = makeStyles({
     overflow: 'hidden',
     width: '300px',
     height: '500px',
+    objectFit:'contain',
   },
   org: {
     float: 'right',
@@ -114,6 +116,11 @@ const useStyles = makeStyles({
     paddingBottom: '5%',
     borderBottomStyle: 'solid',
     borderWidth: '1px',
+  },
+  recommendation:{
+    display:'flex',
+    flexDeriction:'row',
+    flexWrap:'wrap',
   },
   comment: {
     padding: '5% 2% 5% ',
@@ -273,11 +280,11 @@ function EventDetailsPage({ match }) {
               </Typography>
               {usergroup === 'organization' ? (
                 <CardActions>
-                  {editable ? (
+                  {/* {editable ? (
                     <Tooltip title='Delete' placement='left'>
                       <DeleteOutlinedIcon />
                     </Tooltip>
-                  ) : null}
+                  ) : null} */}
                   {editable ? (
                     <Tooltip title='Edit' placement='right'>
                       <IconButton onClick={editEvent}>
@@ -410,7 +417,7 @@ function EventDetailsPage({ match }) {
             </Grid>
           </Grid>
           <CardMedia className={classes.photo}>
-            <img alt='event_image' src={detail.thumbnail} />
+            <img alt='event_image' src={detail.thumbnail} className={classes.photo}/>
           </CardMedia>
         </Grid>
       </Card>
