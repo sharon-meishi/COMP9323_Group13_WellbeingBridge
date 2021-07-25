@@ -7,9 +7,11 @@ import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import CardMedia from '@material-ui/core/CardMedia';
+import { useHistory } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import EditIcon from '@material-ui/icons/Edit';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
 import ShareIcon from '@material-ui/icons/Share';
@@ -19,6 +21,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import EventCard from '../components/EventCard';
 import NavBar from '../components/NavigationBar/NavBar';
 import ShareModal from '../components/ShareModal';
+import BookedUserTable from '../components/BookedUserTable';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
@@ -134,12 +137,13 @@ function EventDetailsPage({ match }) {
   const [share, setShare] = React.useState(false);
   const [recomList, setRecomList] = React.useState([]);
   const [editable, setEditable] = React.useState(false);
+  const [bookedUsers, setBookedUsers] = React.useState([]);
   const usergroup = sessionStorage.getItem('usergroup');
   const oid = sessionStorage.getItem('id');
   const [comment, setComment] = React.useState('');
   const [update, setUpdate] = React.useState(false);
   const context = useContext(AppContext);
-
+  const history = useHistory();
   const token = sessionStorage.getItem('token');
 
   React.useEffect(() => {
@@ -148,6 +152,8 @@ function EventDetailsPage({ match }) {
       if (res[0] === 200) {
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
+        setBookedUsers(res[1].bookedUser);
+        console.log(res[1].bookedUser);
         console.log(res[1]);
         if (res[1].favourite) {
           console.log('initial liked');
@@ -160,11 +166,12 @@ function EventDetailsPage({ match }) {
       }
       if (usergroup === 'organization') {
         const orgDetail = await getOrganizationProfile(oid);
-        console.log(orgDetail[1]);
+        console.log(orgDetail[1].publishedEvent[0]);
         console.log(eventId);
-        if (orgDetail[1].publishedEvent.indexOf(eventId) > 0) {
-          setEditable(true);
+        console.log(orgDetail[1].publishedEvent.indexOf(Number(eventId)));
+        if (orgDetail[1].publishedEvent.indexOf(Number(eventId)) >= 0) {
           console.log('set Editable True');
+          setEditable(true);
         }
       }
     };
@@ -172,6 +179,9 @@ function EventDetailsPage({ match }) {
     setUpdate(false);
   }, [eventId, oid, usergroup, update]);
 
+  const editEvent = () => {
+    history.push(`/event/edit/${eventId}`);
+  };
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
@@ -267,12 +277,16 @@ function EventDetailsPage({ match }) {
               </Typography>
               {usergroup === 'organization' ? (
                 <CardActions>
-                  {editable ? <DeleteOutlinedIcon /> : null}
-                  {editable ? (
-                    <Link href={`/event/edit/${eventId}`} variant='body2'>
-                      Edit
-                    </Link>
-                  ) : null}
+                  {editable ? 
+                    <Tooltip title="Delete" placement="left"  >
+                      <DeleteOutlinedIcon />
+                    </Tooltip> : null}
+                  {editable ?                 
+                    <Tooltip title="Edit" placement="right"  >
+                      <IconButton onClick={editEvent}>
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip> : null}
                 </CardActions>
               ) : (
                 <CardActions className={classes.actions} disableSpacing>
@@ -376,6 +390,11 @@ function EventDetailsPage({ match }) {
                   : null}
               </Comment.Group>
             </Grid>
+            {usergroup?
+              <Grid className={classes.bookedUser}>
+               <Typography variant='h6'>Booked Users:</Typography>
+               <BookedUserTable bookedUsers = {bookedUsers}/>        
+              </Grid>: null}
             <Grid className={classes.recommendation}>
               <Typography variant='h6'>Recommendation:</Typography>
               {recomList.map((eventId) => (
