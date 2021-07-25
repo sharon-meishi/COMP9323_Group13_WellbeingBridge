@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import CardMedia from '@material-ui/core/CardMedia';
 import { useHistory } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
+// import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import EditIcon from '@material-ui/icons/Edit';
@@ -24,6 +24,7 @@ import LoginModal from '../components/NavigationBar/LoginModal';
 import Tooltip from '@material-ui/core/Tooltip';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
+
 import {
   getEventDetails,
   likeEvent,
@@ -88,6 +89,7 @@ const useStyles = makeStyles({
     overflow: 'hidden',
     width: '300px',
     height: '500px',
+    objectFit:'contain',
   },
   org: {
     float: 'right',
@@ -113,6 +115,11 @@ const useStyles = makeStyles({
     paddingBottom: '5%',
     borderBottomStyle: 'solid',
     borderWidth: '1px',
+  },
+  recommendation:{
+    display:'flex',
+    flexDeriction:'row',
+    flexWrap:'wrap',
   },
   comment: {
     padding: '5% 2% 5% ',
@@ -267,10 +274,12 @@ function EventDetailsPage({ match }) {
               </Typography>
               {usergroup === 'organization' ? (
                 <CardActions>
-                  {editable ? 
+                  {/* {editable ? 
                     <Tooltip title="Delete" placement="left"  >
+                      <IconButton onClick={deleteEvent}>
                       <DeleteOutlinedIcon />
-                    </Tooltip> : null}
+                      </IconButton>
+                    </Tooltip> : null} */}
                   {editable ?                 
                     <Tooltip title="Edit" placement="right"  >
                       <IconButton onClick={editEvent}>
@@ -393,7 +402,7 @@ function EventDetailsPage({ match }) {
             </Grid>
           </Grid>
           <CardMedia className={classes.photo}>
-            <img alt='event_image' src={detail.thumbnail} />
+            <img alt='event_image' src={detail.thumbnail} className={classes.photo}/>
           </CardMedia>
         </Grid>
       </Card>
