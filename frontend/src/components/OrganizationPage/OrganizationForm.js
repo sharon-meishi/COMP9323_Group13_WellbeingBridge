@@ -215,6 +215,9 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
         setLoading(false);
         setOpen(true);
         reset();
+      } else{
+        setLoading(false);
+        setErrorMsg('There is something wrong when uploading, please try again')
       }
     }
     if(url){

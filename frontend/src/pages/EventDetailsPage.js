@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { AppContext } from '../utils/store';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Comment, Form } from 'semantic-ui-react';
 import Card from '@material-ui/core/Card';
@@ -14,11 +15,11 @@ import IconButton from '@material-ui/core/IconButton';
 import ShareIcon from '@material-ui/icons/Share';
 import CardActions from '@material-ui/core/CardActions';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import Tooltip from '@material-ui/core/Tooltip';
 import EventCard from '../components/EventCard';
 import NavBar from '../components/NavigationBar/NavBar';
 import ShareModal from '../components/ShareModal';
 import LoginModal from '../components/NavigationBar/LoginModal';
-import Tooltip from '@material-ui/core/Tooltip';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
 import {
@@ -116,10 +117,15 @@ const useStyles = makeStyles({
     borderBottomStyle: 'solid',
     borderWidth: '1px',
   },
+  orgLink: {
+    cursor: 'pointer'
+  }
 });
+
 function EventDetailsPage({ match }) {
   const classes = useStyles();
   const eventId = match.params.eventId;
+  const history = useHistory();
   const [detail, setDetail] = React.useState({});
   const [islike, setIslike] = React.useState(false);
   const [isbook, setIsbook] = React.useState(false);
@@ -225,6 +231,10 @@ function EventDetailsPage({ match }) {
     }
   };
 
+  const toOrgPage= () => {
+    history.push(`/organization/${detail.OrganizationId}`)
+  }
+
   return (
     <div>
       <NavBar />
@@ -301,7 +311,7 @@ function EventDetailsPage({ match }) {
               </IconButton>
             </Grid>
             <Typography variant='body1' className={classes.org}>
-              By {detail.OrganizationName}
+              By <Link color='inherit' underline='always' onClick={toOrgPage} className={classes.orgLink}>{detail.OrganizationName}</Link>
             </Typography>
             <Grid className={classes.info}>
               <Typography variant='body1' className={classes.org}>

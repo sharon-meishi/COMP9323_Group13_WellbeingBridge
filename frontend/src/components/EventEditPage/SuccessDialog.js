@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -6,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { useHistory } from 'react-router-dom';
+
 
 const useStyles = makeStyles((theme) => ({
   titleStyle: {

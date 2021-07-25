@@ -337,7 +337,6 @@ export const updateUserProfile = async (updateBody) => {
 
 export const getOrganizationProfile = async (oId) => {
   const url = baseUrl + `/organization/profile/${oId}`;
-  console.log(sessionStorage.getItem('token'));
   const headers = {
     Authorization: `${sessionStorage.getItem('token')}`,
     'content-Type': 'application/json',
