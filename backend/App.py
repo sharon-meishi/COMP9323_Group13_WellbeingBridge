@@ -668,6 +668,21 @@ class GetUserProfilebyId(Resource):
 
         return output, 200
 
+@api.route("/organization/<int:oid>/summary",
+           doc={"description": "get the summary of an organization"})
+@api.doc(parser=token_parser)
+class Organization_profile(Resource):
+    def get(self, oid):
+        sql=f"SELECT OrganizationName,OrganizationType,Logo,Introduction FROM Organization WHERE OrganizationId={oid};"
+        result=sql_command(sql)
+        output={
+            "oId":oid,
+            "OrganizationName":result[0][0],
+            "OrganizationType":result[0][1],
+            "Logo":result[0][2],
+            "Introduction":result[0][3]
+        }
+        return output,200
 
 org_profile_model = api.model("profile", {
     "organizationName": fields.String,
