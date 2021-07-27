@@ -91,11 +91,10 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
       console.log(res)
       setErrorMsg('')
       sessionStorage.setItem('token', res[1].token);
-      //sessionStorage.setItem('name', data.nickname)
+      sessionStorage.setItem('name', res[1].name)
       sessionStorage.setItem('id', res[1].userId);
       sessionStorage.setItem('usergroup', res[1].usergroup)
       context.setIsLoginState(true)
-      // context.setUserType(res[1].usergroup); 
     } else {
       setErrorMsg(res[1])
     }

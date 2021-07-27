@@ -18,8 +18,10 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1)
   },
   linkStyle: {
-    fontFamily: `'Noto', 'Roboto'`,
-    fontWeight: '500'
+    fontFamily: `'Gill Sans', 'Roboto'`,
+    fontWeight: '500',
+    fontSize: '18px',
+    textAlign: 'center'
   }
 }));
 function OrganizationAvatar({ alt, src, title }) {

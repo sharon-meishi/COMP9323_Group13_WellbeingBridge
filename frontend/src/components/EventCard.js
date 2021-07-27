@@ -1,28 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-// import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
-// import CardHeader from '@material-ui/core/CardHeader';
+import Button from '@material-ui/core/Button';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-// import Collapse from '@material-ui/core/Collapse';
-// import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-// import { red } from '@material-ui/core/colors';
+import Tooltip from '@material-ui/core/Tooltip';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-// import MoreVertIcon from '@material-ui/icons/MoreVert';
-import SamplePic from '../Assets/eventPic.jpeg';
-import Link from '@material-ui/core/Link';
+import Box from '@material-ui/core/Box';
+import ShareModal from './ShareModal';
+import LoginModal from './NavigationBar/LoginModal';
+import RegisterModal from './NavigationBar/RegisterModal';
+import { getEventSummary, likeEvent, unlikeEvent } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 325,
-    margin: '20px 0 20px 0',
+    // minWidth: 280,
+    maxWidth: 335,
+    // margin: '20px 0 20px 0',
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '1%',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 280,
+    },
+    height:'100%'
   },
   media: {
     height: 0,
@@ -37,93 +44,173 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontSize: '1.2rem',
-    // paddingRight:"1%",
-    width: '65%',
     textDecoration: 'underline',
-    // color:"textSecondary",
+    fontWeight: 400,
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   location: {
     fontSize: '0.9rem',
     justifyContent: 'end',
-    paddingTop: '9%',
-    width: '35%',
-    // color:"textSecondary",
+    alignSelf: 'flex-end',
+    fontWeight: 500,
   },
-  // expandOpen: {
-  //   transform: 'rotate(180deg)',
-  // },
   date: {
-    paddingTop: '2%',
     fontSize: '0.7rem',
+    fontStyle: 'italic',
   },
   detail: {
     paddingTop: '2%',
     height: '10%',
   },
-  // avatar: {
-  //   backgroundColor: red[500],
-  // },
   actions: {
     display: 'flex',
+    justifyContent: 'space-between',
   },
   view: {
-    paddingLeft: '35%',
+    fontSize: '10px',
   },
 }));
+
 function EventCard(props) {
   const classes = useStyles();
-  // const [expanded, setExpanded] = React.useState(false);
-  const { eventId, thumbnail, name, date, location, favourite } = props.info;
-  const preventDefault = (event) => event.preventDefault();
-  // const handleExpandClick = () => {
-  //   setExpanded(!expanded);
-  // };
-  // console.log(id);
-  console.log(props);
-  // console.log(props.info);
+  const [info, setInfo] = useState(null);
+  const [islike, setIslike] = React.useState(false);
+  const history = useHistory();
+  const [openLogin, setOpenLogin] = React.useState(false);
+  const [openRegister, setOpenRegister] = React.useState(false);
+  const [share, setShare] = React.useState(false);
+  const token = sessionStorage.getItem('token');
 
-  return (
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getEventSummary(props.eventId);
+      if (res[0] === 200) {
+        setInfo(res[1]);
+        // console.log(res[1]);
+        // console.log(res[1].favourite);
+        if (res[1].favourite) {
+          // console.log('initial liked');
+          setIslike(true);
+        }
+      }
+    };
+    fetchData();
+  }, [props.eventId]);
+
+  const checkDetail = () => {
+    history.push(`/event/${props.eventId}`);
+  };
+  const handleShare = () => {
+    setShare(true);
+  }
+  const handleLike = async () => {
+    if (!token) {
+      setOpenLogin(true);
+    }
+    if (islike) {
+      // console.log('now it is liked');
+      const res = await unlikeEvent(props.eventId);
+      if (res[0] === 200) {
+        setIslike(false);
+        // console.log('unlike success');
+      } else {
+        console.log('unlike error');
+      }
+    } else {
+      // console.log('now it is not liked');
+      const res = await likeEvent(props.eventId);
+      if (res[0] === 200) {
+        setIslike(true);
+        // console.log('like success');
+      } else {
+        console.log('like error');
+      }
+    }
+  };
+  return info ? (
     <Card className={classes.root}>
+      {openLogin ? (
+        <LoginModal
+          open={openLogin}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
+      {openRegister ? (
+        <RegisterModal
+          open={openRegister}
+          setOpenLogin={setOpenLogin}
+          setOpenRegister={setOpenRegister}
+        />
+      ) : null}
+      <ShareModal
+        open={share}
+        setShare={setShare}
+        eventId={props.eventId}
+      />
       <CardMedia
         className={classes.media}
-        image={SamplePic}
-        title='Paella dish'
+        image={info.thumbnail}
+        title='Event Image'
       />
-      <CardContent>
-        <Grid container direction='row'>
-          <Typography className={classes.title}>{name}</Typography>
-          <Typography className={classes.location}>
-            {location.suburb}
-          </Typography>
-        </Grid>
-        <Typography className={classes.date} color='textSecondary'>
-          29, June 2021
-        </Typography>
-        <Grid className={classes.detail}>
-          <Typography >
-            Aimed at all levels of fitness and age groups, the classes will be
-            gentle exercise focus.
-          </Typography>
-        </Grid>
-      </CardContent>
-      <CardActions className={classes.actions} disableSpacing>
-        <IconButton aria-label='add to favorites'>
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label='share'>
-          <ShareIcon />
-        </IconButton>
-        <Link
-          href='#'
-          onClick={preventDefault}
-          className={classes.view}
-          variant='body2'
-        >
-          Discover More
-        </Link>
-      </CardActions>
+
+      <Box
+        display='flex'
+        flexDirection='column'
+        height='100%'
+        justifyContent='space-between'
+      >
+        <CardContent>
+          <Grid container direction='column'>
+            <div onClick={checkDetail} className={classes.title}>
+              {info.name}
+            </div>
+            <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
+              <div className={classes.date} color='textSecondary'>
+                {info.date}
+              </div>
+              <div className={classes.location}>
+                {info.location.postcode}
+              </div>
+            </Box>
+          </Grid>
+
+          <Grid className={classes.detail}>
+            <div>{info.introduction}</div>
+          </Grid>
+        </CardContent>
+
+        <CardActions className={classes.actions} disableSpacing>
+          <Box>
+            {sessionStorage.getItem('usergroup') === 'individual' ? (
+              <IconButton onClick={handleLike} aria-label='add to favorites'>
+                {islike ? (
+                  <FavoriteIcon color='secondary' fontSize='medium' />
+                ) : (
+                  <FavoriteIcon color='disabled' fontSize='medium' />
+                )}
+              </IconButton>
+            ) : null}
+            <IconButton aria-label='share' onClick={handleShare}>
+              <Tooltip title="Share" placement="right">
+                <ShareIcon />
+              </Tooltip>
+            </IconButton>
+          </Box>
+          <Button
+            onClick={checkDetail}
+            size='small'
+            color='primary'
+            className={classes.view}
+          >
+            Discover More
+          </Button>
+        </CardActions>
+      </Box>
     </Card>
-  );
+  ) : null;
 }
 
 export default EventCard;

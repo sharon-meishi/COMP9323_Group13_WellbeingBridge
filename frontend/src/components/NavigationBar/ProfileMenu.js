@@ -1,13 +1,12 @@
-import React, {useContext} from 'react';
-import { useHistory } from 'react-router-dom'
-import { AppContext } from '../utils/store';
+import React, { useContext } from 'react';
+import { useHistory } from 'react-router-dom';
+import { AppContext } from '../../utils/store';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
 
-function ProfileMenu({}) {
-  
+function ProfileMenu() {
   const history = useHistory();
   const context = useContext(AppContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -23,8 +22,16 @@ function ProfileMenu({}) {
   const handleLogout = () => {
     context.setIsLoginState(false);
     sessionStorage.clear();
-  }
+    history.push(`/home`);
+  };
 
+  const toMyProfile = () => {
+    history.push('/profile');
+  };
+
+  const toDashBoard = () => {
+    history.push('/dashboard');
+  };
   return (
     <div>
       <Button
@@ -32,7 +39,7 @@ function ProfileMenu({}) {
         aria-haspopup='true'
         onClick={handleClick}
       >
-        <Avatar></Avatar>
+        <Avatar>{sessionStorage.getItem('name').charAt(0)}</Avatar>
       </Button>
       <Menu
         id='simple-menu'
@@ -41,7 +48,12 @@ function ProfileMenu({}) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        {sessionStorage.getItem('usergroup') === 'individual' ? (
+          <MenuItem onClick={toMyProfile}>Profile</MenuItem>
+        ) : (
+          <MenuItem onClick={toDashBoard}>Dashboard</MenuItem>
+        )}
+
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>

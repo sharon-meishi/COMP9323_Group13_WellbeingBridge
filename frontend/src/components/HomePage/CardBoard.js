@@ -1,124 +1,93 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import EventCard from '../EventCard';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import EventCard from '../EventCard';
 import HomePageButton from '../HomePageButton';
-import Box from '@material-ui/core/Box';
+import { getPopularEventId } from '../api';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    // backgroundColor:'#C5EDF9',
-    // justifyContent:'center',
-    direction: 'row',
-    justifyContent: 'space-around ',
-    alignItems: 'space-between',
-    padding: '0 20% 0 20%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between ',
+    alignItems: 'center',
   },
   text: {
-    // justifyContent:'space-between',
-    // backgroundColor:'black',
-    // margin: '20px',
     fontFamily: `'Noto Sans', 'Roboto'`,
     fontWeight: '500',
     textDecoration: 'underline',
     padding: '1% 0 0 0',
   },
-  title:{
-    width: '70%',
+  title: {
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '16px',
-  }
-});
+  },
+  item: {
+    width: '100%',
+  },
+  eventBox: {
+    display: 'flex',
+    padding:'16px 0',
+    width: '100%',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center',
+    },
+  },
+}));
+
 const CardBoard = () => {
+  const history = useHistory();
   const classes = useStyles();
-  const event_list = [
-    {
-      eventId: 1,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 2,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 3,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 4,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 5,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-    {
-      eventId: 6,
-      thumbnail: 'image link',
-      name: 'Community Yoga Class',
-      date: '',
-      location: {
-        postcode: '2131',
-        suburb: 'Ashfield NSW',
-      },
-      favourite: true,
-    },
-  ];
-  // const event_board = event_list.map(event => <EventCard key={event.eventId} className={classes.item}></EventCard>);
+  const [event_list, setEventlist] = useState([]);
+  const usergroup = sessionStorage.getItem('usergroup');
+  const fetchOrigin = async () => {
+    const res = await getPopularEventId();
+    if (res[0] === 200) {
+      setEventlist(res[1].event_id);
+    } else {
+      console.log('something wrong in CardBoard');
+    }
+  };
+  useEffect(() => fetchOrigin(), []);
+
+  const toEventSearch = () => {
+    history.push('/event/search')
+  }
+
   return (
-    <Box display='flex' flexDirection='column' alignItems='center' justifyContent='space-between'>
-      <Box className={classes.title}>
-        <Typography variant='h4'  className={classes.text}>
-          What's on
-        </Typography>
-        <HomePageButton text='Find an event' />
-      </Box>
+    <Box
+      display='flex'
+      flexDirection='column'
+      alignItems='center'
+      justifyContent='space-between'
+    >
       <Grid container className={classes.root}>
-        {event_list.map((event) => (
-          <EventCard
-            key={event.eventId}
-            className={classes.item}
-            info={event}
-          ></EventCard>
-        ))}
+        <Grid item sm={10} md={9} xl={8} className={classes.item}>
+          <Box className={classes.title} mt={1}>
+            <Typography variant='h4' className={classes.text}>
+              What's on
+            </Typography>
+            <HomePageButton text='Find Event' onClick={toEventSearch}/>
+          </Box>
+          <Grid container className={classes.eventBox}>
+            {event_list.map((eventId) => (
+              <Grid>
+              <EventCard
+                key={eventId}
+                eventId={eventId}
+                className={classes.item}
+              ></EventCard>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
       </Grid>
     </Box>
   );

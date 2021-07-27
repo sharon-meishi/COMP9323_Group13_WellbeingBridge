@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
-import NavBar from '../components/NavBar';
 import { AppContext } from '../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -11,11 +10,12 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
-import MuiAlert from '@material-ui/lab/Alert';
+import NavBar from '../components/NavigationBar/NavBar';
+import BackToTop from '../components/BackToTop';
 import { organizationApplyRequest } from '../components/api';
 
 function FetchAlert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />;
+  return <Alert elevation={6} variant='filled' {...props} />;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -93,7 +93,7 @@ function OrganizationApplyPage() {
       sessionStorage.setItem('name', data.OrganizationName);
       sessionStorage.setItem('usergroup', 'organization');
       context.setIsLoginState(true);
-      history.push('/home');
+      history.push('/dashboard');
     } else {
       setErrorMsg(res[1]);
     }
@@ -101,10 +101,11 @@ function OrganizationApplyPage() {
 
   useEffect(() => {
     reset();
-  }, []);
+  }, [reset]);
 
   return (
     <>
+    <BackToTop showBelow={250} />
       <NavBar />
       <Grid container className={classes.backgroundStyle}>
         <Grid
@@ -223,7 +224,7 @@ function OrganizationApplyPage() {
             </section>
 
             <section className={classes.formStyle}>
-              <label>Contact:</label>
+              <label>Contact (Email or Phone number):</label>
               <Controller
                 render={({ field }) => (
                   <TextField
