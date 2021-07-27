@@ -9895,6 +9895,11 @@ react-material-ui-carousel@^2.2.6:
     auto-bind "^2.1.1"
     react-swipeable "^6.1.0"
 
+react-multi-select-component@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/react-multi-select-component/-/react-multi-select-component-4.0.3.tgz#583b83f07af0868e27e52fdb9146cfad49918cf6"
+  integrity sha512-XRAdxakB69UmdRN8s2DmNrqIoZe5kCSBgIXDXb0ZnSri27H2/Er0L2Xu5HLle4Di2OCfEwhKoh6QvyrImORFyg==
+
 react-native-google-places-autocomplete@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-google-places-autocomplete/-/react-native-google-places-autocomplete-2.2.0.tgz#8471515cc4c2db07e7c33c2acbebf4bc79ebdac3"

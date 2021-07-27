@@ -20,15 +20,16 @@ import { getEventSummary, likeEvent, unlikeEvent } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    // minWidth: 335,
+    // minWidth: 280,
     maxWidth: 335,
-    margin: '20px 0 20px 0',
+    // margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
     padding: '1%',
     [theme.breakpoints.down('sm')]: {
       minWidth: 280,
     },
+    height:'100%'
   },
   media: {
     height: 0,
@@ -87,10 +88,10 @@ function EventCard(props) {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
         setInfo(res[1]);
-        console.log(res[1]);
-        console.log(res[1].favourite);
+        // console.log(res[1]);
+        // console.log(res[1].favourite);
         if (res[1].favourite) {
-          console.log('initial liked');
+          // console.log('initial liked');
           setIslike(true);
         }
       }
@@ -109,20 +110,20 @@ function EventCard(props) {
       setOpenLogin(true);
     }
     if (islike) {
-      console.log('now it is liked');
+      // console.log('now it is liked');
       const res = await unlikeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(false);
-        console.log('unlike success');
+        // console.log('unlike success');
       } else {
         console.log('unlike error');
       }
     } else {
-      console.log('now it is not liked');
+      // console.log('now it is not liked');
       const res = await likeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(true);
-        console.log('like success');
+        // console.log('like success');
       } else {
         console.log('like error');
       }
@@ -163,21 +164,21 @@ function EventCard(props) {
       >
         <CardContent>
           <Grid container direction='column'>
-            <Typography onClick={checkDetail} className={classes.title}>
+            <div onClick={checkDetail} className={classes.title}>
               {info.name}
-            </Typography>
+            </div>
             <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
-              <Typography className={classes.date} color='textSecondary'>
+              <div className={classes.date} color='textSecondary'>
                 {info.date}
-              </Typography>
-              <Typography className={classes.location}>
+              </div>
+              <div className={classes.location}>
                 {info.location.postcode}
-              </Typography>
+              </div>
             </Box>
           </Grid>
 
           <Grid className={classes.detail}>
-            <Typography>{info.introduction}</Typography>
+            <div>{info.introduction}</div>
           </Grid>
         </CardContent>
 

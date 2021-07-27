@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Comment, Form } from 'semantic-ui-react';
+import { Comment, Form, Header } from 'semantic-ui-react';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -15,7 +15,6 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
 import ShareIcon from '@material-ui/icons/Share';
 import CardActions from '@material-ui/core/CardActions';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
 import EventCard from '../components/EventCard';
 import BackToTop from '../components/BackToTop';
@@ -36,21 +35,31 @@ import {
   getOrganizationProfile,
 } from '../components/api';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   card: {
-    margin: '3% 10%',
-    minWidth: 275,
     display: 'flex',
     flexDirection: 'column',
+    minWidth: 275,
+    margin: '3% 10%',
+    fontFamily: 'Lato,"Helvetica Neue",Arial,Helvetica,sans-serif',
   },
   top: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'center',
+    [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      flexDirection: 'column-reverse',
+      alignItems: 'center',
+    },
   },
   left: {
+    display: 'flex',
+    flexDirection: 'column',
     margin: '3%',
     width: '60%',
     height: '50%',
+
   },
   title: {
     display: 'flex',
@@ -88,49 +97,45 @@ const useStyles = makeStyles({
   },
   photo: {
     overflow: 'hidden',
-    width: '300px',
-    height: '500px',
-    objectFit:'contain',
+    width: '350px',
+    // height: '500px',
+    objectFit: 'contain',
+    [theme.breakpoints.down('sm')]: {
+      height: '100%',
+    },
   },
   org: {
-    float: 'right',
-    paddingRight: '5%',
+    display: 'flex',
+    alignItems: 'baseline',
   },
   info: {
     display: 'flex',
-    width: '100%',
-    paddingBottom: '5%',
     flexDirection: 'column',
-    paddingTop: '5%',
-    borderBottomStyle: 'solid',
-    borderWidth: '1px',
+    width: '100%',
+    paddingTop: '1%',
+    paddingBottom: '3%',
+    borderBottom: '1px solid #DCDCDC',
   },
-  intro: {
-    paddingTop: '5%',
-    paddingBottom: '5%',
-    borderBottomStyle: 'solid',
-    borderWidth: '1px',
+  sectionStyle: {
+    paddingTop: '3%',
+    paddingBottom: '3%',
+    borderBottom: '1px solid #DCDCDC',
   },
-  more: {
-    paddingTop: '5%',
-    paddingBottom: '5%',
-    borderBottomStyle: 'solid',
-    borderWidth: '1px',
-  },
-  recommendation:{
-    display:'flex',
-    flexDeriction:'row',
-    flexWrap:'wrap',
-  },
-  comment: {
-    padding: '5% 2% 5% ',
-    borderBottomStyle: 'solid',
-    borderWidth: '1px',
+  recommendation: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'column',
+    paddingTop: '3%',
+    paddingBottom: '3%',
   },
   orgLink: {
     cursor: 'pointer',
+    marginLeft: '3px',
   },
-});
+  eventBox: {
+    justifyContent: 'space-between',
+  },
+}));
 
 function EventDetailsPage({ match }) {
   const classes = useStyles();
@@ -159,22 +164,20 @@ function EventDetailsPage({ match }) {
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
         setBookedUsers(res[1].bookedUser);
-        console.log(res[1].bookedUser);
-        console.log(res[1]);
+        // console.log(res[1].bookedUser);
+        // console.log(res[1]);
         if (res[1].favourite) {
-          console.log('initial liked');
           setIslike(true);
         }
         if (res[1].booked) {
-          console.log('initial booked');
           setIsbook(true);
         }
       }
       if (usergroup === 'organization') {
         const orgDetail = await getOrganizationProfile(oid);
-        console.log(orgDetail[1].publishedEvent[0]);
-        console.log(eventId);
-        console.log(orgDetail[1].publishedEvent.indexOf(Number(eventId)));
+        // console.log(orgDetail[1].publishedEvent[0]);
+        // console.log(eventId);
+        // console.log(orgDetail[1].publishedEvent.indexOf(Number(eventId)));
         if (orgDetail[1].publishedEvent.indexOf(Number(eventId)) >= 0) {
           console.log('set Editable True');
           setEditable(true);
@@ -191,13 +194,13 @@ function EventDetailsPage({ match }) {
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
+      return
     }
     if (islike) {
-      console.log('now it is liked');
       const res = await unlikeEvent(eventId);
       if (res[0] === 200) {
         setIslike(false);
-        console.log('unlike success');
+        // console.log('unlike success');
       } else {
         console.log('unlike error');
       }
@@ -206,7 +209,7 @@ function EventDetailsPage({ match }) {
       const res = await likeEvent(eventId);
       if (res[0] === 200) {
         setIslike(true);
-        console.log('like success');
+        // console.log('like success');
       } else {
         console.log('like error');
       }
@@ -218,12 +221,13 @@ function EventDetailsPage({ match }) {
   const handleBook = async () => {
     if (!token) {
       setOpenLogin(true);
+      return
     }
     if (isbook) {
       const res = await unbookEvent(eventId);
       if (res[0] === 200) {
         setIsbook(false);
-        console.log('set unbook success');
+        // console.log('set unbook success');
       } else {
         console.log('set unbook error');
       }
@@ -231,7 +235,7 @@ function EventDetailsPage({ match }) {
       const res = await bookEvent(eventId);
       if (res[0] === 200) {
         setIsbook(true);
-        console.log('set book success');
+        // console.log('set book success');
       } else {
         console.log('set book error');
       }
@@ -272,12 +276,17 @@ function EventDetailsPage({ match }) {
       <ShareModal open={share} setShare={setShare} eventId={eventId} />
       <Card className={classes.card}>
         {/* <CardContent> */}
-        <Grid className={classes.top}>
+        <Grid container className={classes.top}>
           <Grid className={classes.left}>
             <Grid className={classes.title}>
-              <Typography variant='h4' component='h2'>
-                {detail.eventName}
-              </Typography>
+              <Box display='flex' alignItems='baseline'>
+                <Header as='h1'>{detail.eventName}</Header>
+                <IconButton onClick={handleShare} aria-label='share'>
+                  <Tooltip title='Share' placement='right'>
+                    <ShareIcon />
+                  </Tooltip>
+                </IconButton>
+              </Box>
               {usergroup === 'organization' ? (
                 <CardActions>
                   {/* {editable ? (
@@ -323,49 +332,49 @@ function EventDetailsPage({ match }) {
                   </div>
                 </CardActions>
               )}
-              <IconButton onClick={handleShare} aria-label='share'>
-                <Tooltip title='Share' placement='right'>
-                  <ShareIcon />
-                </Tooltip>
-              </IconButton>
             </Grid>
-            <Typography variant='body1' className={classes.org}>
-              By{' '}
-              <Link
-                color='inherit'
-                underline='always'
-                onClick={toOrgPage}
-                className={classes.orgLink}
-              >
-                {detail.OrganizationName}
-              </Link>
-            </Typography>
+            <Box alignSelf='flex-end'>
+              <div variant='body1'>
+                By
+                <Link
+                  color='inherit'
+                  underline='always'
+                  onClick={toOrgPage}
+                  className={classes.orgLink}
+                >
+                  {detail.OrganizationName}
+                </Link>
+              </div>
+            </Box>
             <Grid className={classes.info}>
-              <Typography variant='body1' className={classes.org}>
-                When: {detail.date}
-              </Typography>
-              <Typography variant='body1' className={classes.org}>
-                What time: {detail.time}
-              </Typography>
-              <Typography variant='body1' className={classes.org}>
-                Where: {detail.location ? detail.location.address : ''}
-              </Typography>
+              <div className={classes.org}>
+                <Header as='h4'> When:</Header>
+                {detail.date}
+              </div>
+              <div variant='body1' className={classes.org}>
+                <Header as='h4'> What time:</Header>
+                {detail.time}
+              </div>
+              <div variant='body1' className={classes.org}>
+                <Header as='h4'> Where:</Header>
+                {detail.location ? detail.location.address : ''}
+              </div>
             </Grid>
-            <Grid className={classes.intro}>
-              <Typography variant='h6'>Introduction:</Typography>
-              <Typography variant='body1' className={classes.description}>
+            <Grid className={classes.sectionStyle}>
+              <Header as='h3'> Introduction:</Header>
+              <div variant='body1'>
                 {detail.introduction}
-              </Typography>
+              </div>
             </Grid>
-            <Grid className={classes.more}>
-              <Typography variant='h6'>More about this event:</Typography>
-              <Typography variant='body1' className={classes.description}>
+            <Grid className={classes.sectionStyle}>
+            <Header as='h3'> More about this event:</Header>
+              <div variant='body1'>
                 {detail.details}
-              </Typography>
+              </div>
             </Grid>
-            <Grid className={classes.comment}>
-              <Typography variant='h6'>Comments:</Typography>
-              <Comment.Group size='large' style={{ maxWidth: '100%' }}>
+            <Grid className={classes.sectionStyle}>
+            <Header as='h3'> Comments:</Header>
+              <Comment.Group size='large' style={{ maxWidth: '100%' }} >
                 {context.isLoginState &&
                 sessionStorage.getItem('usergroup') === 'individual' ? (
                   <Form onSubmit={submitNewComment}>
@@ -403,21 +412,29 @@ function EventDetailsPage({ match }) {
                   : null}
               </Comment.Group>
             </Grid>
-            {usergroup ? (
+            {/* {usergroup ? (
               <Grid className={classes.bookedUser}>
                 <Typography variant='h6'>Booked Users:</Typography>
                 <BookedUserTable bookedUsers={bookedUsers} />
               </Grid>
-            ) : null}
-            <Grid className={classes.recommendation}>
-              <Typography variant='h6'>Recommendation:</Typography>
-              {recomList.map((eventId) => (
-                <EventCard key={eventId} eventId={eventId} />
-              ))}
+            ) : null} */}
+            <Grid container className={classes.recommendation}>
+            <Header as='h3'> Recommendation:</Header>
+              <Grid container item width='100%' spacing={5} >
+                {recomList.map((eventId) => (
+                  <Grid item xs={11} md={6} lg={4}>
+                    <EventCard key={eventId} eventId={eventId} />
+                  </Grid>
+                ))}
+              </Grid>
             </Grid>
           </Grid>
           <CardMedia className={classes.photo}>
-            <img alt='event_image' src={detail.thumbnail} className={classes.photo}/>
+            <img
+              alt='event_image'
+              src={detail.thumbnail}
+              className={classes.photo}
+            />
           </CardMedia>
         </Grid>
       </Card>

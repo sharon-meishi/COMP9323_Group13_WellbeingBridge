@@ -143,7 +143,7 @@ export default function NavBar({search}) {
           
           </Box>
         </div>
-        <Box display='flex' alignItems='center'>
+        <Box display='flex' alignItems='center' mt={1} mb={1}>
           {context.isLoginState ? null : (
             <HomePageButton text='LOGIN' onClick={handleClickOpen} />
           )}
