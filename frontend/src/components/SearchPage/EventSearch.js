@@ -71,6 +71,16 @@ function EventSearch({match, location}) {
             labelledBy='Select'
             className={classes.selectStyle}
           />
+        </Box>        
+        <Box>
+          <label>Event Location: </label>
+          <MultiSelect
+            options={categoryOptions}
+            value={category}
+            onChange={setCategory}
+            labelledBy='Select'
+            className={classes.selectStyle}
+          />
         </Box>
       </Box>
     </>
