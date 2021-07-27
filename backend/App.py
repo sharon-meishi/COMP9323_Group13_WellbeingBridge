@@ -903,6 +903,26 @@ class org(Resource):
             }
         return output, 200
 
+@api.route("/search/organization", doc={"description": "get details of an organization"})
+@api.doc(params={'name': 'orgname', 'type': 'orgtype'})
+class search_org(Resource):
+    def get(self):
+        name=request.args.get('name')
+        orgtype=request.args.get('type')
+        
+        sql_orgsearch=f"select OrganizationId from Organization where OrganizationName='{name}' and OrganizationType='{orgtype}';"
+        output_search=sql_command(sql_orgsearch)
+        org_info = output_search
+
+        org_list=[]
+        for i in org_info:
+            org_list.append(i[0])
+        output={"organizationId":org_list}
+
+        return output,200
+    
+    
+    
 @api.route("/event/<int:eventid>/comment/<int:commentid>", doc={"description": "edit comments under one event"})
 @api.doc(parser=token_parser)
 class comment(Resource):
