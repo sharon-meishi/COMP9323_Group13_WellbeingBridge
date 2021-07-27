@@ -127,7 +127,7 @@ function OrgEventCard({
 
   return (
     <>
-    <BookingDialog open={booking} onClose={() => setBooking(false)} info={bookedUser}/>
+    <BookingDialog open={booking} onClose={() => setBooking(false)} info={bookedUser} eventName={eventName}/>
     <Card className={classes.root}>
       <DeleteModal
         open={open}
