@@ -85,11 +85,9 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
   };
 
   const registerHandeler = async (data) => {
-    console.log(data);
     const res = await registerRequest(data);
     if (res[0] === 200) {
       reset();
-      console.log('register success');
       handleClose();
       setErrorMsg('');
       sessionStorage.setItem('token', res[1].token);

@@ -15,3 +15,7 @@ code {
 html, body, #root {
   height: 100%
 }
+
+.rmsc {
+  --rmsc-h: 42px !important;
+}

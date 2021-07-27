@@ -243,7 +243,13 @@ class event(Resource):
             booked_userid = sql_command(book_sql)
             booked_event_user = []
             for i in booked_userid:
-                booked_event_user.append(i[0])
+                booked_temp = {}
+                id=i[0]
+                sql=f"SELECT NickName,Email FROM User WHERE UserId={id};"
+                x=sql_command(sql)[0]
+                booked_temp['username']=x[0]
+                booked_temp['email']=x[1]
+                booked_event_user.append(booked_temp)
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
                              "thumbnail": result[0][1],

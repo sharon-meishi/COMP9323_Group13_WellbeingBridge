@@ -16,6 +16,8 @@ import HomePageButton from '../HomePageButton';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 import LogoButton from './LogoButton';
+import Searchbar from '../Searchbar'
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,14 +57,6 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
   },
-  searchBox: {
-    border: '2px solid #E5E5E5',
-    height: '32px',
-    display: 'flex',
-    flexDirection: 'row',
-    marginLeft: '10px',
-    borderRadius: '5px',
-  },
   select: {
     width: '130px',
   },
@@ -84,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NavBar() {
+export default function NavBar({search}) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -130,35 +124,26 @@ export default function NavBar() {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
-        <Box className={classes.title}>
-          <Link
-            href='#'
-            onClick={toOrganizationApplyPage}
-            underline='always'
-            color='inherit'
-          >
-            Want to list your organization and events? Apply here!
-          </Link>
-        </Box>
+      <Box className={classes.title}>
+        <Link
+          href='#'
+          onClick={toOrganizationApplyPage}
+          underline='always'
+          color='inherit'
+        >
+          Want to list your organization and events? Apply here!
+        </Link>
+      </Box>
 
       <div className={classes.border}>
         <div className={classes.leftBox}>
           <LogoButton />
-          <div className={classes.searchBox}>
-            <FormControl className={classes.select}>
-              <Select value={type} onChange={handleChange} defaultValue={type}>
-                <MenuItem value='organization'>Organization</MenuItem>
-                <MenuItem value='event'>Event</MenuItem>
-              </Select>
-            </FormControl>
-            <InputBase
-              className={classes.input}
-              placeholder={'Find event or organization...'}
-            />
-            <SearchIcon className={classes.search} />
-          </div>
+          <Box ml={2}>
+            {search ? null : <Searchbar defaultValue='org'/>} 
+          
+          </Box>
         </div>
-        <Box display='flex' alignItems='center'>
+        <Box display='flex' alignItems='center' mt={1} mb={1}>
           {context.isLoginState ? null : (
             <HomePageButton text='LOGIN' onClick={handleClickOpen} />
           )}

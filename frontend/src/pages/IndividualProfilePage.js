@@ -33,7 +33,6 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: '30px',
     width: '100%',
   },
   buttonStyle: {

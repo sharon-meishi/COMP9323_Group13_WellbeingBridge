@@ -19,7 +19,6 @@ function OrganizationDashboardPage() {
     const fetchData = async () => {
       const Data = await getOrganizationProfile(sessionStorage.getItem('id'));
       if (Data[0] === 200) {
-        console.log(Data[1]);
         setProfileData(Data[1]);
         setUpdate(false);
       } else {

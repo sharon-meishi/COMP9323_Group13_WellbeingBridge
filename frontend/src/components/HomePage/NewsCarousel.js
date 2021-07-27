@@ -56,6 +56,10 @@ const useStyles = makeStyles((theme) => ({
       color: '#C5EDE9',
     },
     textAlign: 'left',
+    '& :hover': {
+      color: 'white',
+      
+    }
   },
 }));
 
@@ -149,7 +153,7 @@ function NewsCarousel() {
             </Box>
           </Card>
 
-          <Card
+          {/* <Card
             className={classes.carouselStyle}
             style={{
               backgroundImage: `url(${bg1})`,
@@ -187,7 +191,7 @@ function NewsCarousel() {
                 </li>
               </ul>
             </Box>
-          </Card>
+          </Card> */}
         
         </Carousel>
       </Grid>
