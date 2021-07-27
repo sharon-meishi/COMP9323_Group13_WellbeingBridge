@@ -82,13 +82,10 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
   };
 
   const loginHandeler = async (data) => {
-    console.log(data);
     const res = await loginRequest(data)
     if (res[0] === 200){
       reset();
-      console.log('login success')
       handleClose()
-      console.log(res)
       setErrorMsg('')
       sessionStorage.setItem('token', res[1].token);
       sessionStorage.setItem('name', res[1].name)

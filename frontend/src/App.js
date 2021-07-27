@@ -1,5 +1,5 @@
 import React from 'react';
-import 'semantic-ui-css/semantic.min.css'
+import 'semantic-ui-css/semantic.min.css';
 import {
   Route,
   Switch,
@@ -17,6 +17,8 @@ import OrganizationApplyPage from './pages/OrganizationApplyPage';
 import OrganizationDashboardPage from './pages/OrganizationDashboardPage';
 import OrganizationHomePage from './pages/OrganizationHomePage';
 import IndividualProfilePage from './pages/IndividualProfilePage';
+import OrgSearchPage from './pages/OrgSearchPage';
+import EventSearchPage from './pages/EventSearchPage';
 
 function App() {
   const [isLoginState, setIsLoginState] = React.useState(
@@ -45,6 +47,8 @@ function App() {
               path='/event/edit/:eventId'
               component={EventEditPage}
             />
+
+            <Route exact path='/event/search' component={EventSearchPage} />
             <Route exact path='/event/:eventId' component={EventDetailsPage} />
 
             <Route exact path='/profile' component={IndividualProfilePage} />
@@ -57,6 +61,12 @@ function App() {
               exact
               path='/organization/apply'
               component={OrganizationApplyPage}
+            />
+
+            <Route
+              exact
+              path='/organization/search'
+              component={OrgSearchPage}
             />
 
             <Route

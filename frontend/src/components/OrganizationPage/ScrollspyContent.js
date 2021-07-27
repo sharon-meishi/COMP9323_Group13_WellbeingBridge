@@ -12,7 +12,7 @@ import YoutubeVideo from './YoutubeVideo';
 
 const useStyles = makeStyles((theme) => ({
   scrollspy: {
-    fontFamily: 'Noto sans',
+    fontFamily: 'Noto Sans',
     display: 'flex',
     flexDirection: 'column',
     margin: '150px 0 0 5%',
@@ -68,17 +68,21 @@ const useStyles = makeStyles((theme) => ({
   },
   introduction: {
     fontFamily: 'Noto Sans',
-    fontWeight: 'bold',
+    fontWeight: '400',
     marginBottom: '20px',
+  },
+  boldStyle: {
+    fontFamily: 'Noto Sans',
+    fontWeight: 'bold',
   },
   service: {
     fontFamily: 'Noto Sans',
-    fontWeight: 'bold',
+    fontWeight: '400',
     marginBottom: '10px',
   },
   eventcard: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   video: {
     marginBottom: '15px',
@@ -96,6 +100,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     position: 'absolute',
   },
+  eventBox: {
+    marginBottom:'20px'
+  }
 }));
 
 function ScrollspyContent({ oId }) {
@@ -201,14 +208,21 @@ function ScrollspyContent({ oId }) {
             </section>
             <section id='Events' style={BottomSyle}>
               <h2>Other Information:</h2>
-              <div className={classes.service}>Contract: {data.contact}</div>
               <div className={classes.service}>
-                {data.websiteLink ? `Website Link:${data.websiteLink}` : null}
+                <span className={classes.boldStyle}>Contract:</span>{' '}
+                {data.contact}
               </div>
+
+              {data.websiteLink ? (
+                <div className={classes.service}>
+                  <span className={classes.boldStyle}>Website Link:</span>{' '}
+                  {data.websiteLink}
+                </div>
+              ) : null}
             </section>
-            <section id='Events' style={BottomSyle}>
+            <Grid container id='Events' className={classes.eventBox}>
               <h2>Their Events: </h2>
-              <div className={classes.eventcard}>
+              <Grid container item className={classes.eventcard} spacing={3}>
                 {data.otherEvents.length === 0 ? (
                   <div className={classes.introduction}>
                     No event at the moment, please wait:)
@@ -216,16 +230,14 @@ function ScrollspyContent({ oId }) {
                 ) : (
                   data.otherEvents.map((item) => {
                     return (
-                      <Box key={item} ml={1} mr={1}>
-                        <EventCard
-                          eventId={item}
-                        />
-                      </Box>
+                      <Grid item xs={11} md={6} lg={4}>
+                        <EventCard eventId={item} />
+                      </Grid>
                     );
                   })
                 )}
-              </div>
-            </section>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       ) : null}

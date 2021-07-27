@@ -143,13 +143,10 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     setLoadMore(event_list.length > 3 ? true : false);
   }, [event_list]);
 
-  console.log(eventList);
-
   useEffect(() => {
     const fetchData = async () => {
       const Data = await getOrganizationDetails(profileData.oId);
       if (Data[0] === 200) {
-        console.log(Data[1]);
         setDetails(Data[1]);
         const processedData = {
           OrgName: Data[1].organizationName,
@@ -168,6 +165,8 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     };
     fetchData();
   }, [profileData.oId]);
+
+  console.log(eventList)
 
   return (
     <>
@@ -214,6 +213,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
                   postcode={event.location.postcode}
                   introduction={event.introduction}
                   thumbnail={event.thumbnail}
+                  bookedUser={event.bookedUser}
                   eventList={eventList}
                   setEventList={setEventList}
                 />

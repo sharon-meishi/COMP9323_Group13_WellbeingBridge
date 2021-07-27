@@ -178,6 +178,15 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     });
   };
 
+  const resetForm = () => {
+    reset();
+    setImg({
+      alt: 'Upload an image',
+      src: preloadImg,
+    });
+    setURL('');
+  }
+
 
 
   const onSubmit = async (data) => {
@@ -569,15 +578,15 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
               />
             </section>
           </>
-          <Box display='flex' justifyContent='center'>
-            {/* <Button
-              onClick={reset}
+          <Box display='flex' justifyContent='space-around' flexWrap='wrap'>
+            <Button
+              onClick={resetForm}
               variant='outlined'
               color='primary'
               className={classes.buttonStyle}
             >
               Reset
-            </Button> */}
+            </Button>
             <Button
               type='submit'
               variant='contained'
