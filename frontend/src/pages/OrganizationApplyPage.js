@@ -11,6 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
 import NavBar from '../components/NavigationBar/NavBar';
+import BackToTop from '../components/BackToTop';
 import { organizationApplyRequest } from '../components/api';
 
 function FetchAlert(props) {
@@ -104,6 +105,7 @@ function OrganizationApplyPage() {
 
   return (
     <>
+    <BackToTop showBelow={250} />
       <NavBar />
       <Grid container className={classes.backgroundStyle}>
         <Grid

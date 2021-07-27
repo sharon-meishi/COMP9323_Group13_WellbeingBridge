@@ -229,13 +229,13 @@ function EventDetailsPage({ match }) {
         setIsbook(false);
         // console.log('set unbook success');
       } else {
-        console.log('set unbook error');
+        // console.log('set unbook error');
       }
     } else {
       const res = await bookEvent(eventId);
       if (res[0] === 200) {
         setIsbook(true);
-        // console.log('set book success');
+        console.log('set book success');
       } else {
         console.log('set book error');
       }

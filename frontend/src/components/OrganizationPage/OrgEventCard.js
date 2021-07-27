@@ -18,6 +18,7 @@ import DeleteModal from './DeleteModal';
 import ShareModal from '../ShareModal';
 import clsx from 'clsx';
 import Tooltip from '@material-ui/core/Tooltip';
+import BookingDialog from './BookingDialog'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,13 +59,12 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
-  tip:{
-    bottom:'10px',
-    '&:hover':{
-      backgroundColor:'green',
-      top:'10px',
-
-    }
+  tip: {
+    bottom: '10px',
+    '&:hover': {
+      backgroundColor: 'green',
+      top: '10px',
+    },
   },
   date: {
     fontSize: '0.7rem',
@@ -81,6 +81,9 @@ const useStyles = makeStyles((theme) => ({
   view: {
     fontSize: '8px',
   },
+  buttonStyle: {
+    display:'flex'
+  }
 }));
 
 function OrgEventCard({
@@ -90,14 +93,17 @@ function OrgEventCard({
   postcode,
   introduction,
   thumbnail,
+  bookedUser,
   eventList,
-  setEventList
+  setEventList,
+  
 }) {
   const classes = useStyles();
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
   const [share, setShare] = React.useState(false);
   const [expanded, setExpanded] = React.useState(false);
+  const [booking, setBooking] = React.useState(false);
 
   const editEvent = () => {
     history.push(`/event/edit/${eventId}`);
@@ -119,8 +125,9 @@ function OrgEventCard({
     console.log('handleShare');
   };
 
-
   return (
+    <>
+    <BookingDialog open={booking} onClose={() => setBooking(false)} info={bookedUser}/>
     <Card className={classes.root}>
       <DeleteModal
         open={open}
@@ -130,11 +137,7 @@ function OrgEventCard({
         eventList={eventList}
         setEventList={setEventList}
       />
-      <ShareModal
-        open={share}
-        setShare={setShare}
-        eventId={eventId}
-      />
+      <ShareModal open={share} setShare={setShare} eventId={eventId} />
       <CardMedia
         className={classes.media}
         image={thumbnail}
@@ -153,29 +156,16 @@ function OrgEventCard({
               justifyContent='space-between'
               alignItems='center'
             >
-              <Typography onClick={checkDetail} >
-                {eventName}
-              </Typography>
+              <Typography onClick={checkDetail}>{eventName}</Typography>
               <Box display='flex'>
-                <Tooltip title="Edit" placement="left"  >
-                  <IconButton onClick={editEvent}>
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete" placement="top">
-                  <IconButton onClick={handleDelete} >
-                    <DeleteOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
+                <Button variant='outlined' disabled={bookedUser.length === 0? true : false} color='primary' className={classes.buttonStyle} onClick={() => setBooking(true)}>{bookedUser.length} Bookings</Button>
               </Box>
             </Box>
             <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
               <Typography className={classes.date} color='textSecondary'>
                 {eventDate}
               </Typography>
-              <Typography className={classes.location}>
-                {postcode}
-              </Typography>
+              <Typography className={classes.location}>{postcode}</Typography>
             </Box>
           </Grid>
           <Grid className={classes.detail}>
@@ -183,11 +173,25 @@ function OrgEventCard({
           </Grid>
         </CardContent>
         <CardActions className={classes.actions} disableSpacing>
-          <IconButton onClick={handleShare} aria-label='share'>
-            <Tooltip title="Share" placement="right">
-            <ShareIcon />
-            </Tooltip>
-          </IconButton>
+          <Box display='flex'>
+            <IconButton onClick={handleShare} aria-label='share'>
+              <Tooltip title='Share' placement='top'>
+                <ShareIcon />
+              </Tooltip>
+            </IconButton>
+
+            <IconButton onClick={editEvent}>
+              <Tooltip title='Edit' placement='top'>
+                <EditIcon />
+              </Tooltip>
+            </IconButton>
+
+            <IconButton onClick={handleDelete}>
+              <Tooltip title='Delete' placement='top'>
+                <DeleteOutlinedIcon />
+              </Tooltip>
+            </IconButton>
+          </Box>
           <Box display='flex'>
             <Button
               onClick={checkDetail}
@@ -197,7 +201,7 @@ function OrgEventCard({
             >
               Discover More
             </Button>
-            <IconButton
+            {/* <IconButton
               className={clsx(classes.expand, {
                 [classes.expandOpen]: expanded,
               })}
@@ -206,10 +210,10 @@ function OrgEventCard({
               aria-label='show more'
             >
               <ExpandMoreIcon />
-            </IconButton>
+            </IconButton> */}
           </Box>
         </CardActions>
-        {expanded ? (
+        {/* {expanded ? (
           <Typography paragraph>
             Add rice and stir very gently to distribute. Top with artichokes and
             peppers, and cook without stirring, until most of the liquid is
@@ -218,10 +222,11 @@ function OrgEventCard({
             without stirring, until mussels have opened and rice is just tender,
             5 to 7 minutes more. (Discard any mussels that don’t open.)
           </Typography>
-        ) : null}
+        ) : null} */}
       </Box>
     </Card>
-    )
+    </>
+  );
 }
 
 export default OrgEventCard;

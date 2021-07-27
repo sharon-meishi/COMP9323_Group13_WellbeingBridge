@@ -5,6 +5,7 @@ import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
@@ -83,10 +84,13 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     width: '100%',
   },
+  eventItem: {
+    display: 'flex',
+    justifyContent:'center'
+  }
 }));
 
 function ProfileTabMenu({ FavEvents, BookEvents }) {
-  console.log(FavEvents, BookEvents);
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -123,26 +127,30 @@ function ProfileTabMenu({ FavEvents, BookEvents }) {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0} className={classes.tabPanel}>
-        <Box className={classes.feedStyle}>
+        <Grid container item className={classes.feedStyle}  spacing={3}>
           {FavEvents.length === 0 ? (
             <p>You haven't favourited any events.</p>
           ) : (
             FavEvents.map((eventId) => (
-              <EventCard key={eventId} eventId={eventId} />
+              <Grid item xs={11} md={6} lg={4} className={classes.eventItem}>
+                <EventCard key={eventId} eventId={eventId} />
+              </Grid>
             ))
           )}
-        </Box>
+        </Grid>
       </TabPanel>
       <TabPanel value={value} index={1} className={classes.tabPanel}>
-        <Box className={classes.feedStyle}>
+        <Grid container item className={classes.feedStyle} spacing={3}>
           {BookEvents.length === 0 ? (
             <p>You haven't booked any events.</p>
           ) : (
             BookEvents.map((eventId) => (
-              <EventCard key={eventId} eventId={eventId} />
+              <Grid item xs={11} md={6} lg={4} className={classes.eventItem}>
+                <EventCard key={eventId} eventId={eventId} />
+              </Grid>
             ))
           )}
-        </Box>
+        </Grid>
       </TabPanel>
     </div>
   );

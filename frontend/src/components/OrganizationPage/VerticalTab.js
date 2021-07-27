@@ -166,6 +166,8 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     fetchData();
   }, [profileData.oId]);
 
+  console.log(eventList)
+
   return (
     <>
       {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
@@ -211,6 +213,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
                   postcode={event.location.postcode}
                   introduction={event.introduction}
                   thumbnail={event.thumbnail}
+                  bookedUser={event.bookedUser}
                   eventList={eventList}
                   setEventList={setEventList}
                 />
