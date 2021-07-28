@@ -62,7 +62,7 @@ function OrgSearch() {
               className={classes.dropDown}
               overrideStrings={{selectSomeItems: 'Organization Type...'}}
             />
-            <Button type='submit' onClick={handleSearch}>
+            <Button type='submit' onClick={handleSearch} color='teal'>
               Search
             </Button>
           </Input>
