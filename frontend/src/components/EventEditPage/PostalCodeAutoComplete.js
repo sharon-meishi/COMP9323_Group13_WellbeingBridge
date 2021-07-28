@@ -16197,7 +16197,8 @@ export default function Virtualize({ onChange: ignored, control }) {
     <Controller
       render={({field}) => (
         <Autocomplete
-        defaultValue={null}
+          
+          defaultValue={null}
           value={field.value || null}
           onChange={ (e,data) => field.onChange(data)}
           disableListWrap
@@ -16213,6 +16214,7 @@ export default function Virtualize({ onChange: ignored, control }) {
               variant='outlined'
               size='small'
               margin='dense'
+              style={{backgroundColor:'white', marginBottom:'0px'}}
               
             />
           )}
