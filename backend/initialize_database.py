@@ -83,7 +83,8 @@ def create_database():
   `Address` varchar(255),
   `Lat` varchar(255),
   `Lng` varchar(255),
-  `Date` varchar(255) NOT NULL,
+  `StartDate` varchar(255) NOT NULL,
+  `EndDate` varchar(255) NOT NULL,
   `Time` varchar(255) NOT NULL,
   `Introduction` TEXT DEFAULT NULL,
   `Details` TEXT DEFAULT NULL,
@@ -93,11 +94,11 @@ def create_database():
     insert_event = '''
     INSERT INTO Event
   (EventId,EventName,OrganizationId,OrganizationName,Thumbnail,Format,Category,Postcode,Address,Lat,
-  Lng,Date,Time,Introduction,Details)
+  Lng,StartDate,EndDate,Time,Introduction,Details)
 VALUES(0,"Kids Yoga Class",1,"HeadSpace" ,
 "https://www.indianyoga.school/public/uploads/gallery/kids-yoga-ttc.jpg","Class","Health and fitness",
 "ASHFIELD, NSW 2131","Ashfield Park, Parramatta Rd, Ashfield NSW, Australia","-33.884895","151.135696",
-"14-07-2021",
+"14-07-2021","20-07-2021",
 "11:00 AM to 12:00 PM",
  "Aimed at kids between 5 to 12, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. ",
  "Kids must attend with parents. All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"),
@@ -105,13 +106,13 @@ VALUES(0,"Kids Yoga Class",1,"HeadSpace" ,
 (0,"Tai Chi for seniors",2,"My Aged Care" ,
 "https://www.greatseniorliving.com/assets/img/tai-chi-for-seniors-pin-@1X.jpg","Class","Seniors",
 "ROZELLE, NSW 2039","Hannaford Community Centre, Darling Street, Rozelle NSW, Australia","-33.861659","151.171510",
-"20-07-2021","10:00 AM to 11:00 AM",
+"20-07-2021","21-07-2021","10:00 AM to 11:00 AM",
  "Traditional Yang Style Tai Chi for seniors with particular focus on the 85 forms.",
  "Health benefits are derived from the Tai Chi's slow, gentle and tranquil movements which enable harmony in mind and body, improved mobility, suppleness and mental alertness. Bookings essential. "),
 
 (0,"Youth - #TrueDreamersTour2021",3,"House to Grow" ,
 "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F137085143%2F307439946789%2F1%2Foriginal.20210531-025831?w=800&auto=format%2Ccompress&q=75&sharp=10&rect=1%2C78%2C1250%2C625&s=3d6e67be19885a5a9411e28685a3bf0a",
-"Class","Young People","MARRICKVILLE, NSW 2204","142 Addison Road, Marrickville NSW, Australia","-33.902220","151.161075","01-08-2021","11:00 AM to 3:00 PM",
+"Class","Young People","MARRICKVILLE, NSW 2204","142 Addison Road, Marrickville NSW, Australia","-33.902220","151.161075","01-08-2021","11-08-2021","11:00 AM to 3:00 PM",
  "A half day of activity that challenges young people to engage with wellbeing and make new connections in a friendly and fun environment.",
  "# TrueDreamersTour2021 event promises a half day of activity that challenges young people to engage with health and make new connections in a friendly and fun environment. including Inspirational stories from internaitonal students; Documentary internaional students in Australia; Round table with experts in health and education; Yoga and meditation activity; Live Music; Gift vouchers");
     '''
