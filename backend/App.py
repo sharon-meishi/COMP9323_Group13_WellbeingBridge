@@ -217,7 +217,7 @@ token_parser.add_argument('Authorization', type=str, location='headers')
 class event(Resource):
     def get(self, eventid):
         token = token_parser.parse_args()['Authorization']
-        event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId FROM Event WHERE EventId='{eventid}';"
+        event_sql = f"SELECT EventId,Thumbnail,EventName,StartDate,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId,EndDate FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
 
         if token is None:
@@ -256,7 +256,8 @@ class event(Resource):
                              "category": result[0][10],
                              "name": result[0][2],
                              "orgid":result[0][11],
-                             "date": result[0][3],
+                             "startdate": result[0][3],
+                             "enddate": result[0][12],
                              "time": result[0][9],
                              "location": {
                                  "postcode": result[0][4],
@@ -438,7 +439,8 @@ event_model = api.model("event", {
     "format": fields.String,
     "category": fields.String,
     "location": fields.Nested(location_model),
-    "date": fields.String,
+    "startdate": fields.String,
+    "enddate": fields.String,
     "time": fields.String,
     "introduction": fields.String,
     "details": fields.String
@@ -478,11 +480,11 @@ class PublishEvent(Resource):
             org_email = user_info['email']
             org_sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email = '{org_email}';"
             org_result = sql_command(org_sql)[0]
-            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
+            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
                 format(data['eventName'], org_result[0], org_result[1], data['thumbnail'], data['format'],
                        data['category'],
                        data['location']['postcode'], data['location']['address'],
-                       data['location']['lat'], data['location']['lng'], data['date'], data['time'],
+                       data['location']['lat'], data['location']['lng'], data['startdate'], data['enddate'], data['time'],
                        data['introduction'], data['details'])
             sql_command(sql)
             event_sql=f"SELECT EventId FROM Event WHERE EventName='{data['eventName']}' and OrganizationId={org_result[0]};"
@@ -575,10 +577,11 @@ class GetEventbyId(Resource):
                 "lat": event_info[9],
                 "lng": event_info[10],
             },
-            "date": event_info[11],
-            "time": event_info[12],
-            "introduction": event_info[13],
-            "details": event_info[14],
+            "startdate": event_info[11],
+            "enddate": event_info[12],
+            "time": event_info[13],
+            "introduction": event_info[14],
+            "details": event_info[15],
             "comments": comments,
             "recommendation": recommendation,
             "bookedUser": booked_event_user,
@@ -604,7 +607,7 @@ class GetEventbyId(Resource):
                     "message": "wrong token!"
                 }
                 return output, 403
-            update_sql = f"UPDATE Event SET EventName='{data['eventName']}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Category='{data['category']}',Postcode='{data['location']['postcode']}',Address='{data['location']['address']}',Lat='{data['location']['lat']}',lng='{data['location']['lng']}',Date='{data['date']}',Time='{data['time']}',Introduction='{data['introduction']}',Details='{data['details']}' WHERE Eventid={eventid};"
+            update_sql = f"UPDATE Event SET EventName='{data['eventName']}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Category='{data['category']}',Postcode='{data['location']['postcode']}',Address='{data['location']['address']}',Lat='{data['location']['lat']}',lng='{data['location']['lng']}',StartDate='{data['startdate']}', EndDate='{data['enddate']}',Time='{data['time']}',Introduction='{data['introduction']}',Details='{data['details']}' WHERE Eventid={eventid};"
             sql_command(update_sql)
             output = {
                 "message": "Success"
