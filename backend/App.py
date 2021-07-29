@@ -313,7 +313,7 @@ class favourite(Resource):
                 output = {
                     "message": "Internal Error: event is already favourited."
                 }
-                return output, 500
+                return output, 200
             favourite_id = curr_favourite_id + ',' + str(eventid)
         else:
             favourite_id = str(eventid)
@@ -410,6 +410,7 @@ class unbook(Resource):
             output = {
                 "message": "No booking for this event."
             }
+            return output, 404
         else:
             sql = f"DELETE FROM Booking WHERE UserId = '{user_id}' AND EventId = '{eventid}';"
             sql_command(sql)
@@ -596,7 +597,7 @@ class GetEventbyId(Resource):
             output = {
                 "message": "bad request!"
             }
-            return output, 405
+            return output, 400
         else:
             user_type = decode_token(token)['type']
             if user_type != 'organization':
@@ -623,7 +624,7 @@ class GetUserProfilebyId(Resource):
         token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         user_sql = f"SELECT * FROM User WHERE UserId={user_id};"
-        book_sql = f"SELECT BookingID FROM Booking WHERE UserId={user_id};"
+        book_sql = f"SELECT EventId FROM Booking WHERE UserId={user_id};"
         user_info = sql_command(user_sql)[0]
         bood_info = sql_command(book_sql)
         booking_lst = [info[0] for info in bood_info]
@@ -691,7 +692,7 @@ class Organization_profile(Resource):
             output = {
                 "message": "bad request!"
             }
-            return output, 405
+            return output, 400
         else:
             user_type = decode_token(token)['type']
             if user_type != 'organization':
@@ -729,7 +730,7 @@ class Organization_profile(Resource):
             output = {
                 "message": "bad request!"
             }
-            return output, 405
+            return output, 400
         else:
             user_type = decode_token(token)['type']
             if user_type != 'organization':
@@ -871,7 +872,7 @@ class org(Resource):
             output = {
                 "message": "bad request!"
             }
-            return output, 405
+            return output, 400
         
         user_type = decode_token(token)['type']
         if user_type != 'organization':

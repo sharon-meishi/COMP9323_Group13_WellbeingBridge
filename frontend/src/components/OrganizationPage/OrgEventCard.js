@@ -13,12 +13,10 @@ import IconButton from '@material-ui/core/IconButton';
 import ShareIcon from '@material-ui/icons/Share';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Tooltip from '@material-ui/core/Tooltip';
 import DeleteModal from './DeleteModal';
 import ShareModal from '../ShareModal';
-import clsx from 'clsx';
-import Tooltip from '@material-ui/core/Tooltip';
-import BookingDialog from './BookingDialog'
+import BookingDialog from './BookingDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -82,8 +80,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '8px',
   },
   buttonStyle: {
-    display:'flex'
-  }
+    display: 'flex',
+  },
 }));
 
 function OrgEventCard({
@@ -96,13 +94,11 @@ function OrgEventCard({
   bookedUser,
   eventList,
   setEventList,
-  
 }) {
   const classes = useStyles();
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
   const [share, setShare] = React.useState(false);
-  const [expanded, setExpanded] = React.useState(false);
   const [booking, setBooking] = React.useState(false);
 
   const editEvent = () => {
@@ -111,10 +107,6 @@ function OrgEventCard({
 
   const checkDetail = () => {
     history.push(`/event/${eventId}`);
-  };
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
   };
 
   const handleDelete = () => {
@@ -127,104 +119,97 @@ function OrgEventCard({
 
   return (
     <>
-    <BookingDialog open={booking} onClose={() => setBooking(false)} info={bookedUser} eventName={eventName}/>
-    <Card className={classes.root}>
-      <DeleteModal
-        open={open}
-        setOpen={setOpen}
-        eventId={eventId}
+      <BookingDialog
+        open={booking}
+        onClose={() => setBooking(false)}
+        info={bookedUser}
         eventName={eventName}
-        eventList={eventList}
-        setEventList={setEventList}
       />
-      <ShareModal open={share} setShare={setShare} eventId={eventId} />
-      <CardMedia
-        className={classes.media}
-        image={thumbnail}
-        title='Event Image'
-      />
-      <Box
-        display='flex'
-        flexDirection='column'
-        height='100%'
-        justifyContent='space-between'
-      >
-        <CardContent>
-          <Grid container direction='column'>
-            <Box
-              display='flex'
-              justifyContent='space-between'
-              alignItems='center'
-            >
-              <Typography onClick={checkDetail}>{eventName}</Typography>
-              <Box display='flex'>
-                <Button variant='outlined' disabled={bookedUser.length === 0? true : false} color='primary' className={classes.buttonStyle} onClick={() => setBooking(true)}>{bookedUser.length} Bookings</Button>
+      <Card className={classes.root}>
+        <DeleteModal
+          open={open}
+          setOpen={setOpen}
+          eventId={eventId}
+          eventName={eventName}
+          eventList={eventList}
+          setEventList={setEventList}
+        />
+        <ShareModal open={share} setShare={setShare} eventId={eventId} />
+        <CardMedia
+          className={classes.media}
+          image={thumbnail}
+          title='Event Image'
+        />
+        <Box
+          display='flex'
+          flexDirection='column'
+          height='100%'
+          justifyContent='space-between'
+        >
+          <CardContent>
+            <Grid container direction='column'>
+              <Box
+                display='flex'
+                justifyContent='space-between'
+                alignItems='center'
+              >
+                <Typography onClick={checkDetail}>{eventName}</Typography>
+                <Box display='flex'>
+                  <Button
+                    variant='outlined'
+                    disabled={bookedUser.length === 0 ? true : false}
+                    color='primary'
+                    className={classes.buttonStyle}
+                    onClick={() => setBooking(true)}
+                  >
+                    {bookedUser.length} Bookings
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-            <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
-              <Typography className={classes.date} color='textSecondary'>
-                {eventDate}
-              </Typography>
-              <Typography className={classes.location}>{postcode}</Typography>
-            </Box>
-          </Grid>
-          <Grid className={classes.detail}>
-            <Typography>{introduction}</Typography>
-          </Grid>
-        </CardContent>
-        <CardActions className={classes.actions} disableSpacing>
-          <Box display='flex'>
-            <IconButton onClick={handleShare} aria-label='share'>
-              <Tooltip title='Share' placement='top'>
-                <ShareIcon />
-              </Tooltip>
-            </IconButton>
+              <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
+                <Typography className={classes.date} color='textSecondary'>
+                  {eventDate}
+                </Typography>
+                <Typography className={classes.location}>{postcode}</Typography>
+              </Box>
+            </Grid>
+            <Grid className={classes.detail}>
+              <Typography>{introduction}</Typography>
+            </Grid>
+          </CardContent>
+          <CardActions className={classes.actions} disableSpacing>
+            <Box display='flex'>
+              <IconButton onClick={handleShare} aria-label='share'>
+                <Tooltip title='Share' placement='top'>
+                  <ShareIcon />
+                </Tooltip>
+              </IconButton>
 
-            <IconButton onClick={editEvent}>
-              <Tooltip title='Edit' placement='top'>
-                <EditIcon />
-              </Tooltip>
-            </IconButton>
+              <IconButton onClick={editEvent}>
+                <Tooltip title='Edit' placement='top'>
+                  <EditIcon />
+                </Tooltip>
+              </IconButton>
 
-            <IconButton onClick={handleDelete}>
-              <Tooltip title='Delete' placement='top'>
-                <DeleteOutlinedIcon />
-              </Tooltip>
-            </IconButton>
-          </Box>
-          <Box display='flex'>
-            <Button
-              onClick={checkDetail}
-              size='small'
-              color='primary'
-              className={classes.view}
-            >
-              Discover More
-            </Button>
-            {/* <IconButton
-              className={clsx(classes.expand, {
-                [classes.expandOpen]: expanded,
-              })}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label='show more'
-            >
-              <ExpandMoreIcon />
-            </IconButton> */}
-          </Box>
-        </CardActions>
-        {/* {expanded ? (
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is
-            absorbed, 15 to 18 minutes. Reduce heat to medium-low, add reserved
-            shrimp and mussels, tucking them down into the rice, and cook again
-            without stirring, until mussels have opened and rice is just tender,
-            5 to 7 minutes more. (Discard any mussels that don’t open.)
-          </Typography>
-        ) : null} */}
-      </Box>
-    </Card>
+              <IconButton onClick={handleDelete}>
+                <Tooltip title='Delete' placement='top'>
+                  <DeleteOutlinedIcon />
+                </Tooltip>
+              </IconButton>
+            </Box>
+            <Box display='flex'>
+              <Button
+                onClick={checkDetail}
+                size='small'
+                color='primary'
+                className={classes.view}
+              >
+                Discover More
+              </Button>
+            </Box>
+          </CardActions>
+        </Box>
+      </Card>
     </>
   );
 }

@@ -271,10 +271,10 @@ function EventForm({
         Data = await createEventRequest(uploadBody);
       }
       if (Data[0] === 200) {
+        console.log(Data[1])
         console.log('create/update success');
         setLoading(false);
         setOpen(true);
-        reset();
       } else {
         setErrorMsg(`Something wrong ${Data[1]}`);
       }

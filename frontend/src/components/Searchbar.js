@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Icon, Button, Select, Input } from 'semantic-ui-react';
+import { Button, Select, Input } from 'semantic-ui-react';
 
 const options = [
   { key: 'org', text: 'Organization', value: 'org' },

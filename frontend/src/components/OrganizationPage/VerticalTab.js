@@ -154,7 +154,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
           OrganizationDetail: Data[1].details,
           OrganizationIntroduction: Data[1].introduction,
           OrganizationType: Data[1].organizationType,
-          serviceList: Data[1].serviceList.map((x) => ({ service: x })),
+          serviceList: Data[1].serviceList ? Data[1].serviceList.map((x) => ({ service: x })) : null,
           video: Data[1].video,
           websiteLink: Data[1].websiteLink,
         };
