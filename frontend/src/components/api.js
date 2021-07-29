@@ -88,7 +88,7 @@ export const createEventRequest = async (uploadBody) => {
     const res = await axios.post(url, uploadBody, {
       headers: headers,
     });
-    return [res.status, ''];
+    return [res.status, res.data];
   } catch (error) {
     console.log(error);
     if (error.response) {
