@@ -104,6 +104,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [upload, setUpload] = useState(false)
 
   const {
     reset,
@@ -114,6 +115,8 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
   } = useForm({
     defaultValues: preloadValues,
   });
+
+  console.log(preloadValues)
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -179,6 +182,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
   };
 
   const resetForm = () => {
+    setUpload(false)
     reset();
     setImg({
       alt: 'Upload an image',
@@ -196,46 +200,48 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     if (data.picture){
       handleUpload();
     } else {
-      setURL(preloadImg)
+      setUpload(true)
     }
   };
 
   useEffect(() => {
     const buildBody = () => {
-      const sl = data.serviceList.map((x) => x.service);
+      const sl = data.serviceList ? data.serviceList.map((x) => x.service) : ''
       const uploadBody = {
         organizationName: data.OrgName,
         organizationType: data.OrganizationType,
         introduction: data.OrganizationIntroduction,
         contact: data.Contact,
-        details: data.OrganizationDetail,
-        serviceList: sl.join('@'),
+        details: data.OrganizationDetail || '',
+        serviceList: sl ? sl.join('@') : '',
         logo: url,  
-        video: data.video,
-        websiteLink: data.websiteLink,
+        video: data.video || '',
+        websiteLink: data.websiteLink || '',
       };
       return uploadBody;
     };
 
     const sendData = async(uploadBody) =>{
+      console.log('senddata')
       const Data = await updateOrgPage(oId, uploadBody);
       if (Data[0] === 200){
         console.log('update success');
         setLoading(false);
         setOpen(true);
-        reset();
+        setUpload(false)
       } else{
         setLoading(false);
+        setUpload(false)
         setErrorMsg('There is something wrong when uploading, please try again')
       }
     }
-    if(url){
+    if(url || upload){
       const uploadBody = buildBody();
       console.log(uploadBody)
       sendData(uploadBody)
     }
 
-  }, [url]);
+  }, [url, upload]);
 
   useEffect(() => {
     reset();
@@ -526,13 +532,16 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                 rules={{
                   validate: {
                     validURL: (value) => {
-                      const id = matchYoutubeUrl(value);
-                      console.log(id);
-                      if (id || value === '') {
-                        setVId(id);
-                        return true;
+                      if (value){
+                        const id = matchYoutubeUrl(value);
+                        if (id){
+                          setVId(id);
+                          return true
+                        } else{
+                          return false
+                        }
                       } else {
-                        return false;
+                        return true
                       }
                     },
                   },

@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100px',
     color: '#26A69A',
   },
+  actionsStyle: {
+    display:'flex',
+    justifyContent:'center'
+  }
 }));
 
 function SuccessDialog({ eventId, oId, open, setOpen, message }) {
@@ -57,16 +61,16 @@ function SuccessDialog({ eventId, oId, open, setOpen, message }) {
       <Box m={3}>
         <Typography variant='subtitle1'>{message}</Typography>
       </Box>
-      <DialogActions>
-        <Button onClick={backToHome} color='primary'>
+      <DialogActions className={classes.actionsStyle}>
+        <Button onClick={backToHome} variant="outlined" color='primary'>
           Back to HomePage
         </Button>
         {oId ? (
-          <Button onClick={toOrgPage} color='primary'>
+          <Button onClick={toOrgPage} variant="contained" color='primary'>
             To Organization Page
           </Button>
         ) : (
-          <Button onClick={backToDashboard} color='primary'>
+          <Button onClick={backToDashboard} variant="outlined" color='primary'>
             Back to Dashboard
           </Button>
         )}

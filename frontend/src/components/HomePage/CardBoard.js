@@ -46,7 +46,6 @@ const CardBoard = () => {
   const history = useHistory();
   const classes = useStyles();
   const [event_list, setEventlist] = useState([]);
-  const usergroup = sessionStorage.getItem('usergroup');
   const fetchOrigin = async () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {

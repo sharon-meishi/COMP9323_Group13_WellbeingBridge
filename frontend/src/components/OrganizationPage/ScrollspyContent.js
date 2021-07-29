@@ -135,8 +135,6 @@ function ScrollspyContent({ oId }) {
     getOrganization();
   }, [oId]);
 
-  console.log(data);
-
   return (
     <div>
       {data ? (
@@ -163,6 +161,7 @@ function ScrollspyContent({ oId }) {
             </Link>
           </Scrollspy>
           <Grid item xs={8} md={7} lg={6} xl={5} className={classes.content}>
+            
             <section id='Name' style={BottomSyle}>
               <div className={classes.box}>
                 <h2>{data.organizationName}</h2>
@@ -176,13 +175,15 @@ function ScrollspyContent({ oId }) {
               </div>
               <div className={classes.introduction}>{data.introduction}</div>
             </section>
+
             <section id='Details' style={BottomSyle}>
               <h2>Details</h2>
               <div className={classes.introduction}>
                 {data.details || 'Nothing at the moment, please wait:)'}
               </div>
             </section>
-            <section id='Service' style={BottomSyle}>
+
+            <section id='Services' style={BottomSyle}>
               <h2>Services: </h2>
               {data.serviceList.length === 0 ? (
                 <div className={classes.introduction}>
@@ -194,7 +195,8 @@ function ScrollspyContent({ oId }) {
                 })
               )}
             </section>
-            <section id='Contact' style={BottomSyle}>
+
+            <section id='Video' style={BottomSyle}>
               <h2>Video:</h2>
               {data.video ? (
                 <YoutubeVideo vId={matchYoutubeUrl(data.video)} />
@@ -206,7 +208,8 @@ function ScrollspyContent({ oId }) {
                 />
               )}
             </section>
-            <section id='Events' style={BottomSyle}>
+
+            <section id='Contact' style={BottomSyle}>
               <h2>Other Information:</h2>
               <div className={classes.service}>
                 <span className={classes.boldStyle}>Contract:</span>{' '}
@@ -220,6 +223,7 @@ function ScrollspyContent({ oId }) {
                 </div>
               ) : null}
             </section>
+
             <Grid container id='Events' className={classes.eventBox}>
               <h2>Their Events: </h2>
               <Grid container item className={classes.eventcard} spacing={3}>

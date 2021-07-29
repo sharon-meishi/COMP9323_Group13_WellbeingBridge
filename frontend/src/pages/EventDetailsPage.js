@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Comment, Form, Header } from 'semantic-ui-react';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import CardMedia from '@material-ui/core/CardMedia';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
@@ -20,7 +19,6 @@ import EventCard from '../components/EventCard';
 import BackToTop from '../components/BackToTop';
 import NavBar from '../components/NavigationBar/NavBar';
 import ShareModal from '../components/ShareModal';
-import BookedUserTable from '../components/BookedUserTable';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
@@ -149,7 +147,7 @@ function EventDetailsPage({ match }) {
   const [share, setShare] = React.useState(false);
   const [recomList, setRecomList] = React.useState([]);
   const [editable, setEditable] = React.useState(false);
-  const [bookedUsers, setBookedUsers] = React.useState([]);
+  // const [bookedUsers, setBookedUsers] = React.useState([]);
   const usergroup = sessionStorage.getItem('usergroup');
   const oid = sessionStorage.getItem('id');
   const [comment, setComment] = React.useState('');
@@ -161,9 +159,10 @@ function EventDetailsPage({ match }) {
     const getEvent = async () => {
       const res = await getEventDetails(eventId);
       if (res[0] === 200) {
+        console.log(res[1])
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
-        setBookedUsers(res[1].bookedUser);
+        // setBookedUsers(res[1].bookedUser);
         // console.log(res[1].bookedUser);
         // console.log(res[1]);
         if (res[1].favourite) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import { Button, Select, Input } from 'semantic-ui-react';
+import { Button, Input } from 'semantic-ui-react';
 import OrgSearchResult from './OrgSearchResult';
 import MultiSelect from 'react-multi-select-component';
 

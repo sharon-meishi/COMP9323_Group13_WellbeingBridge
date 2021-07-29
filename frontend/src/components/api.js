@@ -124,7 +124,11 @@ export const getEventSummary = async (eventId, dataOnly) => {
       return [res.status, res.data];
     }
   } catch (error) {
-    return [error.response.status, error.response.data.message];
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };
 
