@@ -123,7 +123,7 @@ export default function NavBar({search}) {
         <div className={classes.leftBox}>
           <LogoButton />
           <Box ml={2}>
-            {search ? null : <Searchbar defaultValue='org'/>} 
+            {search ? null : <Searchbar defaultValue='organization'/>} 
           
           </Box>
         </div>

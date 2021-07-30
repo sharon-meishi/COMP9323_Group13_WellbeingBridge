@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import Scrollspy from 'react-scrollspy';
 import { AppContext } from '../../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
-import { Comment, Form, Header } from 'semantic-ui-react';
+import { Comment, Form } from 'semantic-ui-react';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
