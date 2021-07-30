@@ -543,6 +543,8 @@ class GetEventbyId(Resource):
             comment_temp['username'] = data[2]
             comment_temp['published'] = str(data[5])
             comment_temp['comment'] = data[4]
+            comment_temp['answer']=data[6]
+            comment_temp['replyid']=data[7]
             # comment_temp = json.dumps(comment_temp)
             comments.append(comment_temp)
         comments.reverse()
@@ -802,7 +804,7 @@ class Organization_profile(Resource):
         event_result = sql_command(find_event_sql)
         if len(event_result):
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{data['comment']}','{time}');"
+            sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{data['comment']}','{time}',NULL,NULL);"
             sql_command(sql)
             output = {
                 "message": "success"
@@ -931,7 +933,7 @@ class search_org(Resource):
 
         return output,200
     
-    
+
     
 @api.route("/event/<int:eventid>/comment/<int:commentid>", doc={"description": "edit comments under one event"})
 @api.doc(parser=token_parser)
@@ -961,6 +963,39 @@ def value_check(org_info,i):
     if org_info[i] !=None:
         result=org_info[i].replace("\n",'')
     return result
+
+reply_model = api.model("reply", {
+    "answer": fields.String
+})
+@api.route("/event/<int:eventid>/comment/<int:commentid>/answer", doc={"description": "reply to a comment on a specific event"})
+@api.doc(parser=token_parser)
+class reply_comment(Resource):
+    @api.expect(reply_model)
+    def put(self,eventid, commentid):
+        data=api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        type = decode_token(token)['type']
+        if type == 'individual':
+            sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+            result = sql_command(sql)[0]
+            userid = result[0]
+        else:
+            sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email='{email}';"
+            result = sql_command(sql)[0]
+            userid = result[0]
+
+        sql=f"UPDATE COMMENT SET answer='{data['answer']}',replyid={userid} WHERE id={commentid};"
+        sql_command(sql)
+        output={
+            "message":"success"
+        }
+        return output,200
 
 
 if __name__ == "__main__":

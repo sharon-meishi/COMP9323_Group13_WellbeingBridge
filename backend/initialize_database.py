@@ -134,12 +134,14 @@ VALUES(0,"Kids Yoga Class",1,"HeadSpace" ,
   `eventid` int DEFAULT NULL,
   `comment` varchar(255) DEFAULT NULL,
   `time` datetime DEFAULT NULL,
+  `answer` varchar(255) DEFAULT NULL,
+  `replyid` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
     '''
     insert_comment = '''
-    INSERT INTO `Comment` VALUES (0, 3, 'Cecilia', 1, 'That is great', '2021-07-08 21:51:26'),
-    (0, 4, 'Nick', 1, 'That is awsome!', '2021-07-08 21:51:30');
+    INSERT INTO `Comment` VALUES (0, 3, 'Cecilia', 1, 'That is great', '2021-07-08 21:51:26',NULL,NULL),
+    (0, 4, 'Nick', 1, 'That is awsome!', '2021-07-08 21:51:30',NULL,NULL);
     '''
     c.execute(user_table)
     c.execute(organization_table)
