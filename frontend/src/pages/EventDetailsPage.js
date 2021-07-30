@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import parse from 'date-fns/parse';
 import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,7 +23,6 @@ import ShareModal from '../components/ShareModal';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
-
 import {
   getEventDetails,
   likeEvent,
@@ -57,7 +57,6 @@ const useStyles = makeStyles((theme) => ({
     margin: '3%',
     width: '60%',
     height: '50%',
-
   },
   title: {
     display: 'flex',
@@ -136,9 +135,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function EventDetailsPage({ match }) {
-  const classes = useStyles();
   const eventId = match.params.eventId;
+  const classes = useStyles();
   const history = useHistory();
+  const context = useContext(AppContext);
   const [detail, setDetail] = React.useState({});
   const [islike, setIslike] = React.useState(false);
   const [isbook, setIsbook] = React.useState(false);
@@ -147,19 +147,23 @@ function EventDetailsPage({ match }) {
   const [share, setShare] = React.useState(false);
   const [recomList, setRecomList] = React.useState([]);
   const [editable, setEditable] = React.useState(false);
-  // const [bookedUsers, setBookedUsers] = React.useState([]);
-  const usergroup = sessionStorage.getItem('usergroup');
-  const oid = sessionStorage.getItem('id');
   const [comment, setComment] = React.useState('');
   const [update, setUpdate] = React.useState(false);
-  const context = useContext(AppContext);
+  const currentTime = new Date();
+
+  const usergroup = sessionStorage.getItem('usergroup');
+  const oid = sessionStorage.getItem('id');
   const token = sessionStorage.getItem('token');
+
+  const parsedDate = (dateString, format) => {
+    return parse(dateString, format, new Date());
+  };
 
   React.useEffect(() => {
     const getEvent = async () => {
       const res = await getEventDetails(eventId);
       if (res[0] === 200) {
-        console.log(res[1])
+        console.log(res[1]);
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
         // setBookedUsers(res[1].bookedUser);
@@ -193,7 +197,7 @@ function EventDetailsPage({ match }) {
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
-      return
+      return;
     }
     if (islike) {
       const res = await unlikeEvent(eventId);
@@ -220,7 +224,7 @@ function EventDetailsPage({ match }) {
   const handleBook = async () => {
     if (!token) {
       setOpenLogin(true);
-      return
+      return;
     }
     if (isbook) {
       const res = await unbookEvent(eventId);
@@ -288,11 +292,6 @@ function EventDetailsPage({ match }) {
               </Box>
               {usergroup === 'organization' ? (
                 <CardActions>
-                  {/* {editable ? (
-                    <Tooltip title='Delete' placement='left'>
-                      <DeleteOutlinedIcon />
-                    </Tooltip>
-                  ) : null} */}
                   {editable ? (
                     <Tooltip title='Edit' placement='right'>
                       <IconButton onClick={editEvent}>
@@ -319,7 +318,15 @@ function EventDetailsPage({ match }) {
                     onClick={handleBook}
                     aria-label='add to favorites'
                   >
-                    {isbook ? (
+                    {currentTime > parsedDate(detail.enddate, 'dd/MM/yyyy') ? (
+                      <Button
+                        variant='contained'
+                        className={classes.isbook}
+                        disabled
+                      >
+                        Expired
+                      </Button>
+                    ) : isbook ? (
                       <Button variant='contained' className={classes.isbook}>
                         UNBOOK
                       </Button>
@@ -348,7 +355,7 @@ function EventDetailsPage({ match }) {
             <Grid className={classes.info}>
               <div className={classes.org}>
                 <Header as='h4'> When:</Header>
-                {detail.date}
+                {detail.startdate} to {detail.enddate}
               </div>
               <div variant='body1' className={classes.org}>
                 <Header as='h4'> What time:</Header>
@@ -361,19 +368,15 @@ function EventDetailsPage({ match }) {
             </Grid>
             <Grid className={classes.sectionStyle}>
               <Header as='h3'> Introduction:</Header>
-              <div variant='body1'>
-                {detail.introduction}
-              </div>
+              <div variant='body1'>{detail.introduction}</div>
             </Grid>
             <Grid className={classes.sectionStyle}>
-            <Header as='h3'> More about this event:</Header>
-              <div variant='body1'>
-                {detail.details}
-              </div>
+              <Header as='h3'> More about this event:</Header>
+              <div variant='body1'>{detail.details}</div>
             </Grid>
             <Grid className={classes.sectionStyle}>
-            <Header as='h3'> Comments:</Header>
-              <Comment.Group size='large' style={{ maxWidth: '100%' }} >
+              <Header as='h3'> Comments:</Header>
+              <Comment.Group size='large' style={{ maxWidth: '100%' }}>
                 {context.isLoginState &&
                 sessionStorage.getItem('usergroup') === 'individual' ? (
                   <Form onSubmit={submitNewComment}>
@@ -387,7 +390,7 @@ function EventDetailsPage({ match }) {
                     <Box display='flex' justifyContent='flex-end'>
                       <Form.Button
                         size='tiny'
-                        content='Add Reply'
+                        content='Add Comment'
                         labelPosition='left'
                         icon='edit'
                         primary
@@ -418,8 +421,8 @@ function EventDetailsPage({ match }) {
               </Grid>
             ) : null} */}
             <Grid container className={classes.recommendation}>
-            <Header as='h3'> Recommendation:</Header>
-              <Grid container item width='100%' spacing={5} >
+              <Header as='h3'> Recommendation:</Header>
+              <Grid container item width='100%' spacing={5}>
                 {recomList.map((eventId) => (
                   <Grid item xs={11} md={6} lg={4}>
                     <EventCard key={eventId} eventId={eventId} />

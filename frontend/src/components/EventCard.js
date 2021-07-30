@@ -12,6 +12,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import Box from '@material-ui/core/Box';
+import Chip from '@material-ui/core/Chip';
 import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
 import RegisterModal from './NavigationBar/RegisterModal';
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       minWidth: 280,
     },
-    height:'100%'
+    height: '100%',
   },
   media: {
     height: 0,
@@ -61,7 +62,6 @@ const useStyles = makeStyles((theme) => ({
   },
   detail: {
     paddingTop: '2%',
-    height: '10%',
   },
   actions: {
     display: 'flex',
@@ -70,13 +70,19 @@ const useStyles = makeStyles((theme) => ({
   view: {
     fontSize: '10px',
   },
+  content: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
 }));
 
 function EventCard(props) {
   const classes = useStyles();
+  const history = useHistory();
   const [info, setInfo] = useState(null);
   const [islike, setIslike] = React.useState(false);
-  const history = useHistory();
   const [openLogin, setOpenLogin] = React.useState(false);
   const [openRegister, setOpenRegister] = React.useState(false);
   const [share, setShare] = React.useState(false);
@@ -86,11 +92,9 @@ function EventCard(props) {
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
+        console.log(res[1]);
         setInfo(res[1]);
-        // console.log(res[1]);
-        // console.log(res[1].favourite);
         if (res[1].favourite) {
-          // console.log('initial liked');
           setIslike(true);
         }
       }
@@ -103,31 +107,38 @@ function EventCard(props) {
   };
   const handleShare = () => {
     setShare(true);
-  }
+  };
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
     }
     if (islike) {
-      // console.log('now it is liked');
       const res = await unlikeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(false);
-        // console.log('unlike success');
       } else {
         console.log('unlike error');
       }
     } else {
-      // console.log('now it is not liked');
       const res = await likeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(true);
-        // console.log('like success');
       } else {
         console.log('like error');
       }
     }
   };
+
+  const toSearchPage = () => {
+    const queryData = {eventCategory : info.category};
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`
+    }
+    history.push(path);
+  }
+
   return info ? (
     <Card className={classes.root}>
       {openLogin ? (
@@ -144,11 +155,7 @@ function EventCard(props) {
           setOpenRegister={setOpenRegister}
         />
       ) : null}
-      <ShareModal
-        open={share}
-        setShare={setShare}
-        eventId={props.eventId}
-      />
+      <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
       <CardMedia
         className={classes.media}
         image={info.thumbnail}
@@ -161,24 +168,31 @@ function EventCard(props) {
         height='100%'
         justifyContent='space-between'
       >
-        <CardContent>
-          <Grid container direction='column'>
-            <div onClick={checkDetail} className={classes.title}>
-              {info.name}
-            </div>
-            <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
-              <div className={classes.date} color='textSecondary'>
-                {info.date}
-              </div>
-              <div className={classes.location}>
-                {info.location.postcode}
-              </div>
-            </Box>
-          </Grid>
+        <CardContent className={classes.content}>
+          <Box>
+            <Grid container direction='column'>
+              <Box display='flex' justifyContent='space-between' >
+                <div onClick={checkDetail} className={classes.title}>
+                  {info.name}
+                </div>
+                {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
+              </Box>
 
-          <Grid className={classes.detail}>
-            <div>{info.introduction}</div>
-          </Grid>
+              <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
+                <div className={classes.date} color='textSecondary'>
+                  {info.startdate} to {info.enddate}
+                </div>
+                <div className={classes.location}>{info.location.postcode}</div>
+              </Box>
+            </Grid>
+
+            <Grid className={classes.detail}>
+              <div>{info.introduction}</div>
+            </Grid>
+          </Box>
+          <Box alignSelf='flex-end'>
+            <Chip label={`#${info.category}`} clickable color='primary' onClick={toSearchPage} />
+          </Box>
         </CardContent>
 
         <CardActions className={classes.actions} disableSpacing>
@@ -186,14 +200,14 @@ function EventCard(props) {
             {sessionStorage.getItem('usergroup') === 'individual' ? (
               <IconButton onClick={handleLike} aria-label='add to favorites'>
                 {islike ? (
-                  <FavoriteIcon color='secondary' fontSize='medium' />
+                  <FavoriteIcon color='secondary' fontSize='default' />
                 ) : (
-                  <FavoriteIcon color='disabled' fontSize='medium' />
+                  <FavoriteIcon color='disabled' fontSize='default' />
                 )}
               </IconButton>
             ) : null}
             <IconButton aria-label='share' onClick={handleShare}>
-              <Tooltip title="Share" placement="right">
+              <Tooltip title='Share' placement='right'>
                 <ShareIcon />
               </Tooltip>
             </IconButton>

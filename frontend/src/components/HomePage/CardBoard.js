@@ -77,7 +77,7 @@ const CardBoard = () => {
           </Box>
           <Grid container className={classes.eventBox}>
             {event_list.map((eventId) => (
-              <Grid>
+              <Grid key={eventId}>
               <EventCard
                 key={eventId}
                 eventId={eventId}

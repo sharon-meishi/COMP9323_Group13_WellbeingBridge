@@ -121,6 +121,7 @@ function EventForm({
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [eId, setEId] = useState(eventId)
 
   const {
     reset,
@@ -228,12 +229,6 @@ function EventForm({
 
   useEffect(() => {
     const buildBody = () => {
-      let date = '';
-      if (startDate === endDate) {
-        date = startDate;
-      } else {
-        date = `${startDate} to ${endDate}`;
-      }
       let location = {};
       if (eventFormat === 'Online Event') {
         location = {
@@ -256,7 +251,8 @@ function EventForm({
         format: data.EventFormat,
         category: data.EventCategory,
         location: location,
-        date: date,
+        startdate: startDate,
+        enddate: endDate,
         time: `${startTime} to ${endTime}`,
         introduction: data.EventIntroduction,
         details: data.EventDetails,
@@ -271,7 +267,8 @@ function EventForm({
         Data = await createEventRequest(uploadBody);
       }
       if (Data[0] === 200) {
-        console.log(Data[1])
+        console.log(Data[1].eventid)
+        setEId(Data[1].eventid)
         console.log('create/update success');
         setLoading(false);
         setOpen(true);
@@ -319,7 +316,7 @@ function EventForm({
         <SuccessDialog
           open={open}
           setOpen={setOpen}
-          eventId={eventId}
+          eventId={eId}
           message={
             eventId
               ? 'Thank you! Your event information has been updated successfully!'

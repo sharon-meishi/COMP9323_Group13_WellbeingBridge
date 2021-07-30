@@ -114,7 +114,6 @@ function OrganizationApplyPage() {
           sm={8}
           md={6}
           lg={5}
-          xl={3}
           className={classes.GridStyle}
         >
           {errorMsg ? (
