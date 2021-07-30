@@ -289,7 +289,7 @@ function EventSearch({}) {
               <label>Event Location: </label>
               <Box display='flex' width='100%' justifyContent='space-between'>
                 <Box flexGrow='1'>
-                  <PostalCodeAutoComplete control={control}/>
+                  <PostalCodeAutoComplete control={control} search/>
                 </Box>
                 <Box pt={1}>
                   <Dropdown
