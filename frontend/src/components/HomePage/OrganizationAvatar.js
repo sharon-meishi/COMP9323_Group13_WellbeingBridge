@@ -31,7 +31,7 @@ function OrganizationAvatar({ alt, src, title }) {
   const history = useHistory();
 
   const toOrgSearch = () => {
-    const data = { type: title };
+    const data = { orgType: title };
     const queryPath = new URLSearchParams(data).toString();
     const path = {
       pathname: 'organization/search',

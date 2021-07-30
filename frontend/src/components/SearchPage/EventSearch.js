@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useForm, Controller } from 'react-hook-form';
 import Box from '@material-ui/core/Box';
-import Link from '@material-ui/core/Link';
 import MultiSelect from 'react-multi-select-component';
-import { Input, Button, Select, Dropdown, Menu } from 'semantic-ui-react';
+import { Input, Button, Dropdown } from 'semantic-ui-react';
 import EventSearchResult from './EventSearchResult';
 import DatePicker from 'react-datepicker';
 import PostalCodeAutoComplete from '../EventEditPage/PostalCodeAutoComplete';
+import dateFormat from 'date-fns/format';
+import parse from 'date-fns/parse';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useStyles = makeStyles({
@@ -26,11 +28,11 @@ const useStyles = makeStyles({
     fontWeight: 'bold',
   },
   selectStyle: {
-    minWidth: '300px',
+    minWidth: '350px',
     marginTop: '3px',
   },
   inputStyle: {
-    minWidth: '300px',
+    minWidth: '350px',
     marginTop: '3px',
     minHeight: '44px',
   },
@@ -43,7 +45,7 @@ const useStyles = makeStyles({
     pointer: 'cursor',
   },
   pickerStyle: {
-    minWidth: '300px',
+    minWidth: '350px',
     height: '38px',
     fontSize: '15px',
     border: '1px solid rgba(0, 0, 0, 0.23)',
@@ -77,115 +79,237 @@ const categoryOptions = [
 ];
 
 const options = [
+  { key: 'Any', text: 'Any', value: 'Any' },
   { key: '5 km', text: '5 km', value: '5 km' },
   { key: '10 km', text: '10 km', value: '10 km' },
-  { key: '20 km', text: '20 km', value: '20 km' },
+  { key: '15 km', text: '15 km', value: '15 km' },
 ];
 
-function EventSearch({ match, location }) {
-  console.log(window.location.search.substring(1));
+function EventSearch({}) {
   const classes = useStyles();
-  const { reset, control } = useForm();
-  const [format, setFormat] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const history = useHistory();
+  const location = useLocation();
+
+  const queryString = location.search;
+  const searchParam = new URLSearchParams(queryString);
+  const [searchState, setSearchState] = React.useState(0);
+
+  const parsedDate = (dateString, format) => {
+    return parse(dateString, format, new Date());
+  };
+  const postcode = searchParam.has('postcode')
+    ? searchParam.get('postcode')
+    : '';
+  const [keyword, setKeyword] = useState(
+    searchParam.has('keyword') ? searchParam.get('keyword') : ''
+  );
+  const [startDate, setStartDate] = useState(
+    searchParam.has('startDate') ? searchParam.get('startDate') : ''
+  );
+  const [endDate, setEndDate] = useState(
+    searchParam.has('endDate') ? searchParam.get('endDate') : ''
+  );
+  const [range, setRange] = useState(
+    searchParam.has('range') ? searchParam.get('range') : 'Any'
+  );
+  const [format, setFormat] = useState(
+    searchParam.has('eventFormat')
+      ? searchParam
+          .get('eventFormat')
+          .split(',')
+          .map((each) => ({ label: each, value: each }))
+      : []
+  );
+  const [category, setCategory] = useState(
+    searchParam.has('eventCategory')
+      ? searchParam
+          .get('eventCategory')
+          .split(',')
+          .map((each) => ({ label: each, value: each }))
+      : []
+  );
+
+  const urlValue = {
+    startdate: searchParam.has('startDate')
+      ? parsedDate(searchParam.get('startDate'), 'dd/MM/yyyy')
+      : '',
+    enddate: searchParam.has('endDate')
+      ? parsedDate(searchParam.get('endDate'), 'dd/MM/yyyy')
+      : '',
+    Postcode: searchParam.has('postcode') ? searchParam.get('postcode') : '',
+  };
+
+  const { reset, control, handleSubmit } = useForm({
+    defaultValues: urlValue,
+  });
+
+  const handleSearch = (data) => {
+    console.log(data.Postcode);
+    const eventFormat = format.map((each) => each.value);
+    const eventCategory = category.map((each) => each.value);
+    console.log(startDate, endDate);
+    const queryData = Object.assign(
+      {},
+      keyword === '' ? null : { keyword },
+      eventFormat.length === 0 ? null : { eventFormat },
+      eventCategory.length === 0 ? null : { eventCategory },
+      startDate === '' ? null : { startDate },
+      endDate === '' ? null : { endDate },
+      data.Postcode === '' ? null : { postcode: data.Postcode },
+      range === '' ? null : { range }
+    );
+    const queryPath = new URLSearchParams(queryData).toString();
+    console.log(queryPath);
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+    setSearchState(searchState + 1);
+  };
+
+  useEffect(() => {
+    console.log(
+      keyword,
+      format.map((each) => each.value),
+      category.map((each) => each.value),
+      startDate,
+      endDate,
+      postcode,
+      range
+    );
+  }, [searchState]);
 
   return (
     <>
-      <Box className={classes.search}>
-        <Box className={classes.titleStyle} mt={5} mb={5}>
-          Find Events
-        </Box>
-        <Box
-          display='flex'
-          width='100%'
-          justifyContent='center'
-          flexWrap='wrap'
-        >
-          <Box display='flex' flexDirection='column'>
-            <label>Event Keyword: </label>
-            <Input
-              placeholder='Event Keyword...'
-              className={classes.inputStyle}
-            />
+      <form onSubmit={handleSubmit(handleSearch)}>
+        <Box className={classes.search}>
+          <Box className={classes.titleStyle} mt={5} mb={5}>
+            Find Events
           </Box>
-          <Box ml={1}>
-            <label>Event Format: </label>
-            <MultiSelect
-              options={formatOptions}
-              value={format}
-              onChange={setFormat}
-              labelledBy='Select'
-              className={classes.selectStyle}
-            />
-          </Box>
-          <Box ml={1}>
-            <label>Event Category: </label>
-            <MultiSelect
-              options={categoryOptions}
-              value={category}
-              onChange={setCategory}
-              labelledBy='Select'
-              className={classes.selectStyle}
-            />
-          </Box>
-        </Box>
-        <Box
-          mt={1}
-          display='flex'
-          width='100%'
-          justifyContent='center'
-          flexWrap='wrap'
-        >
-          <Box>
-            <label>Start Date: </label>
-            <Box>
-              <DatePicker
-              dateFormat='dd/MM/yyyy'
-               selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                className={classes.pickerStyle}
+          <Box
+            display='flex'
+            width='100%'
+            justifyContent='center'
+            flexWrap='wrap'
+          >
+            <Box display='flex' flexDirection='column'>
+              <label>Event Keyword: </label>
+              <Input
+                placeholder='Event Keyword...'
+                className={classes.inputStyle}
+                value={keyword}
+                onChange={(event, data) => {
+                  setKeyword(data.value);
+                }}
               />
             </Box>
-          </Box>
-          <Box ml={1}>
-            <label>End Date: </label>
-            <Box>
-              <DatePicker
-              dateFormat='dd/MM/yyyy'
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                className={classes.pickerStyle}
+            <Box ml={1}>
+              <label>Event Format: </label>
+              <MultiSelect
+                options={formatOptions}
+                value={format}
+                onChange={setFormat}
+                labelledBy='Select'
+                className={classes.selectStyle}
+              />
+            </Box>
+            <Box ml={1}>
+              <label>Event Category: </label>
+              <MultiSelect
+                options={categoryOptions}
+                value={category}
+                onChange={setCategory}
+                labelledBy='Select'
+                className={classes.selectStyle}
               />
             </Box>
           </Box>
           <Box
+            mt={1}
             display='flex'
-            flexDirection='column'
-            style={{ minWidth: '300px' }}
-            ml={1}
+            width='100%'
+            justifyContent='center'
+            flexWrap='wrap'
           >
-            <label>Event Location: </label>
-            <Box display='flex' width='100%' justifyContent='space-between'>
-              <Box flexGrow='1'>
-                <PostalCodeAutoComplete control={control} />
-              </Box>
-              <Box pt={1}>
-                <Dropdown
-                  defaultValue='5 km'
-                  options={options}
-                  selection
-                  style={{ minWidth: '50px', maxHeight: '45px' }}
+            <Box>
+              <label>Start Date: </label>
+              <Box>
+                <Controller
+                  render={({ field }) => (
+                    <DatePicker
+                      dateFormat='dd/MM/yyyy'
+                      selected={field.value}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setStartDate(
+                          dateFormat(e, 'dd/MM/yyyy', {
+                            awareOfUnicodeTokens: true,
+                          })
+                        );
+                      }}
+                      className={classes.pickerStyle}
+                    />
+                  )}
+                  name='startdate'
+                  control={control}
                 />
               </Box>
             </Box>
+            <Box ml={1}>
+              <label>End Date: </label>
+              <Box>
+                <Controller
+                  render={({ field }) => (
+                    <DatePicker
+                      dateFormat='dd/MM/yyyy'
+                      selected={field.value}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setEndDate(
+                          dateFormat(e, 'dd/MM/yyyy', {
+                            awareOfUnicodeTokens: true,
+                          })
+                        );
+                      }}
+                      className={classes.pickerStyle}
+                    />
+                  )}
+                  name='enddate'
+                  control={control}
+                />
+              </Box>
+            </Box>
+            <Box
+              display='flex'
+              flexDirection='column'
+              style={{ minWidth: '350px' }}
+              ml={1}
+            >
+              <label>Event Location: </label>
+              <Box display='flex' width='100%' justifyContent='space-between'>
+                <Box flexGrow='1'>
+                  <PostalCodeAutoComplete control={control}/>
+                </Box>
+                <Box pt={1}>
+                  <Dropdown
+                    value={range}
+                    onChange={(e, { value }) => setRange(value)}
+                    options={options}
+                    selection
+                    style={{ minWidth: '80px', maxHeight: '45px' }}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+          <Box mt={3}>
+            <Button color='teal' type='submit'>
+              Search
+            </Button>
           </Box>
         </Box>
-        <Box mt={3}>
-          <Button color='teal'>Search</Button>
-        </Box>
-      </Box>
+      </form>
       <EventSearchResult />
     </>
   );

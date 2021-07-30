@@ -41,12 +41,12 @@ function OrgSearch() {
   const searchParam = new URLSearchParams(queryString);
   const [searchState, setSearchState] = React.useState(0)
 
-  const typeList = searchParam.has('type') ? searchParam.get('type') : []
+  const typeList = searchParam.has('orgType') ? searchParam.get('orgType') : []
 
   const [searchType, setSearchType] = useState(
-    searchParam.has('type')
+    searchParam.has('orgType')
       ? searchParam
-          .get('type')
+          .get('orgType')
           .split(',')
           .map((each) => ({ label: each, value: each }))
       : []
@@ -56,16 +56,15 @@ function OrgSearch() {
   );
 
   const handleSearch = () => {
-    const type = searchType.map((each) => each.value);
-    console.log(keyword, type);
+    const orgType = searchType.map((each) => each.value);
+    console.log(keyword, orgType);
     const queryData = Object.assign(
       {},
       keyword === '' ? null : { keyword },
-      type.length === 0 ? null : { type }
+      orgType.length === 0 ? null : { orgType }
     );
 
     const queryPath = new URLSearchParams(queryData).toString();
-    console.log()
     const path = {
       pathname: '/organization/search',
       search: `?${queryPath}`,
