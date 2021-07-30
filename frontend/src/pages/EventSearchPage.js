@@ -7,7 +7,7 @@ function EventSearchPage() {
   return (
     <>
       <BackToTop showBelow={250} />
-      <NavBar />
+      <NavBar search={true}/>
       <EventSearch/>
     </>
   );

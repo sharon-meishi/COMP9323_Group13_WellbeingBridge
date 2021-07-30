@@ -46,7 +46,6 @@ const CardBoard = () => {
   const history = useHistory();
   const classes = useStyles();
   const [event_list, setEventlist] = useState([]);
-  const usergroup = sessionStorage.getItem('usergroup');
   const fetchOrigin = async () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {
@@ -78,7 +77,7 @@ const CardBoard = () => {
           </Box>
           <Grid container className={classes.eventBox}>
             {event_list.map((eventId) => (
-              <Grid>
+              <Grid key={eventId}>
               <EventCard
                 key={eventId}
                 eventId={eventId}

@@ -26,20 +26,8 @@ function EventEditPage(props) {
       if (Data[0] === 200) {
         console.log(Data[1]);
         setRawData(Data[1]);
-
-        const date = Data[1].date.split(' ');
+        
         const time = Data[1].time.split('to');
-        let startDate, endDate;
-
-        console.log(date);
-        console.log(time);
-        if (date.length === 3) {
-          startDate = parsedDate(date[0], 'dd/MM/yyyy');
-          endDate = parsedDate(date[2], 'dd/MM/yyyy');
-        } else {
-          startDate = parsedDate(date[0], 'dd/MM/yyyy');
-          endDate = parsedDate(date[0], 'dd/MM/yyyy');
-        }
         const startTime = parsedDate(time[0], 'h:mm aa ');
         const endTime = parsedDate(time[1], ' h:mm aa');
 
@@ -49,8 +37,8 @@ function EventEditPage(props) {
           EventCategory: Data[1].category,
           EventIntroduction: Data[1].introduction,
           EventDetails: Data[1].details,
-          StartDate: startDate,
-          EndDate: endDate,
+          StartDate: parsedDate(Data[1].startdate, 'dd/MM/yyyy'),
+          EndDate: parsedDate(Data[1].enddate, 'dd/MM/yyyy'),
           StartTime: startTime,
           EndTime: endTime,
           Postcode: Data[1].location.postcode,

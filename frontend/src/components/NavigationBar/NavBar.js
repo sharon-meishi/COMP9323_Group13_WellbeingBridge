@@ -3,15 +3,8 @@ import { AppContext } from '../../utils/store';
 import ProfileMenu from './ProfileMenu';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import SearchIcon from '@material-ui/icons/Search';
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  InputBase,
-  Link,
-  Box,
-} from '@material-ui/core';
+import Link from '@material-ui/core/Link';
+import Box from '@material-ui/core/Box';
 import HomePageButton from '../HomePageButton';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
@@ -81,16 +74,11 @@ const useStyles = makeStyles((theme) => ({
 export default function NavBar({search}) {
   const classes = useStyles();
   const history = useHistory();
-
   const context = useContext(AppContext);
-
-  const [type, settype] = React.useState('organization');
-  const handleChange = (event) => {
-    settype(event.target.value);
-  };
 
   const [openLogin, setOpenLogin] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
+
   const handleClickOpen = () => {
     setOpenLogin(true);
   };
@@ -99,10 +87,6 @@ export default function NavBar({search}) {
     event.preventDefault();
     history.push('/organization/apply');
   };
-
-  // const toHomePage = () => {
-  //   history.push('/home');
-  // };
 
   const toCreateEvent = () => {
     history.push('/event/create');
@@ -139,7 +123,7 @@ export default function NavBar({search}) {
         <div className={classes.leftBox}>
           <LogoButton />
           <Box ml={2}>
-            {search ? null : <Searchbar defaultValue='org'/>} 
+            {search ? null : <Searchbar defaultValue='organization'/>} 
           
           </Box>
         </div>

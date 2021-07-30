@@ -8,7 +8,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
-
 const useStyles = makeStyles((theme) => ({
   titleStyle: {
     display: 'flex',
@@ -19,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
     height: '100px',
     width: '100px',
     color: '#26A69A',
+  },
+  actionsStyle: {
+    display: 'flex',
+    justifyContent: 'center',
   },
 }));
 
@@ -57,16 +60,18 @@ function SuccessDialog({ eventId, oId, open, setOpen, message }) {
       <Box m={3}>
         <Typography variant='subtitle1'>{message}</Typography>
       </Box>
-      <DialogActions>
-        <Button onClick={backToHome} color='primary'>
-          Back to HomePage
-        </Button>
+      <DialogActions className={classes.actionsStyle}>
+        {eventId ? (
+          <Button onClick={toEventPage} variant='outlined' color='primary'>
+            To Event Page
+          </Button>
+        ) : null}
         {oId ? (
-          <Button onClick={toOrgPage} color='primary'>
+          <Button onClick={toOrgPage} variant='contained' color='primary'>
             To Organization Page
           </Button>
         ) : (
-          <Button onClick={backToDashboard} color='primary'>
+          <Button onClick={backToDashboard} variant='outlined' color='primary'>
             Back to Dashboard
           </Button>
         )}
