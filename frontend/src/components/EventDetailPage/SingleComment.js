@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Comment } from 'semantic-ui-react';
+import { Form, Comment, Button } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Avatar } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
 import DeleteReminder from './DeleteReminder';
 import { updateComment, deleteComment } from '../api';
 
@@ -14,11 +15,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function SingleComment({ content, eventId, setUpdate }) {
+function SingleComment({ oId, content, eventId, setUpdate }) {
   const classes = useStyles();
   const [editMode, setEditMode] = useState(false);
+  const [editAnswer, setEditAnswer] = useState(false);
   const [comment, setComment] = useState(content.comment);
+  const [answer, setAnswer] = useState('');
   const [open, setOpen] = useState(false);
+
+  const toggleAnswer = () => {
+    setEditAnswer(!editAnswer);
+  };
 
   const toggleEdit = () => {
     setEditMode(!editMode);
@@ -90,12 +97,38 @@ function SingleComment({ content, eventId, setUpdate }) {
             content.comment
           )}
         </Comment.Text>
-        {parseInt(sessionStorage.getItem('id')) === content.userId &&
-        sessionStorage.getItem('usergroup') === 'individual' ? (
-          <Comment.Actions>
-            <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
-            <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
-          </Comment.Actions>
+        <Comment.Actions>
+          {parseInt(sessionStorage.getItem('id')) === content.userId &&
+          sessionStorage.getItem('usergroup') === 'individual' ? (
+            <>
+              <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
+              <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
+            </>
+          ) : null}
+          <Comment.Action onClick={toggleAnswer}>{'Add Reply'}</Comment.Action>
+          {/* {parseInt(sessionStorage.getItem('id')) === oId &&
+          sessionStorage.getItem('usergroup') === 'organization' ? (
+            <Comment.Action onClick={toggleEdit}>Add Answer</Comment.Action>
+          ) : null} */}
+        </Comment.Actions>
+        {editAnswer ? (
+          <Form reply>
+            <Form.TextArea
+              placeholder='Please leave your answer here'
+              name='answer'
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              required
+            />
+            <Box display='flex' justifyContent='flex-end'>
+              <Button
+                content='Add Answer'
+                labelPosition='left'
+                icon='edit'
+                primary
+              />
+            </Box>
+          </Form>
         ) : null}
       </Comment.Content>
     </Comment>

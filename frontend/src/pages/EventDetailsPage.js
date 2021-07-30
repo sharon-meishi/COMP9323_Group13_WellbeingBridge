@@ -390,7 +390,7 @@ function EventDetailsPage({ match }) {
                     <Box display='flex' justifyContent='flex-end'>
                       <Form.Button
                         size='tiny'
-                        content='Add Reply'
+                        content='Add Comment'
                         labelPosition='left'
                         icon='edit'
                         primary

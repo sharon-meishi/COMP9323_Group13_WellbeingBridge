@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Scrollspy from 'react-scrollspy';
+import { AppContext } from '../../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
+import { Comment, Form, Header } from 'semantic-ui-react';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import Rating from '@material-ui/lab/Rating';
 import logoPlaceholder from '../../Assets/logo-placeholder.png';
 import comingSoon from '../../Assets/video-coming-soon.gif';
 import EventCard from '../EventCard';
-import { getOrganizationDetails } from '../api';
 import YoutubeVideo from './YoutubeVideo';
+import { getOrganizationDetails } from '../api';
 
 const useStyles = makeStyles((theme) => ({
   scrollspy: {
-    fontFamily: 'Noto Sans',
     display: 'flex',
     flexDirection: 'column',
+    fontSize:'20px',
     margin: '150px 0 0 5%',
     position: 'fixed',
     top: 0,
@@ -101,17 +104,37 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
   },
   eventBox: {
-    marginBottom:'20px'
-  }
+    marginBottom: '20px',
+  },
+  linkStyle: {
+    marginLeft: '8px',
+    cursor: 'pointer',
+  },
 }));
+
+const labels = {
+  1: 'Useless',
+  2: 'Poor',
+  3: 'Ok',
+  4: 'Good',
+  5: 'Excellent',
+};
 
 function ScrollspyContent({ oId }) {
   const classes = useStyles();
+  const context = useContext(AppContext);
   const BottomSyle = {
-    borderBottom: '3px solid rgba(0, 0, 0, 0.1)',
+    borderBottom: '1px solid #DCDCDC',
     marginBottom: '30px',
   };
   const [data, setData] = useState(null);
+  const [review, setReview] = useState('');
+  const [newRating, setNewRating] = useState(3);
+  const [ratingHover, setRatingHover] = useState(-1);
+
+  const submitNewReview = async () => {
+    console.log(review);
+  };
 
   const matchYoutubeUrl = (url) => {
     const p =
@@ -161,10 +184,18 @@ function ScrollspyContent({ oId }) {
             </Link>
           </Scrollspy>
           <Grid item xs={8} md={7} lg={6} xl={5} className={classes.content}>
-            
             <section id='Name' style={BottomSyle}>
               <div className={classes.box}>
-                <h2>{data.organizationName}</h2>
+                <Box display='flex' flexDirection='column' flexWrap='wrap'>
+                  <h2>{data.organizationName}</h2>
+                  <Box display='flex' alignItems='center' flexWrap='wrap'>
+                    <Rating value={3.5} name='read-only' readOnly precision={0.5}/>
+                    <Box ml={1}>{3.5}</Box>
+                    <Link className={classes.linkStyle} href='#Reviews'>
+                      Add your review
+                    </Link>
+                  </Box>
+                </Box>
                 <div>
                   <img
                     alt='logo'
@@ -222,6 +253,42 @@ function ScrollspyContent({ oId }) {
                   {data.websiteLink}
                 </div>
               ) : null}
+            </section>
+
+            <section id='Reviews' style={BottomSyle}>
+              <h2>Reviews:</h2>
+              <Comment.Group size='large' style={{ maxWidth: '100%' }}>
+                <Form onSubmit={submitNewReview}>
+                  <Box display='flex' mb={1}>
+                    <Rating
+                      value={newRating}
+                      onChange={(event, newValue) => {
+                        setNewRating(newValue);
+                      }}
+                      onChangeActive={(event, newHover) => {
+                        setRatingHover(newHover);
+                      }}
+                    />
+                    {newRating !== null && <Box ml={2}>{labels[ratingHover !== -1 ? ratingHover : newRating]}</Box>}
+                  </Box>
+                  <Form.TextArea
+                    placeholder='Please leave your review here'
+                    name='review'
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                    required
+                  />
+                  <Box display='flex' justifyContent='flex-end' mb={1}>
+                    <Form.Button
+                      size='tiny'
+                      content='Add Review'
+                      labelPosition='left'
+                      icon='edit'
+                      primary
+                    />
+                  </Box>
+                </Form>
+              </Comment.Group>
             </section>
 
             <Grid container id='Events' className={classes.eventBox}>

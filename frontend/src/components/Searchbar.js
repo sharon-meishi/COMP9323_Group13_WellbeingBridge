@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Select, Input } from 'semantic-ui-react';
+import { Form, Button, Select, Input } from 'semantic-ui-react';
 
 const options = [
   { key: 'org', text: 'Organization', value: 'org' },
@@ -14,23 +14,26 @@ function Searchbar({ defaultValue }) {
     console.log(keyword, select);
   };
 
+  const toSearchPage = () => {};
+
   return (
-    <Input
-      type='text'
-      placeholder='Type keyword for...'
-      onChange={(e) => setKeyword(e.target.value)}
-      action
-    >
-      <input />
-      <Select
-        options={options}
-        value={select}
-        onChange={(e, { value }) => setSelect(value)}
-      />
-      <Button type='submit' onClick={handleSubmit}>
-        Search
-      </Button>
-    </Input>
+      <Input
+        type='text'
+        placeholder='Type keyword for...'
+        onChange={(e) => setKeyword(e.target.value)}
+        required
+        action
+      >
+        <input required />
+        <Select
+          options={options}
+          value={select}
+          onChange={(e, { value }) => setSelect(value)}
+        />
+        <Button type='submit' onClick={handleSubmit}>
+          Search
+        </Button>
+      </Input>
   );
 }
 

@@ -87,10 +87,7 @@ function EventCard(props) {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
         setInfo(res[1]);
-        // console.log(res[1]);
-        // console.log(res[1].favourite);
         if (res[1].favourite) {
-          // console.log('initial liked');
           setIslike(true);
         }
       }
@@ -109,20 +106,16 @@ function EventCard(props) {
       setOpenLogin(true);
     }
     if (islike) {
-      // console.log('now it is liked');
       const res = await unlikeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(false);
-        // console.log('unlike success');
       } else {
         console.log('unlike error');
       }
     } else {
-      // console.log('now it is not liked');
       const res = await likeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(true);
-        // console.log('like success');
       } else {
         console.log('like error');
       }
