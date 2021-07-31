@@ -6,6 +6,7 @@ import json
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import jwt
+from geopy import distance
 
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
@@ -922,19 +923,79 @@ class search_org(Resource):
         name=request.args.get('name')
         orgtype=request.args.get('type')
         
-        sql_orgsearch=f"select OrganizationId from Organization where OrganizationName='{name}' and OrganizationType='{orgtype}';"
+        sql_orgsearch="select OrganizationId from Organization"
+        conds = []
+        if name is not None:
+            ns = name.split(",")
+            conds.append("( " + " OR ".join(["OrganizationName='{}'".format(n) for n in ns]) + " )")
+        if orgtype is not None:
+            ots = orgtype.split(",")
+            conds.append("( " + " OR ".join(["OrganizationType='{}'".format(ot) for ot in ots]) + " )")
+        
+        if conds:
+            sql_orgsearch += " WHERE " + " AND ".join(conds) + ";"
+        else:
+            sql_orgsearch += ";"
         output_search=sql_command(sql_orgsearch)
         org_info = output_search
 
-        org_list=[]
-        for i in org_info:
-            org_list.append(i[0])
+        org_list=[oi[0] for oi in org_info]
         output={"organizationId":org_list}
 
         return output,200
-    
 
-    
+
+@api.route("/search/event", doc={"description": "search event based on criterions."})
+@api.doc(params={"keyword": "search keywords", "format": "event format", "category": "event category",
+    "startdate": "date of start", "enddate": "date of end", "lat": "latitude", "lng": "longitude", "range": "default range = 5km"})
+class search_event(Resource):
+    def get(self):
+        keyword = request.args.get('keyword')
+        formats = request.args.get('format')
+        category = request.args.get('category')
+        startdate = request.args.get('startdate')
+        enddate = request.args.get('enddate')
+        lat = request.args.get('lat')
+        lng = request.args.get('lng')
+        range = request.args.get('range')
+        if range == "" or range is None:
+            range = 5
+        else:
+            range = int(range)
+        orig_coords = (float(lat), float(lng))
+
+        sql_eventsearch = "select EventId, Lat, Lng from Event"
+        conds = []
+        if keyword is not None:
+            kws = keyword.split(",")
+            conds.append("( " + " OR ".join(["EventName LIKE '%{}%'".format(kw) for kw in kws]) + " )")
+        if formats is not None:
+            fs = formats.split(",")
+            conds.append("( " + " OR ".join(["FORMAT='{}'".format(f) for f in fs]) + " )")
+        if category is not None:
+            cts = category.split(",")
+            conds.append("( " + " OR ".join(["Category='{}'".format(f) for f in cts]) + " )")
+        if startdate is not None:
+            conds.append("StartDate='{}'".format(startdate))
+        if enddate is not None:
+            conds.append("EndDate='{}'".format(enddate))
+
+        if conds:
+            sql_eventsearch += " WHERE " + " AND ".join(conds) + ";"
+        else:
+            sql_eventsearch += ";"
+
+        output_search = sql_command(sql_eventsearch)
+        found_events = []
+        for event_id, e_lat, e_lng in output_search:
+            evt_coords = (float(e_lat), float(e_lng))
+            if distance.geodesic(orig_coords, evt_coords).km <= range:
+                found_events.append(event_id)
+
+        return found_events, 200
+
+
+
 @api.route("/event/<int:eventid>/comment/<int:commentid>", doc={"description": "edit comments under one event"})
 @api.doc(parser=token_parser)
 class comment(Resource):
