@@ -150,50 +150,56 @@ class Login(Resource):
     @api.response(201, 'Created')
     @api.expect(login_model)
     def post(self):
-        data = json.loads(request.get_data())
+        data=api.payload
         email = data['email']
         password = data['password']
         if email == "" or password == "":
-            output = {
-                "message": "Missing email or password"
+            output={
+                "message":"Missing email or password"
             }
-            return output, 400
-        code = login(email, password)
-        return code
-
-
-def login(username, password):
-    sql_login_u = f"SELECT UserId, Password, NickName FROM User WHERE Email = '{username}';"
-    sql_login_o = f"SELECT OrganizationId, Password,OrganizationName FROM Organization WHERE Email = '{username}';"
-    result_u = sql_command(sql_login_u)
-    result_o = sql_command(sql_login_o)
-    tag = 'string'
-    password_final = 0
-    if len(result_u) > 0:
-        group_id = result_u[0][0]
-        password_final = result_u[0][1]
-        name=result_u[0][2]
-        tag = 'individual'
-    elif len(result_o) > 0:
-        group_id = result_o[0][0]
-        password_final = result_o[0][1]
-        name=result_o[0][2]
-        tag = 'organization'
-
-    if password == password_final:
-        token = encode_token(username, tag)
-        output = {
-            "userId": group_id,
-            "usergroup": tag,
-            "name": name,
-            "token": token
-        }
-        return output, 200
-    else:
-        output = {
-            "message": "Wrong email or password"
-        }
-        return output, 400
+            return output,400
+        else:
+            user_sql = f"SELECT Password FROM User WHERE Email='{email}';"
+            org_sql = f"SELECT Password FROM Organization WHERE Email='{email}';"
+            result_from_user = sql_command(user_sql)
+            print(result_from_user)
+            result_from_org = sql_command(org_sql)
+            if result_from_user:
+                type_flag = 'user'
+            elif result_from_org:
+                type_flag = 'orgnization'
+            else:
+                output={
+                    "message":"email not signup as individual / organization"
+                }
+                return output,403
+            # check the identification of current user
+            if type_flag == 'user':
+                if password == result_from_user[0][0]:
+                    token = encode_token(email, type_flag)
+                    output={
+                        "message":"success",
+                        "token":token
+                    }
+                    return output,200
+                else:
+                    output={
+                        "message":"Wrong password"
+                    }
+                    return output,403
+            else:
+                if password == result_from_org[0][0]:
+                    token = encode_token(email, type_flag)
+                    output={
+                        "message":"success",
+                        "token":token
+                    }
+                    return output,200
+                else:
+                    output={
+                        "message":"Wrong password"
+                    }
+                    return output,403
 
 
 @api.route('/popular/events')
