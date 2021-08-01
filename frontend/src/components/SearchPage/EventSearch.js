@@ -85,7 +85,7 @@ const options = [
   { key: '15 km', text: '15 km', value: '15 km' },
 ];
 
-function EventSearch({}) {
+function EventSearch() {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
@@ -139,7 +139,7 @@ function EventSearch({}) {
     Postcode: searchParam.has('postcode') ? searchParam.get('postcode') : '',
   };
 
-  const { reset, control, handleSubmit } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: urlValue,
   });
 
@@ -166,6 +166,7 @@ function EventSearch({}) {
     };
     history.push(path);
     setSearchState(searchState + 1);
+    
   };
 
   useEffect(() => {
@@ -178,7 +179,7 @@ function EventSearch({}) {
       postcode,
       range
     );
-  }, [searchState]);
+  }, [category, endDate, format, keyword, postcode, range, searchState, startDate]);
 
   return (
     <>
