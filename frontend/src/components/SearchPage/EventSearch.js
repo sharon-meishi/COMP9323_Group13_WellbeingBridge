@@ -11,6 +11,7 @@ import PostalCodeAutoComplete from '../EventEditPage/PostalCodeAutoComplete';
 import dateFormat from 'date-fns/format';
 import parse from 'date-fns/parse';
 import 'react-datepicker/dist/react-datepicker.css';
+import { searchEvent } from '../api';
 
 const useStyles = makeStyles({
   search: {
@@ -93,6 +94,7 @@ function EventSearch() {
   const queryString = location.search;
   const searchParam = new URLSearchParams(queryString);
   const [searchState, setSearchState] = React.useState(0);
+  const [resultList, setresultList] = React.useState([]);
 
   const parsedDate = (dateString, format) => {
     return parse(dateString, format, new Date());
@@ -143,7 +145,7 @@ function EventSearch() {
     defaultValues: urlValue,
   });
 
-  const handleSearch = (data) => {
+  const handleSearch = async (data) => {
     console.log(data.Postcode);
     const eventFormat = format.map((each) => each.value);
     const eventCategory = category.map((each) => each.value);
@@ -156,17 +158,27 @@ function EventSearch() {
       startDate === '' ? null : { startDate },
       endDate === '' ? null : { endDate },
       data.Postcode === '' ? null : { postcode: data.Postcode },
-      range === '' ? null : { range }
+      range === 'Any' ? null : { range }
     );
     const queryPath = new URLSearchParams(queryData).toString();
-    console.log(queryPath);
     const path = {
       pathname: '/event/search',
-      search: `?${queryPath}`,
+      search: `?${queryPath}&lat=-33.884895&lng=151.135696`,
     };
     history.push(path);
     setSearchState(searchState + 1);
-    
+
+    navigator.geolocation.getCurrentPosition(position => {
+      const a = position.coords;
+      console.log('sss',a);
+      // Show a map centered at latitude / longitude.
+    });
+
+    const res = await searchEvent(path.search);
+    if (res[0] === 200) {
+      console.log(res[1]);
+      setresultList(res[1]);
+    }
   };
 
   useEffect(() => {
@@ -311,7 +323,7 @@ function EventSearch() {
           </Box>
         </Box>
       </form>
-      <EventSearchResult />
+      <EventSearchResult result={resultList} />
     </>
   );
 }

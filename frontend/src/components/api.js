@@ -569,3 +569,23 @@ export const getOrgSummary= async (oid) => {
     }
   }
 };
+
+export const searchEvent= async (data) => {
+  const url = baseUrl + `/search/event${data}`;
+  try {
+    const res = await axios.get(url,{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
