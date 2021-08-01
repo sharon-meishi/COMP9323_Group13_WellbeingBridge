@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(9),
     height: theme.spacing(9),
     marginBottom: theme.spacing(1),
+    cursor: 'pointer',
   },
   linkStyle: {
     fontFamily: `'Gill Sans', 'Roboto'`,
@@ -40,8 +41,8 @@ function OrganizationAvatar({ alt, src, title }) {
     history.push(path);
   };
   return (
-    <Grid item xs={2} className={classes.item}>
-      <Avatar alt={alt} src={src} className={classes.avatarStyle} />
+    <Grid item xs={2} className={classes.item} >
+      <Avatar alt={alt} src={src} className={classes.avatarStyle} onClick={toOrgSearch}/>
       <Link onClick={toOrgSearch} color='inherit' className={classes.linkStyle}>
         {title}
       </Link>
