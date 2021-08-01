@@ -542,3 +542,51 @@ export const searchEvent = async (searchBody) => {
     }
   }
 };
+
+export const searchOrganization= async (keyword,typeList) => {
+  let url;
+  if (keyword && typeof typeList !== 'object'){
+    url = baseUrl + `/search/organization?name=${keyword}&type=${typeList}`;
+  }else if (keyword){
+    url = baseUrl + `/search/organization?name=${keyword}`;
+  }else{
+    url = baseUrl + `/search/organization?type=${typeList}`;
+  }
+  console.log(`-${keyword}-${typeList}-`);
+  try {
+    const res = await axios.get(url,{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const getOrgSummary= async (oid) => {
+  const url = baseUrl + `/organization/${oid}/summary`;
+  try {
+    const res = await axios.get(url,{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};

@@ -3,8 +3,11 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Button, Input } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import OrgSearchResult from './OrgSearchResult';
+// import OrgSearchResult from './OrgSearchResult';
 import MultiSelect from 'react-multi-select-component';
+import Grid from '@material-ui/core/Grid';
+import {searchOrganization} from '../api';
+import OrgCard from './OrgCard';
 
 const options = [
   { label: 'Youth', value: 'Youth' },
@@ -31,16 +34,29 @@ const useStyles = makeStyles({
   dropDown: {
     minWidth: '200px',
   },
+  search:{
+    display:'flex',
+    justifyContent:'space-evenly',
+    flexWrap:'wrap',
+    margin:'2%',
+    alignItem:'center',
+    // minHeight:'2000px',
+    // paddingBottom:'40%',//need be be changed
+
+  }
 });
 
 function OrgSearch() {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  console.log(`location=${location}`);
   const queryString = location.search;
+  console.log(`queryString=${queryString}`);
   const searchParam = new URLSearchParams(queryString);
-  const [searchState, setSearchState] = React.useState(0)
-
+  console.log(`searchParam=${searchParam}`);
+  const [searchState, setSearchState] = React.useState(0);
+  const [searchResult, setSearchResult] = React.useState([]);
   const typeList = searchParam.has('orgType') ? searchParam.get('orgType') : []
 
   const [searchType, setSearchType] = useState(
@@ -75,6 +91,17 @@ function OrgSearch() {
 
   useEffect(() => {
     console.log(keyword, typeList);
+    console.log(typeof(keyword));
+    console.log(typeof(typeList));
+    const search = async ()=>{
+      const res=  await searchOrganization(keyword, typeList);
+      console.log(res[0]);
+      if (res[0] === 200){
+        console.log(res[1].organizationId);
+        setSearchResult(res[1].organizationId);
+      }
+    }
+    search();
   }, [searchState]);
 
   return (
@@ -114,7 +141,10 @@ function OrgSearch() {
           </Input>
         </Box>
       </Box>
-      <OrgSearchResult />
+      <Grid className={classes.search}>
+            {searchResult.map((item,index)=>
+                <OrgCard Id={item} key={index}></OrgCard>)}
+      </Grid>
     </>
   );
 }
