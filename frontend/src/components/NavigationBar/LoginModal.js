@@ -89,7 +89,7 @@ function LoginModal({ open, setOpenLogin, setOpenRegister }) {
       setErrorMsg('')
       sessionStorage.setItem('token', res[1].token);
       sessionStorage.setItem('name', res[1].name)
-      sessionStorage.setItem('id', res[1].userId);
+      sessionStorage.setItem('id', res[1].id);
       sessionStorage.setItem('usergroup', res[1].usergroup)
       context.setIsLoginState(true)
       if (res[1].usergroup === 'organization'){
