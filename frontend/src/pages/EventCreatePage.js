@@ -1,7 +1,7 @@
 import React from 'react';
 import NavBar from '../components/NavigationBar/NavBar';
 import BackToTop from '../components/BackToTop';
-import EventForm from '../components/EventEditPage/EventForm';//sdsd
+import EventForm from '../components/EventEditPage/EventForm';
 
 function EventCreatePage() {
   return (
