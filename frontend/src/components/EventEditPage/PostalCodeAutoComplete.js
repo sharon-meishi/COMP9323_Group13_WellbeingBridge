@@ -16191,7 +16191,7 @@ const renderGroup = (params) => [
   params.children,
 ];
 
-export default function Virtualize({ onChange: ignored, control }) {
+export default function Virtualize({ onChange: ignored, control, search }) {
   const classes = useStyles();
   return (
     <Controller
@@ -16223,7 +16223,7 @@ export default function Virtualize({ onChange: ignored, control }) {
       onChange={([, data]) => data}
       name='Postcode'
       control={control}
-      rules={{ required: true }}
+      rules={{ required: search ? false : true }}
     />
   );
 }
