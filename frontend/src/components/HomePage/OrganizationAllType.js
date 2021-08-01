@@ -70,7 +70,7 @@ function OrganizationAllType() {
             <OrganizationAvatar
               alt='senior'
               src={senior}
-              title='Senior'
+              title='Seniors'
             ></OrganizationAvatar>
             <OrganizationAvatar
               alt='family'
