@@ -8,7 +8,7 @@ import { Input, Button, Dropdown } from 'semantic-ui-react';
 import EventSearchResult from './EventSearchResult';
 import DatePicker from 'react-datepicker';
 import PostalCodeAutoComplete from '../EventEditPage/PostalCodeAutoComplete';
-import dateFormat from 'date-fns/format';
+import dateFormat from 'date-fns/Format';
 import parse from 'date-fns/parse';
 import 'react-datepicker/dist/react-datepicker.css';
 import { searchEvent } from '../api';
@@ -56,7 +56,7 @@ const useStyles = makeStyles({
   },
 });
 
-const formatOptions = [
+const FormatOptions = [
   { label: 'Class', value: 'Class' },
   { label: 'Conference', value: 'Conference' },
   { label: 'Festival', value: 'Festival' },
@@ -96,8 +96,8 @@ function EventSearch() {
   const [searchState, setSearchState] = React.useState(0);
   const [resultList, setresultList] = React.useState([]);
 
-  const parsedDate = (dateString, format) => {
-    return parse(dateString, format, new Date());
+  const parsedDate = (dateString, Format) => {
+    return parse(dateString, Format, new Date());
   };
   const postcode = searchParam.has('postcode')
     ? searchParam.get('postcode')
@@ -105,38 +105,38 @@ function EventSearch() {
   const [keyword, setKeyword] = useState(
     searchParam.has('keyword') ? searchParam.get('keyword') : ''
   );
-  const [startDate, setStartDate] = useState(
-    searchParam.has('startDate') ? searchParam.get('startDate') : ''
+  const [startdate, setstartdate] = useState(
+    searchParam.has('startdate') ? searchParam.get('startdate') : ''
   );
-  const [endDate, setEndDate] = useState(
-    searchParam.has('endDate') ? searchParam.get('endDate') : ''
+  const [enddate, setenddate] = useState(
+    searchParam.has('enddate') ? searchParam.get('enddate') : ''
   );
   const [range, setRange] = useState(
     searchParam.has('range') ? searchParam.get('range') : 'Any'
   );
-  const [format, setFormat] = useState(
-    searchParam.has('eventFormat')
+  const [Format, setFormat] = useState(
+    searchParam.has('format')
       ? searchParam
-          .get('eventFormat')
+          .get('format')
           .split(',')
           .map((each) => ({ label: each, value: each }))
       : []
   );
-  const [category, setCategory] = useState(
-    searchParam.has('eventCategory')
+  const [Category, setCategory] = useState(
+    searchParam.has('category')
       ? searchParam
-          .get('eventCategory')
+          .get('category')
           .split(',')
           .map((each) => ({ label: each, value: each }))
       : []
   );
 
   const urlValue = {
-    startdate: searchParam.has('startDate')
-      ? parsedDate(searchParam.get('startDate'), 'dd/MM/yyyy')
+    startdate: searchParam.has('startdate')
+      ? parsedDate(searchParam.get('startdate'), 'dd/MM/yyyy')
       : '',
-    enddate: searchParam.has('endDate')
-      ? parsedDate(searchParam.get('endDate'), 'dd/MM/yyyy')
+    enddate: searchParam.has('enddate')
+      ? parsedDate(searchParam.get('enddate'), 'dd/MM/yyyy')
       : '',
     Postcode: searchParam.has('postcode') ? searchParam.get('postcode') : '',
   };
@@ -147,16 +147,16 @@ function EventSearch() {
 
   const handleSearch = async (data) => {
     console.log(data.Postcode);
-    const eventFormat = format.map((each) => each.value);
-    const eventCategory = category.map((each) => each.value);
-    console.log(startDate, endDate);
+    const format = Format.map((each) => each.value);
+    const category = Category.map((each) => each.value);
+    console.log(startdate, enddate);
     const queryData = Object.assign(
       {},
       keyword === '' ? null : { keyword },
-      eventFormat.length === 0 ? null : { eventFormat },
-      eventCategory.length === 0 ? null : { eventCategory },
-      startDate === '' ? null : { startDate },
-      endDate === '' ? null : { endDate },
+      format.length === 0 ? null : { format },
+      category.length === 0 ? null : { category },
+      startdate === '' ? null : { startdate },
+      enddate === '' ? null : { enddate },
       data.Postcode === '' ? null : { postcode: data.Postcode },
       range === 'Any' ? null : { range }
     );
@@ -184,14 +184,14 @@ function EventSearch() {
   useEffect(() => {
     console.log(
       keyword,
-      format.map((each) => each.value),
-      category.map((each) => each.value),
-      startDate,
-      endDate,
+      Format.map((each) => each.value),
+      Category.map((each) => each.value),
+      startdate,
+      enddate,
       postcode,
       range
     );
-  }, [category, endDate, format, keyword, postcode, range, searchState, startDate]);
+  }, [Category, enddate, Format, keyword, postcode, range, searchState, startdate]);
 
   return (
     <>
@@ -220,8 +220,8 @@ function EventSearch() {
             <Box ml={1}>
               <label>Event Format: </label>
               <MultiSelect
-                options={formatOptions}
-                value={format}
+                options={FormatOptions}
+                value={Format}
                 onChange={setFormat}
                 labelledBy='Select'
                 className={classes.selectStyle}
@@ -231,7 +231,7 @@ function EventSearch() {
               <label>Event Category: </label>
               <MultiSelect
                 options={categoryOptions}
-                value={category}
+                value={Category}
                 onChange={setCategory}
                 labelledBy='Select'
                 className={classes.selectStyle}
@@ -255,7 +255,7 @@ function EventSearch() {
                       selected={field.value}
                       onChange={(e) => {
                         field.onChange(e);
-                        setStartDate(
+                        setstartdate(
                           dateFormat(e, 'dd/MM/yyyy', {
                             awareOfUnicodeTokens: true,
                           })
@@ -279,7 +279,7 @@ function EventSearch() {
                       selected={field.value}
                       onChange={(e) => {
                         field.onChange(e);
-                        setEndDate(
+                        setenddate(
                           dateFormat(e, 'dd/MM/yyyy', {
                             awareOfUnicodeTokens: true,
                           })
