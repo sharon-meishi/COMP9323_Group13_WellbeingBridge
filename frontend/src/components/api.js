@@ -522,27 +522,6 @@ export const updateOrgPage = async (oId, uploadBody) => {
   }
 };
 
-export const searchEvent = async (searchBody) => {
-  const url = baseUrl + '/search/event';
-  const headers = {
-    Authorization: `${sessionStorage.getItem('token')}`,
-    'content-Type': 'application/json',
-  };
-  try {
-    const res = await axios.put(url, searchBody, {
-      headers: headers,
-    });
-    return [res.status, ''];
-  } catch (error) {
-    console.log(error);
-    if (error.response) {
-      return [error.response.status, error.response.data.message];
-    } else {
-      return [error, ''];
-    }
-  }
-};
-
 export const searchOrganization= async (keyword,typeList) => {
   let url;
   if (keyword && typeof typeList !== 'object'){
