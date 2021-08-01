@@ -160,15 +160,15 @@ class Login(Resource):
             }
             return output,400
         else:
-            user_sql = f"SELECT Password,NickName FROM User WHERE Email='{email}';"
-            org_sql = f"SELECT Password,OrganizationName FROM Organization WHERE Email='{email}';"
+            user_sql = f"SELECT Password,NickName,UserId FROM User WHERE Email='{email}';"
+            org_sql = f"SELECT Password,OrganizationName,OrganizationId FROM Organization WHERE Email='{email}';"
             result_from_user = sql_command(user_sql)
             print(result_from_user)
             result_from_org = sql_command(org_sql)
             if result_from_user:
                 type_flag = 'user'
             elif result_from_org:
-                type_flag = 'orgnization'
+                type_flag = 'organization'
             else:
                 output={
                     "message":"email not signup as individual / organization"
@@ -182,7 +182,8 @@ class Login(Resource):
                         "message":"success",
                         "token":token,
                         "usergroup":type_flag,
-                        "name":result_from_user[0][1]
+                        "name":result_from_user[0][1],
+                        "id": result_from_user[0][2]
                     }
                     return output,200
                 else:
@@ -197,7 +198,8 @@ class Login(Resource):
                         "message":"success",
                         "token":token,
                         "usergroup": type_flag,
-                        "name":result_from_org[0][1]
+                        "name":result_from_org[0][1],
+                        "id": result_from_org[0][2]
                     }
                     return output,200
                 else:
