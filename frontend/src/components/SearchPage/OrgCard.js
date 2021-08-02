@@ -6,6 +6,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
+import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import cardimg from '../../Assets/logo-placeholder.png';
@@ -21,6 +22,9 @@ const useStyles = makeStyles({
   },
   intro:{
     minHeight:'65px',
+  },
+  label:{
+    marginLeft:'20px',
   }
 });
 
@@ -46,10 +50,13 @@ export default function OrgCard({Id}) {
 
   const handleLink = ()=>{
     history.push(`/organization/${Id}`)
-  }
+  };
+  const toOrgType = ()=>{
+    history.push('/organization/search');
+  };
   return (
     <Card className={classes.root}>
-      <CardActionArea>
+      {/* <CardActionArea> */}
 
         <CardMedia
           className={classes.media}
@@ -59,12 +66,13 @@ export default function OrgCard({Id}) {
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
           {cardInfo.OrganizationName}
+          <Chip label={`#${cardInfo.OrganizationType}`} className={classes.label}clickable color='primary' onClick={toOrgType} />
           </Typography>
           <Typography className={classes.intro}variant="body2" color="textSecondary" component="p">
             {cardInfo.Introduction}
           </Typography>
         </CardContent>
-      </CardActionArea>
+      {/* </CardActionArea> */}
       <CardActions>
         <Button size="small" color="primary" onClick={handleLink}>
           Learn More

@@ -102,7 +102,10 @@ function OrgSearch() {
       }
     }
     search();
-  }, [searchState]);
+    if (queryString){
+      handleSearch();
+    }
+  }, [searchState,queryString]);
 
   return (
     <>
