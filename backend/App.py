@@ -212,10 +212,8 @@ class Login(Resource):
 @api.route('/popular/events')
 class GetPopularEvent(Resource):
     def get(self):
-        # querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
-        # return sql_command(querry_string), 200
-        return {'event_id': [1, 2, 3]}, 200
-
+        querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
+        return sql_command(querry_string), 200
 
 parser = api.parser()
 parser.add_argument('token', type=str)
@@ -974,7 +972,6 @@ class search_event(Resource):
             range = 5
         else:
             range = int(range)
-        orig_coords = (float(lat), float(lng))
 
         sql_eventsearch = "select EventId, Lat, Lng from Event"
         conds = []
@@ -999,10 +996,14 @@ class search_event(Resource):
 
         output_search = sql_command(sql_eventsearch)
         found_events = []
-        for event_id, e_lat, e_lng in output_search:
-            evt_coords = (float(e_lat), float(e_lng))
-            if distance.geodesic(orig_coords, evt_coords).km <= range:
-                found_events.append(event_id)
+        if lat is not None and lng is not None:
+            orig_coords = (float(lat), float(lng))
+            for event_id, e_lat, e_lng in output_search:
+                evt_coords = (float(e_lat), float(e_lng))
+                if distance.geodesic(orig_coords, evt_coords).km <= range:
+                    found_events.append(event_id)
+        else:
+            found_events = [output[0] for output in output_search]
 
         return found_events, 200
 
