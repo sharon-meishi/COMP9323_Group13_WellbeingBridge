@@ -99,7 +99,6 @@ function EventSearch() {
   const searchParam = new URLSearchParams(queryString);
   const [searchState, setSearchState] = useState(0);
   const [resultList, setresultList] = useState([]);
-  console.log(queryString)
 
   const [lat, setLat] = useState(null)
   const [lng, setLng] = useState(null)
@@ -164,10 +163,8 @@ function EventSearch() {
   }
 
   const handleSearch = async (data) => {
-    console.log(data.Postcode);
     const format = Format.map((each) => each.value);
     const category = Category.map((each) => each.value);
-    console.log(startdate, enddate);
     const queryData = Object.assign(
       {},
       keyword === '' ? null : { keyword },
@@ -184,7 +181,9 @@ function EventSearch() {
       search: `?${queryPath}&lat=-33.884895&lng=151.135696`,
     };
     history.push(path);
-    setLatLng(data.Postcode);
+    if (data.Postcode) {
+      setLatLng(data.Postcode);
+    }
     setSearchState(searchState + 1);
   };
 
