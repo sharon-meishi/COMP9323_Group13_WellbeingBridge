@@ -181,7 +181,7 @@ class Login(Resource):
                     output={
                         "message":"success",
                         "token":token,
-                        "usergroup":type_flag,
+                        "usergroup": 'individual',
                         "name":result_from_user[0][1],
                         "id": result_from_user[0][2]
                     }
