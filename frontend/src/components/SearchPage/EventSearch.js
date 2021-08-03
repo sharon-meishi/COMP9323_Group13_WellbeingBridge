@@ -11,6 +11,10 @@ import PostalCodeAutoComplete from '../EventEditPage/PostalCodeAutoComplete';
 import dateFormat from 'date-fns/Format';
 import parse from 'date-fns/parse';
 import 'react-datepicker/dist/react-datepicker.css';
+import GooglePlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-google-places-autocomplete';
 import { searchEvent } from '../api';
 
 const useStyles = makeStyles({
@@ -81,9 +85,9 @@ const categoryOptions = [
 
 const options = [
   { key: 'Any', text: 'Any', value: 'Any' },
-  { key: '5 km', text: '5 km', value: '5 km' },
-  { key: '10 km', text: '10 km', value: '10 km' },
-  { key: '15 km', text: '15 km', value: '15 km' },
+  { key: '5 km', text: '5 km', value: '5' },
+  { key: '10 km', text: '10 km', value: '10' },
+  { key: '15 km', text: '15 km', value: '15' },
 ];
 
 function EventSearch() {
@@ -93,8 +97,11 @@ function EventSearch() {
 
   const queryString = location.search;
   const searchParam = new URLSearchParams(queryString);
-  const [searchState, setSearchState] = React.useState(0);
-  const [resultList, setresultList] = React.useState([]);
+  const [searchState, setSearchState] = useState(0);
+  const [resultList, setresultList] = useState([]);
+
+  const [lat, setLat] = useState(null)
+  const [lng, setLng] = useState(null)
 
   const parsedDate = (dateString, Format) => {
     return parse(dateString, Format, new Date());
@@ -145,11 +152,19 @@ function EventSearch() {
     defaultValues: urlValue,
   });
 
+  const setLatLng = (address) => {
+    geocodeByAddress(address)
+      .then((results) => getLatLng(results[0]))
+      .then(({ lat, lng }) => {
+        setLat(lat.toFixed(6));
+        setLng(lng.toFixed(6));
+        console.log('Successfully got latitude and longitude', { lat, lng });
+      });
+  }
+
   const handleSearch = async (data) => {
-    console.log(data.Postcode);
     const format = Format.map((each) => each.value);
     const category = Category.map((each) => each.value);
-    console.log(startdate, enddate);
     const queryData = Object.assign(
       {},
       keyword === '' ? null : { keyword },
@@ -166,19 +181,10 @@ function EventSearch() {
       search: `?${queryPath}&lat=-33.884895&lng=151.135696`,
     };
     history.push(path);
-    setSearchState(searchState + 1);
-
-    navigator.geolocation.getCurrentPosition(position => {
-      const a = position.coords;
-      console.log('sss',a);
-      // Show a map centered at latitude / longitude.
-    });
-
-    const res = await searchEvent(path.search);
-    if (res[0] === 200) {
-      console.log(res[1]);
-      setresultList(res[1]);
+    if (data.Postcode) {
+      setLatLng(data.Postcode);
     }
+    setSearchState(searchState + 1);
   };
 
   useEffect(() => {
@@ -191,7 +197,21 @@ function EventSearch() {
       postcode,
       range
     );
-  }, [Category, enddate, Format, keyword, postcode, range, searchState, startdate]);
+    navigator.geolocation.getCurrentPosition(position => {
+      const a = position.coords;
+      console.log('sss',a); 
+      // Show a map centered at latitude / longitude.
+    });
+
+    const fetchData = async() => {
+      const res = await searchEvent(queryString);
+      if (res[0] === 200) {
+        console.log(res[1]);
+        setresultList(res[1]);
+      }
+    } 
+    fetchData();
+  }, [searchState, queryString]);
 
   return (
     <>

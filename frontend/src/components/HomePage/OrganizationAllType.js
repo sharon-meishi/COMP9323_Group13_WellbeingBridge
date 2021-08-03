@@ -15,7 +15,7 @@ import employment from '../../Assets/OrganizationType/employment.jpeg';
 import money from '../../Assets/OrganizationType/money.jpeg';
 import community from '../../Assets/OrganizationType/community.jpeg';
 import OrganizationAvatar from './OrganizationAvatar';
-import HomePageButton from '../HomePageButton';
+import HomePageButton from './HomePageButton';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -48,8 +48,8 @@ function OrganizationAllType() {
   const history = useHistory();
 
   const toOrgSearch = () => {
-    history.push('/organization/search')
-  }
+    history.push('/organization/search');
+  };
 
   return (
     <Box className={classes.box}>
@@ -59,9 +59,14 @@ function OrganizationAllType() {
             <Typography variant='h5' className={classes.titleStyle}>
               What type of organization you are looking for?
             </Typography>
-            <HomePageButton text='Find Organization' onClick={toOrgSearch}/>
+            <HomePageButton text='Find Organization' onClick={toOrgSearch} />
           </Box>
-          <Box display='flex' width='100%' justifyContent='space-between' mb={1}>
+          <Box
+            display='flex'
+            width='100%'
+            justifyContent='space-between'
+            mb={1}
+          >
             <OrganizationAvatar
               alt='youth'
               src={youth}
@@ -88,7 +93,12 @@ function OrganizationAllType() {
               title='Body Health'
             ></OrganizationAvatar>
           </Box>
-          <Box display='flex' width='100%' justifyContent='space-between' mb={2}>
+          <Box
+            display='flex'
+            width='100%'
+            justifyContent='space-between'
+            mb={2}
+          >
             <OrganizationAvatar
               alt='community'
               src={community}

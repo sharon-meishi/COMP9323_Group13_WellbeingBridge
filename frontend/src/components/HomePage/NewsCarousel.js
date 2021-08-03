@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
     borderLeft: '7px solid #C5EDE9',
   },
   liStyle: {
+    fontSize:'16px',
     '&::marker': {
       color: '#C5EDE9',
     },

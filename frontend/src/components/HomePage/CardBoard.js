@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import EventCard from '../EventCard';
-import HomePageButton from '../HomePageButton';
+import HomePageButton from './HomePageButton';
 import { getPopularEventId } from '../api';
 
 const useStyles = makeStyles((theme) => ({
@@ -71,7 +71,7 @@ const CardBoard = () => {
         <Grid item sm={10} md={9} xl={8} className={classes.item}>
           <Box className={classes.title} mt={1}>
             <Typography variant='h4' className={classes.text}>
-              What's on
+              Popular events
             </Typography>
             <HomePageButton text='Find Event' onClick={toEventSearch}/>
           </Box>

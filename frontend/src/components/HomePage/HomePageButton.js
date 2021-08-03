@@ -6,7 +6,7 @@ const StyledButton = withStyles({
   root: {
     background: '#216991',
     fontSize: '15px',
-    '&:hover': {
+    '&:hover': { 
       background: '#FFF',
       color: '#216991',
     },
