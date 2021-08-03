@@ -16,14 +16,14 @@ function Searchbar({ defaultValue }) {
     const data = { keyword: keyword };
     const queryPath = new URLSearchParams(data).toString();
     const path = {
-      pathname: `${select}/search`,
+      pathname: `/${select}/search`,
       search: `?${queryPath}`,
     };
     history.push(path);
   };
 
   return (
-    <Form onSubmit={toSearchPage} style={{fontSize: '16px'}}>
+    <Form onSubmit={toSearchPage} style={{ fontSize: '16px' }}>
       <Form.Field>
         <Input
           type='text'
@@ -38,9 +38,7 @@ function Searchbar({ defaultValue }) {
             value={select}
             onChange={(e, { value }) => setSelect(value)}
           />
-          <Button type='submit'>
-            Search
-          </Button>
+          <Button type='submit'>Search</Button>
         </Input>
       </Form.Field>
     </Form>

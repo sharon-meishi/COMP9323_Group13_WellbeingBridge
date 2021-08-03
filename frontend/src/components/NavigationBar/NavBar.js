@@ -109,6 +109,7 @@ export default function NavBar({ search }) {
     history.push('/event/create');
   };
 
+
   return (
     <div className={classes.root}>
       {openLogin ? (

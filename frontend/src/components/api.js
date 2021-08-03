@@ -531,7 +531,6 @@ export const searchOrganization= async (keyword,typeList) => {
   }else{
     url = baseUrl + `/search/organization?type=${typeList}`;
   }
-  console.log(`-${keyword}-${typeList}-`);
   try {
     const res = await axios.get(url,{
       headers: {
