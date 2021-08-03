@@ -15,7 +15,7 @@ import employment from '../../Assets/OrganizationType/employment.jpeg';
 import money from '../../Assets/OrganizationType/money.jpeg';
 import community from '../../Assets/OrganizationType/community.jpeg';
 import OrganizationAvatar from './OrganizationAvatar';
-import HomePageButton from '../HomePageButton';
+import HomePageButton from './HomePageButton';
 
 const useStyles = makeStyles((theme) => ({
   box: {

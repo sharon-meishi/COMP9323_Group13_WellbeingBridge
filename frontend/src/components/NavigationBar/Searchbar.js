@@ -23,7 +23,7 @@ function Searchbar({ defaultValue }) {
   };
 
   return (
-    <Form onSubmit={toSearchPage}>
+    <Form onSubmit={toSearchPage} style={{fontSize: '16px'}}>
       <Form.Field>
         <Input
           type='text'
