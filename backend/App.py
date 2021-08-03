@@ -213,7 +213,9 @@ class Login(Resource):
 class GetPopularEvent(Resource):
     def get(self):
         querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
-        return sql_command(querry_string), 200
+        event_id = sql_command(querry_string)[0]
+        output = { "event_id": event_id}
+        return output, 200
 
 parser = api.parser()
 parser.add_argument('token', type=str)

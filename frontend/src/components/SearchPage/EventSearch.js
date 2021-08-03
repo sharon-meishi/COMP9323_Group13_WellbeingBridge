@@ -85,9 +85,9 @@ const categoryOptions = [
 
 const options = [
   { key: 'Any', text: 'Any', value: 'Any' },
-  { key: '5 km', text: '5 km', value: '5 km' },
-  { key: '10 km', text: '10 km', value: '10 km' },
-  { key: '15 km', text: '15 km', value: '15 km' },
+  { key: '5 km', text: '5 km', value: '5' },
+  { key: '10 km', text: '10 km', value: '10' },
+  { key: '15 km', text: '15 km', value: '15' },
 ];
 
 function EventSearch() {
