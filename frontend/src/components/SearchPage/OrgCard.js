@@ -2,7 +2,6 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -28,10 +27,11 @@ const useStyles = makeStyles({
   }
 });
 
-export default function OrgCard({Id}) {
+export default function OrgCard({Id,changeState}) {
   const history = useHistory();
   const classes = useStyles();
   console.log(`Id in OrgCard ${Id}`);
+  console.log(changeState);
   const [cardInfo, setCardInfo] = React.useState({});
   const [cardLogo, setCardLogo] = React.useState(cardimg);
   const getInfo = async()=>{
@@ -52,7 +52,17 @@ export default function OrgCard({Id}) {
     history.push(`/organization/${Id}`)
   };
   const toOrgType = ()=>{
-    history.push('/organization/search');
+    console.log(cardInfo.OrganizationType);
+    const data = { orgType: cardInfo.OrganizationType };
+    const queryPath = new URLSearchParams(data).toString();
+    const path = {
+      pathname: '/organization/search',
+      search: `?${queryPath}`,
+    };
+    console.log(path);
+    history.push(path);
+    changeState();
+    // history.push(`organization/search`);
   };
   return (
     <Card className={classes.root}>

@@ -102,11 +102,15 @@ function OrgSearch() {
       }
     }
     search();
-    if (queryString){
-      handleSearch();
-    }
+    console.log(queryString);
+    console.log('queryString');
+    // if (queryString){
+    //   handleSearch();
+    // }
   }, [searchState,queryString]);
-
+  const changeState=()=>{
+    setSearchState(searchState+1);
+  }
   return (
     <>
       <Box
@@ -144,9 +148,9 @@ function OrgSearch() {
           </Input>
         </Box>
       </Box>
-      <Grid className={classes.search}>
+      <Grid className={classes.search} key={queryString}>
             {searchResult.map((item,index)=>
-                <OrgCard Id={item} key={index}></OrgCard>)}
+                <OrgCard changeState={changeState}Id={item} key={index}></OrgCard>)}
       </Grid>
     </>
   );
