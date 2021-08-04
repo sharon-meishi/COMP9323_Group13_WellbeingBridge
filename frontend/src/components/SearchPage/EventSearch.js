@@ -99,16 +99,13 @@ function EventSearch() {
   const searchParam = new URLSearchParams(queryString);
   const [searchState, setSearchState] = useState(0);
   const [resultList, setresultList] = useState([]);
-
-  const [lat, setLat] = useState(null)
-  const [lng, setLng] = useState(null)
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
 
   const parsedDate = (dateString, Format) => {
     return parse(dateString, Format, new Date());
   };
-  const postcode = searchParam.has('postcode')
-    ? searchParam.get('postcode')
-    : '';
+
   const [keyword, setKeyword] = useState(
     searchParam.has('keyword') ? searchParam.get('keyword') : ''
   );
@@ -148,7 +145,7 @@ function EventSearch() {
     Postcode: searchParam.has('postcode') ? searchParam.get('postcode') : '',
   };
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: urlValue,
   });
 
@@ -158,9 +155,9 @@ function EventSearch() {
       .then(({ lat, lng }) => {
         setLat(lat.toFixed(6));
         setLng(lng.toFixed(6));
-        console.log('Successfully got latitude and longitude', { lat, lng });
+        // console.log('Successfully got latitude and longitude', { lat, lng });
       });
-  }
+  };
 
   const handleSearch = async (data) => {
     const format = Format.map((each) => each.value);
@@ -175,43 +172,79 @@ function EventSearch() {
       data.Postcode === '' ? null : { postcode: data.Postcode },
       range === 'Any' ? null : { range }
     );
+
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {
       pathname: '/event/search',
-      search: `?${queryPath}&lat=-33.884895&lng=151.135696`,
+      search: `?${queryPath}`,
     };
     history.push(path);
-    if (data.Postcode) {
-      setLatLng(data.Postcode);
-    }
+    // if (data.Postcode) {
+    //   setLatLng(data.Postcode);
+    // }
     setSearchState(searchState + 1);
   };
 
-  useEffect(() => {
-    console.log(
-      keyword,
-      Format.map((each) => each.value),
-      Category.map((each) => each.value),
-      startdate,
-      enddate,
-      postcode,
-      range
-    );
-    navigator.geolocation.getCurrentPosition(position => {
-      const a = position.coords;
-      console.log('sss',a); 
-      // Show a map centered at latitude / longitude.
-    });
+  const fetchData = async (q) => {
+    console.log('fetchdata',q)
+    const res = await searchEvent(q);
+    if (res[0] === 200) {
+      console.log(res[1]);
+      setresultList(res[1]);
+    }
+  };
 
-    const fetchData = async() => {
-      const res = await searchEvent(queryString);
-      if (res[0] === 200) {
-        console.log(res[1]);
-        setresultList(res[1]);
-      }
-    } 
-    fetchData();
-  }, [searchState, queryString]);
+  useEffect(() => {
+    console.log(`queryString${queryString}`);
+    // reset state
+    setresultList([])
+
+    setKeyword(searchParam.has('keyword') ? searchParam.get('keyword') : '');
+    setstartdate(
+      searchParam.has('startdate') ? searchParam.get('startdate') : ''
+    );
+    setenddate(searchParam.has('enddate') ? searchParam.get('enddate') : '');
+    setRange(searchParam.has('range') ? searchParam.get('range') : 'Any');
+    setFormat(
+      searchParam.has('format')
+        ? searchParam
+            .get('format')
+            .split(',')
+            .map((each) => ({ label: each, value: each }))
+        : []
+    );
+    setCategory(
+      searchParam.has('category')
+        ? searchParam
+            .get('category')
+            .split(',')
+            .map((each) => ({ label: each, value: each }))
+        : []
+    );
+    // navigator.geolocation.getCurrentPosition(position => {
+    //   const a = position.coords;
+    //   console.log('sss',a);
+    //   // Show a map centered at latitude / longitude.
+    // });
+    setValue(
+      'Postcode',
+      searchParam.has('postcode') ? searchParam.get('postcode') : ''
+    );
+
+    if(searchParam.has('postcode')){
+      setLatLng(searchParam.get('postcode'))
+    } else{
+      fetchData(queryString);
+    }
+
+  }, [searchState, location.search]);
+
+  useEffect(() => {
+    if (lat && lng) {
+      const locationQuery = `${queryString}&lat=${lat}&lng=${lng}`
+      fetchData(locationQuery);
+    }
+  }, [lat, lng]);
 
   return (
     <>
@@ -322,7 +355,7 @@ function EventSearch() {
               <label>Event Location: </label>
               <Box display='flex' width='100%' justifyContent='space-between'>
                 <Box flexGrow='1'>
-                  <PostalCodeAutoComplete control={control} search/>
+                  <PostalCodeAutoComplete control={control} search />
                 </Box>
                 <Box pt={1}>
                   <Dropdown
@@ -343,7 +376,7 @@ function EventSearch() {
           </Box>
         </Box>
       </form>
-      <EventSearchResult result={resultList} />
+      <EventSearchResult key={location.search} result={resultList} />
     </>
   );
 }

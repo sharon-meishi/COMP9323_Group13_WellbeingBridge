@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
   item: {
     display: 'flex',
     justifyContent: 'center',
+    alignItems:'center'
   },
   titleStyle: {
     marginBottom: '1%',
@@ -51,7 +52,7 @@ function EventSearchResult(props) {
         </Box>
         <Grid container item justify='space-between' spacing={3}>
           {props.result.map((eventId) => (
-            <Grid item xs={12} md={6} lg={4} className={classes.item}>
+            <Grid item xs={12} md={6}className={classes.item}>
               <EventCard key={eventId} eventId={eventId}></EventCard>
             </Grid>
           ))}
