@@ -29,6 +29,12 @@ function SingleComment({
   const [comment, setComment] = useState(content.comment);
   const [answer, setAnswer] = useState(content.answer || '');
   const [open, setOpen] = useState(false);
+  const isOrg =
+    sessionStorage.getItem('usergroup') === 'organization' &&
+    parseInt(sessionStorage.getItem('id')) === oId;
+  const isAuthor =
+    sessionStorage.getItem('usergroup') === 'individual' &&
+    parseInt(sessionStorage.getItem('id')) === content.userId;
 
   const toggleAnswer = () => {
     setEditAnswer(!editAnswer);
@@ -71,7 +77,6 @@ function SingleComment({
     }
   };
 
-
   return (
     <Comment>
       {open ? (
@@ -113,13 +118,10 @@ function SingleComment({
           )}
         </Comment.Text>
         <Comment.Actions>
-          {sessionStorage.getItem('usergroup') === 'organization' &&
-          parseInt(sessionStorage.getItem('id')) === oId &&
-          !content.answer ? (
+          {isOrg && !content.answer ? (
             <Comment.Action onClick={toggleAnswer}>{'Reply'}</Comment.Action>
           ) : null}
-          {parseInt(sessionStorage.getItem('id')) === content.userId &&
-          sessionStorage.getItem('usergroup') === 'individual' ? (
+          {isAuthor ? (
             <>
               <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
@@ -140,9 +142,11 @@ function SingleComment({
                 <Comment.Author as='span'>{orgName}</Comment.Author>
                 <Comment.Text>{content.answer}</Comment.Text>
                 <Comment.Actions>
-                  <Comment.Action onClick={toggleAnswer}>
-                    Edit Answer
-                  </Comment.Action>
+                  {isOrg ? (
+                    <Comment.Action onClick={toggleAnswer}>
+                      Edit Answer
+                    </Comment.Action>
+                  ) : null}
                 </Comment.Actions>
               </Comment.Content>
             </Comment>
