@@ -20,7 +20,7 @@ import BookingDialog from './BookingDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 280,
+    width: 290,
     display: 'flex',
     flexDirection: 'column',
     margin: '1%',
@@ -87,7 +87,8 @@ const useStyles = makeStyles((theme) => ({
 function OrgEventCard({
   eventId,
   eventName,
-  eventDate,
+  startdate,
+  enddate,
   postcode,
   introduction,
   thumbnail,
@@ -153,7 +154,12 @@ function OrgEventCard({
                 justifyContent='space-between'
                 alignItems='center'
               >
-                <Typography onClick={checkDetail}>{eventName}</Typography>
+                <Box
+                  onClick={checkDetail}
+                  style={{ fontSize: '16px', fontWeight:'bold', cursor: 'pointer' }}
+                >
+                  {eventName}
+                </Box>
                 <Box display='flex'>
                   <Button
                     variant='outlined'
@@ -166,11 +172,11 @@ function OrgEventCard({
                   </Button>
                 </Box>
               </Box>
-              <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
+              <Box justifyContent='space-between' mt={1} mb={1}>
                 <Typography className={classes.date} color='textSecondary'>
-                  {eventDate}
+                  {startdate} to {enddate}
                 </Typography>
-                <Typography className={classes.location}>{postcode}</Typography>
+                <Typography className={classes.location} style={{textAlign:'end'}}>{postcode}</Typography>
               </Box>
             </Grid>
             <Grid className={classes.detail}>

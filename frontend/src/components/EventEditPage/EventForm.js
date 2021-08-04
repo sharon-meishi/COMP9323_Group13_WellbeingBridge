@@ -203,7 +203,6 @@ function EventForm({
   };
 
   const setLatLng = (address) => {
-    console.log(address);
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {

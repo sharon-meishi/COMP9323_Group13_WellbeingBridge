@@ -479,6 +479,30 @@ export const deleteComment = async (eventId, commentId) => {
   }
 };
 
+export const updateAnswer = async (eventId, commentId, answer) => {
+  const url = baseUrl + `/event/${eventId}/comment/${commentId}/answer`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const answerBody = {
+    answer: answer,
+  };
+  try {
+    const res = await axios.put(url, answerBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
 export const deleteEvent = async (eventId) => {
   console.log('delete')
   const url = baseUrl + `/event/${eventId}/summary`;
