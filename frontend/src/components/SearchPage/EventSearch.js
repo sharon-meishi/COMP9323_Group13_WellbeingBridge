@@ -7,7 +7,6 @@ import MultiSelect from 'react-multi-select-component';
 import { Input, Button, Dropdown } from 'semantic-ui-react';
 import EventSearchResult from './EventSearchResult';
 import DatePicker from 'react-datepicker';
-import PostalCodeAutoComplete from '../EventEditPage/PostalCodeAutoComplete';
 import dateFormat from 'date-fns/Format';
 import parse from 'date-fns/parse';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -84,7 +83,6 @@ const categoryOptions = [
 ];
 
 const options = [
-  { key: 'Any', text: 'Any', value: 'Any' },
   { key: '5 km', text: '5 km', value: '5' },
   { key: '10 km', text: '10 km', value: '10' },
   { key: '15 km', text: '15 km', value: '15' },
@@ -99,13 +97,13 @@ function EventSearch() {
   const searchParam = new URLSearchParams(queryString);
   const [searchState, setSearchState] = useState(0);
   const [resultList, setresultList] = useState([]);
-  const [lat, setLat] = useState(null);
-  const [lng, setLng] = useState(null);
 
+  // parse Date value to 'dd/mm/yyyy' date string
   const parsedDate = (dateString, Format) => {
     return parse(dateString, Format, new Date());
   };
 
+  // prefill data from url
   const [keyword, setKeyword] = useState(
     searchParam.has('keyword') ? searchParam.get('keyword') : ''
   );
@@ -115,8 +113,11 @@ function EventSearch() {
   const [enddate, setenddate] = useState(
     searchParam.has('enddate') ? searchParam.get('enddate') : ''
   );
+  const [address, setAddress] = useState(
+    searchParam.has('address') ? searchParam.get('address') : ''
+  );
   const [range, setRange] = useState(
-    searchParam.has('range') ? searchParam.get('range') : 'Any'
+    searchParam.has('range') ? searchParam.get('range') : '5'
   );
   const [Format, setFormat] = useState(
     searchParam.has('format')
@@ -135,6 +136,7 @@ function EventSearch() {
       : []
   );
 
+  // prepare prefill data for useform
   const urlValue = {
     startdate: searchParam.has('startdate')
       ? parsedDate(searchParam.get('startdate'), 'dd/MM/yyyy')
@@ -145,7 +147,7 @@ function EventSearch() {
     Postcode: searchParam.has('postcode') ? searchParam.get('postcode') : '',
   };
 
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: urlValue,
   });
 
@@ -153,13 +155,13 @@ function EventSearch() {
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {
-        setLat(lat.toFixed(6));
-        setLng(lng.toFixed(6));
-        // console.log('Successfully got latitude and longitude', { lat, lng });
+        const locationQuery = `${queryString}&lat=${lat.toFixed(6)}&lng=${lng.toFixed(6)}`;
+        fetchData(locationQuery);
       });
   };
 
   const handleSearch = async (data) => {
+    const address = data.address ? data.address.label : '';
     const format = Format.map((each) => each.value);
     const category = Category.map((each) => each.value);
     const queryData = Object.assign(
@@ -169,24 +171,19 @@ function EventSearch() {
       category.length === 0 ? null : { category },
       startdate === '' ? null : { startdate },
       enddate === '' ? null : { enddate },
-      data.Postcode === '' ? null : { postcode: data.Postcode },
-      range === 'Any' ? null : { range }
+      address === '' ? null : { address },
+      range === '' ? null : { range },
     );
-
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {
       pathname: '/event/search',
       search: `?${queryPath}`,
     };
     history.push(path);
-    // if (data.Postcode) {
-    //   setLatLng(data.Postcode);
-    // }
     setSearchState(searchState + 1);
   };
 
   const fetchData = async (q) => {
-    console.log('fetchdata',q)
     const res = await searchEvent(q);
     if (res[0] === 200) {
       console.log(res[1]);
@@ -195,16 +192,17 @@ function EventSearch() {
   };
 
   useEffect(() => {
-    console.log(`queryString${queryString}`);
+    console.log(`queryString=${queryString}`);
     // reset state
-    setresultList([])
+    setresultList([]);
 
     setKeyword(searchParam.has('keyword') ? searchParam.get('keyword') : '');
     setstartdate(
       searchParam.has('startdate') ? searchParam.get('startdate') : ''
     );
     setenddate(searchParam.has('enddate') ? searchParam.get('enddate') : '');
-    setRange(searchParam.has('range') ? searchParam.get('range') : 'Any');
+    setAddress(searchParam.has('address') ? searchParam.get('address') : '')
+    setRange(searchParam.has('range') ? searchParam.get('range') : '5');
     setFormat(
       searchParam.has('format')
         ? searchParam
@@ -226,31 +224,19 @@ function EventSearch() {
     //   console.log('sss',a);
     //   // Show a map centered at latitude / longitude.
     // });
-    setValue(
-      'Postcode',
-      searchParam.has('postcode') ? searchParam.get('postcode') : ''
-    );
-
-    if(searchParam.has('postcode')){
-      setLatLng(searchParam.get('postcode'))
-    } else{
+    // if have location 
+    if(searchParam.has('address')){
+      setLatLng(searchParam.get('address'))
+    }else{
       fetchData(queryString);
     }
-
   }, [searchState, location.search]);
-
-  useEffect(() => {
-    if (lat && lng) {
-      const locationQuery = `${queryString}&lat=${lat}&lng=${lng}`
-      fetchData(locationQuery);
-    }
-  }, [lat, lng]);
 
   return (
     <>
       <form onSubmit={handleSubmit(handleSearch)}>
         <Box className={classes.search}>
-          <Box className={classes.titleStyle} mt={5} mb={5}>
+          <Box className={classes.titleStyle} mt={3} mb={5}>
             Find Events
           </Box>
           <Box
@@ -354,8 +340,25 @@ function EventSearch() {
             >
               <label>Event Location: </label>
               <Box display='flex' width='100%' justifyContent='space-between'>
-                <Box flexGrow='1'>
-                  <PostalCodeAutoComplete control={control} search />
+                <Box flexGrow='1' pt={1}>
+                  <Controller
+                    render={({ field }) => (
+                      <GooglePlacesAutocomplete
+                        selectProps={{
+                          value: field.value,
+                          onChange: field.onChange,
+                          placeholder: 'Your address...',
+                          defaultValue: {
+                            label: address,
+                            value: address,
+                          }
+                        }}
+                        minLengthAutocomplete={3}
+                      />
+                    )}
+                    name='address'
+                    control={control}
+                  />
                 </Box>
                 <Box pt={1}>
                   <Dropdown
