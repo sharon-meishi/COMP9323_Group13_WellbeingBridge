@@ -13,8 +13,8 @@ import cardimg from '../../Assets/logo-placeholder.png';
 import {getOrgSummary} from '../api';
 const useStyles = makeStyles({
   root: {
-    maxWidth: 345,
-    minWidth:345,
+    maxWidth: 330,
+    minWidth: 330,
     marginBottom:'15px',
   },
   media: {
@@ -68,7 +68,7 @@ export default function OrgCard({Id}) {
         <CardMedia
           className={classes.media}
           image={cardLogo}
-          title="Contemplative Reptile"
+          title="Organization Logo"
         />
         <CardContent>
           <Box display='flex' >
