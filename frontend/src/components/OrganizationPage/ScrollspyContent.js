@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import Scrollspy from 'react-scrollspy';
-import { AppContext } from '../../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
 import { Comment, Form } from 'semantic-ui-react';
 import Link from '@material-ui/core/Link';
@@ -122,7 +121,6 @@ const labels = {
 
 function ScrollspyContent({ oId }) {
   const classes = useStyles();
-  const context = useContext(AppContext);
   const BottomSyle = {
     borderBottom: '1px solid #DCDCDC',
     marginBottom: '30px',

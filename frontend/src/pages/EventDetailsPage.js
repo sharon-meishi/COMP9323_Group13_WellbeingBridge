@@ -181,7 +181,7 @@ function EventDetailsPage({ match }) {
     };
     getEvent();
     setUpdate(false);
-  }, [eventId, update]);
+  }, [eventId, update, usergroup]);
 
   useEffect(() => {
     const fetchOrgData = async() => {

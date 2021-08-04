@@ -28,7 +28,6 @@ function SingleComment({
   const [editAnswer, setEditAnswer] = useState(false);
   const [comment, setComment] = useState(content.comment);
   const [answer, setAnswer] = useState(content.answer || '');
-  const [logo, setLogo] = useState(orgDetail.Logo || '')
   const [open, setOpen] = useState(false);
 
   const toggleAnswer = () => {

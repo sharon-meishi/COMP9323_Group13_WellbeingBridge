@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useForm, Controller } from 'react-hook-form';
 import Box from '@material-ui/core/Box';
+import Link from '@material-ui/core/Link';
 import MultiSelect from 'react-multi-select-component';
 import { Input, Button, Dropdown } from 'semantic-ui-react';
 import EventSearchResult from './EventSearchResult';
@@ -151,6 +152,10 @@ function EventSearch() {
     defaultValues: urlValue,
   });
 
+  const toOrgSearch = () => {
+    history.push('/organization/search')
+  }
+
   const setLatLng = (address) => {
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
@@ -193,9 +198,8 @@ function EventSearch() {
 
   useEffect(() => {
     console.log(`queryString=${queryString}`);
-    // reset state
+    // reset state after query string have change
     setresultList([]);
-
     setKeyword(searchParam.has('keyword') ? searchParam.get('keyword') : '');
     setstartdate(
       searchParam.has('startdate') ? searchParam.get('startdate') : ''
@@ -236,7 +240,7 @@ function EventSearch() {
     <>
       <form onSubmit={handleSubmit(handleSearch)}>
         <Box className={classes.search}>
-          <Box className={classes.titleStyle} mt={3} mb={5}>
+          <Box className={classes.titleStyle} mt={3} mb={3}>
             Find Events
           </Box>
           <Box
@@ -348,6 +352,7 @@ function EventSearch() {
                           value: field.value,
                           onChange: field.onChange,
                           placeholder: 'Your address...',
+                          isClearable: true,
                           defaultValue: {
                             label: address,
                             value: address,
@@ -372,14 +377,15 @@ function EventSearch() {
               </Box>
             </Box>
           </Box>
-          <Box mt={3}>
+          <Box mt={2}>
             <Button color='teal' type='submit'>
               Search
             </Button>
           </Box>
+          <Box mt={1}><Link onClick={toOrgSearch} style={{cursor: 'pointer'}}>Want to find organization?</Link></Box>
         </Box>
       </form>
-      <EventSearchResult key={location.search} result={resultList} />
+      <EventSearchResult key={location.search} result={resultList} address={address}/>
     </>
   );
 }
