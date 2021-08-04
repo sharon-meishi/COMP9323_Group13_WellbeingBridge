@@ -1,38 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
 import EventCard from '../EventCard';
+import EventMap from './EventMap';
 
 const useStyles = makeStyles((theme) => ({
-    container: {
-       padding: '1% 20%',
-       [theme.breakpoints.down('md')]: {
-        padding: '1% 15%',
-      },
+  container: {
+    display: 'flex',
+    flexWrap: 'nowrap',
+  },
+  eventResult: {
+    padding: '1% 2%',
+    [theme.breakpoints.down('md')]: {
+      padding: '1% 2%',
     },
-    item: {
-      display:'flex',
-      justifyContent:'center'
-    },
-    titleStyle: {
-        marginBottom:'1%',
-        fontSize:'20px',
-        fontWeight:'bold'
-    }
-}))
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  mapStyle:{
+    padding: '1% 1% 0 5%',
+    marginBottom: '30px'
+  }
+,
+  item: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems:'center'
+  },
+  titleStyle: {
+    marginBottom: '1%',
+    fontSize: '20px',
+    fontWeight: 'bold',
+  },
+  eventBox: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+}));
 
-function EventSearchResult() {
-    const classes = useStyles()
+function EventSearchResult(props) {
+  const classes = useStyles();
   return (
     <Grid container className={classes.container}>
-      <Box className={classes.titleStyle}>3 matching results</Box>
-      <Grid  container justify='center' spacing={3}>
-        {[1, 2, 3].map((eventId) => (
-          <Grid item xs={11} md={5} lg={4} className={classes.item}>
-            <EventCard key={eventId} eventId={eventId}></EventCard>
-          </Grid>
-        ))}
+      <Grid item xs={6} className={classes.mapStyle}>
+        <EventMap />
+      </Grid>
+      <Grid container item xs={6} className={classes.eventResult}>
+        <Box className={classes.titleStyle}>
+          {props.result.length} matching results
+        </Box>
+        <Grid container item justify='space-between' spacing={3}>
+          {props.result.map((eventId) => (
+            <Grid item xs={12} md={6}className={classes.item}>
+              <EventCard key={eventId} eventId={eventId}></EventCard>
+            </Grid>
+          ))}
+        </Grid>
       </Grid>
     </Grid>
   );

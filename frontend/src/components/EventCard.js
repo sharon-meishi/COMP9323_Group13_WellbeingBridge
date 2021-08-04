@@ -130,7 +130,7 @@ function EventCard(props) {
   };
 
   const toSearchPage = () => {
-    const queryData = {eventCategory : info.category};
+    const queryData = {category : info.category};
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {
       pathname: '/event/search',

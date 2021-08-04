@@ -176,7 +176,7 @@ function OrganizationApplyPage() {
                         Financial and Legal
                       </MenuItem>
                       <MenuItem value='Mental Health'>Mental Health</MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
+                      <MenuItem value='Seniors'>Senior</MenuItem>
                       <MenuItem value='Youth'>Youth</MenuItem>
                     </Select>
                   );

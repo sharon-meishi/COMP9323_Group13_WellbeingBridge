@@ -20,7 +20,7 @@ def create_database():
     user_table = '''
     CREATE TABLE IF NOT EXISTS `User` (
   `UserId` int NOT NULL AUTO_INCREMENT,
-  `NickName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `NickName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
   `FavouriteId` varchar(255) DEFAULT NULL,
@@ -75,7 +75,7 @@ def create_database():
   `EventId` int NOT NULL AUTO_INCREMENT,
   `EventName` varchar(255) NOT NULL,
   `OrganizationId` int NOT NULL,
-  `OrganizationName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `OrganizationName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `Thumbnail` varchar(255) NOT NULL,
   `Format` varchar(255) NOT NULL,
   `Category` varchar(255) NOT NULL,

@@ -3,18 +3,31 @@ import { AppContext } from '../../utils/store';
 import ProfileMenu from './ProfileMenu';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import Divider from '@material-ui/core/Divider';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import HomePageButton from '../HomePageButton';
+import Button from '@material-ui/core/Button';
+import HomePageButton from '../HomePage/HomePageButton';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 import LogoButton from './LogoButton';
-import Searchbar from '../Searchbar'
+import Searchbar from './Searchbar';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: '#216991' },
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    '& hr': {
+      margin: '0 5px',
+      width: '2px',
+    },
   },
   title: {
     backgroundColor: '#C5EDE9',
@@ -66,12 +79,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '5px',
     cursor: 'pointer',
   },
-  button: {
-    marginRight: '20px',
+  buttonStyle: {
+    fontSize: '15px',
   },
 }));
 
-export default function NavBar({search}) {
+export default function NavBar({ search }) {
   const classes = useStyles();
   const history = useHistory();
   const context = useContext(AppContext);
@@ -83,6 +96,10 @@ export default function NavBar({search}) {
     setOpenLogin(true);
   };
 
+  const handleRegisterOpen = () => {
+    setOpenRegister(true)
+  }
+
   const toOrganizationApplyPage = (event) => {
     event.preventDefault();
     history.push('/organization/apply');
@@ -91,6 +108,7 @@ export default function NavBar({search}) {
   const toCreateEvent = () => {
     history.push('/event/create');
   };
+
 
   return (
     <div className={classes.root}>
@@ -123,19 +141,39 @@ export default function NavBar({search}) {
         <div className={classes.leftBox}>
           <LogoButton />
           <Box ml={2}>
-            {search ? null : <Searchbar defaultValue='organization'/>} 
-          
+            {search ? null : <Searchbar defaultValue='organization' />}
           </Box>
         </div>
-        <Box display='flex' alignItems='center' mt={1} mb={1}>
-          {context.isLoginState ? null : (
-            <HomePageButton text='LOGIN' onClick={handleClickOpen} />
-          )}
-          {sessionStorage.getItem('usergroup') === 'organization' ? (
-            <HomePageButton text='NEW EVENT' onClick={toCreateEvent} />
-          ) : null}
-          {context.isLoginState ? <ProfileMenu /> : null}
-        </Box>
+        <ThemeProvider theme={theme}>
+          <Box display='flex' alignItems='center' mt={1} mb={1}>
+            {context.isLoginState ? null : (
+              <>
+                {/* <HomePageButton text='LOGIN' onClick={handleClickOpen} /> */}
+                <Button
+                  onClick={handleClickOpen}
+                  className={classes.buttonStyle}
+                  variant='contained'
+                  color='primary'
+                >
+                  login
+                </Button>
+                <Divider orientation='vertical' flexItem />
+                <Button
+                  onClick={handleRegisterOpen}
+                  className={classes.buttonStyle}
+                  variant='outlined'
+                  color='primary'
+                >
+                  Register
+                </Button>
+              </>
+            )}
+            {sessionStorage.getItem('usergroup') === 'organization' ? (
+              <HomePageButton text='NEW EVENT' onClick={toCreateEvent} />
+            ) : null}
+            {context.isLoginState ? <ProfileMenu /> : null}
+          </Box>
+        </ThemeProvider>
       </div>
     </div>
   );

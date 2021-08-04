@@ -531,7 +531,6 @@ export const searchOrganization= async (keyword,typeList) => {
   }else{
     url = baseUrl + `/search/organization?type=${typeList}`;
   }
-  console.log(`-${keyword}-${typeList}-`);
   try {
     const res = await axios.get(url,{
       headers: {
@@ -552,6 +551,26 @@ export const searchOrganization= async (keyword,typeList) => {
 
 export const getOrgSummary= async (oid) => {
   const url = baseUrl + `/organization/${oid}/summary`;
+  try {
+    const res = await axios.get(url,{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const searchEvent= async (data) => {
+  const url = baseUrl + `/search/event${data}`;
   try {
     const res = await axios.get(url,{
       headers: {

@@ -3,15 +3,15 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Button, Input } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-// import OrgSearchResult from './OrgSearchResult';
 import MultiSelect from 'react-multi-select-component';
 import Grid from '@material-ui/core/Grid';
-import {searchOrganization} from '../api';
+import Link from '@material-ui/core/Link';
+import { searchOrganization } from '../api';
 import OrgCard from './OrgCard';
 
 const options = [
   { label: 'Youth', value: 'Youth' },
-  { label: 'Senior', value: 'Senior' },
+  { label: 'Seniors', value: 'Seniors' },
   { label: 'Family', value: 'Family' },
   { label: 'Mental Health', value: 'Mental Health' },
   { label: 'Body Health', value: 'Body Health' },
@@ -32,32 +32,39 @@ const useStyles = makeStyles({
     fontWeight: 'bold',
   },
   dropDown: {
-    minWidth: '200px',
+    minWidth: '350px',
+    fontSize: '17px',
   },
-  search:{
-    display:'flex',
-    justifyContent:'space-evenly',
-    flexWrap:'wrap',
-    margin:'2%',
-    alignItem:'center',
+  search: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    margin: '2%',
+    width: '70%',
     // minHeight:'2000px',
     // paddingBottom:'40%',//need be be changed
-
-  }
+  },
+  itemStyle: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchBar: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
 });
 
 function OrgSearch() {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
-  console.log(`location=${location}`);
   const queryString = location.search;
-  console.log(`queryString=${queryString}`);
   const searchParam = new URLSearchParams(queryString);
-  console.log(`searchParam=${searchParam}`);
   const [searchState, setSearchState] = React.useState(0);
   const [searchResult, setSearchResult] = React.useState([]);
-  const typeList = searchParam.has('orgType') ? searchParam.get('orgType') : []
 
   const [searchType, setSearchType] = useState(
     searchParam.has('orgType')
@@ -73,7 +80,6 @@ function OrgSearch() {
 
   const handleSearch = () => {
     const orgType = searchType.map((each) => each.value);
-    console.log(keyword, orgType);
     const queryData = Object.assign(
       {},
       keyword === '' ? null : { keyword },
@@ -86,32 +92,53 @@ function OrgSearch() {
       search: `?${queryPath}`,
     };
     history.push(path);
-    setSearchState(searchState+1)
+    setSearchState(searchState + 1);
   };
 
+  const toSearchEvent = () => {
+    history.push('/event/search')
+  }
+
   useEffect(() => {
-    console.log(keyword, typeList);
-    console.log(typeof(keyword));
-    console.log(typeof(typeList));
-    const search = async ()=>{
-      const res=  await searchOrganization(keyword, typeList);
-      console.log(res[0]);
-      if (res[0] === 200){
+    // reset state and search filter
+    const urlKeyword = searchParam.has('keyword')
+      ? searchParam.get('keyword')
+      : '';
+    const typeList = searchParam.has('orgType')
+      ? searchParam.get('orgType')
+      : [];
+    setKeyword(urlKeyword);
+    setSearchType(
+      typeList.length !== 0
+        ? typeList.split(',').map((each) => ({ label: each, value: each }))
+        : []
+    );
+    setSearchResult([]);
+    // search with new filter
+    const search = async () => {
+      const res = await searchOrganization(urlKeyword, typeList);
+      if (res[0] === 200) {
         console.log(res[1].organizationId);
         setSearchResult(res[1].organizationId);
       }
-    }
+    };
     search();
-  }, [searchState]);
+  }, [searchState, location.search]);
 
   return (
-    <>
+    <Box
+      display='flex'
+      justifyContent='center'
+      alignItems='center'
+      flexDirection='column'
+    >
       <Box
         display='flex'
         justifyContent='center'
         alignItems='center'
         flexDirection='column'
         className={classes.container}
+        width='100%'
       >
         <div className={classes.titleStyle}>Find Organization</div>
         <Box mt={5} pl={5} pr={5}>
@@ -121,13 +148,13 @@ function OrgSearch() {
             action
             size='large'
             value={keyword}
+            className={classes.searchBar}
             onChange={(event, data) => {
               setKeyword(data.value);
             }}
           >
-            <input />
+            <input style={{ minWidth: '300px', fontSize: '17px' }} />
             <MultiSelect
-              shouldToggleOnHover
               options={options}
               labelledBy='Organization Type'
               value={searchType}
@@ -135,17 +162,35 @@ function OrgSearch() {
               className={classes.dropDown}
               overrideStrings={{ selectSomeItems: 'Organization Type...' }}
             />
-            <Button type='submit' onClick={handleSearch} color='teal'>
+            <Button
+              type='submit'
+              onClick={handleSearch}
+              color='teal'
+              style={{ fontSize: '17px' }}
+            >
               Search
             </Button>
           </Input>
         </Box>
+        <Box mt={5} >
+          <Link underline='always' style={{cursor: 'pointer'}} onClick={toSearchEvent}>Find Event</Link>
+        </Box>
       </Box>
-      <Grid className={classes.search}>
-            {searchResult.map((item,index)=>
-                <OrgCard Id={item} key={index}></OrgCard>)}
+      <Grid container className={classes.search} key={location.search}>
+        {searchResult.map((item, index) => (
+          <Grid
+            item
+            xs={11}
+            md={6}
+            lg={4}
+            key={index}
+            className={classes.itemStyle}
+          >
+            <OrgCard Id={item} key={index} />
+          </Grid>
+        ))}
       </Grid>
-    </>
+    </Box>
   );
 }
 
