@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   item: {
     width: '100%',
+
   },
   eventBox: {
     display: 'flex',
@@ -40,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: 'center',
     },
   },
+  eventItem : {
+    display:'flex',
+    justifyContent: 'center'
+  }
 }));
 
 const CardBoard = () => {
@@ -77,7 +82,7 @@ const CardBoard = () => {
           </Box>
           <Grid container className={classes.eventBox}>
             {event_list.map((eventId) => (
-              <Grid key={eventId}>
+              <Grid item xs={12} md={6} lg={4}key={eventId} className={classes.eventItem}>
               <EventCard
                 key={eventId}
                 eventId={eventId}

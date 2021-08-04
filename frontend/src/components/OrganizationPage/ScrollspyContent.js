@@ -150,6 +150,7 @@ function ScrollspyContent({ oId }) {
     const getOrganization = async () => {
       const res = await getOrganizationDetails(oId);
       if (res[0] === 200) {
+        console.log(res[1])
         setData(res[1]);
       } else {
         console.log('There is something wrong in getOrganization.');

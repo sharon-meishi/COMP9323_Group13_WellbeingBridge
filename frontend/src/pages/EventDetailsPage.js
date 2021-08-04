@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import parse from 'date-fns/parse';
 import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
@@ -30,7 +30,7 @@ import {
   bookEvent,
   unbookEvent,
   postComment,
-  getOrganizationProfile,
+  getOrgSummary,
 } from '../components/api';
 
 const useStyles = makeStyles((theme) => ({
@@ -104,6 +104,7 @@ const useStyles = makeStyles((theme) => ({
   org: {
     display: 'flex',
     alignItems: 'baseline',
+    fontSize: '16px',
   },
   info: {
     display: 'flex',
@@ -117,6 +118,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: '3%',
     paddingBottom: '3%',
     borderBottom: '1px solid #DCDCDC',
+    fontSize: '16px',
   },
   recommendation: {
     display: 'flex',
@@ -128,6 +130,7 @@ const useStyles = makeStyles((theme) => ({
   orgLink: {
     cursor: 'pointer',
     marginLeft: '3px',
+    fontWeight: 'bold',
   },
   eventBox: {
     justifyContent: 'space-between',
@@ -139,36 +142,35 @@ function EventDetailsPage({ match }) {
   const classes = useStyles();
   const history = useHistory();
   const context = useContext(AppContext);
-  const [detail, setDetail] = React.useState({});
-  const [islike, setIslike] = React.useState(false);
-  const [isbook, setIsbook] = React.useState(false);
-  const [openLogin, setOpenLogin] = React.useState(false);
-  const [openRegister, setOpenRegister] = React.useState(false);
-  const [share, setShare] = React.useState(false);
-  const [recomList, setRecomList] = React.useState([]);
-  const [editable, setEditable] = React.useState(false);
-  const [comment, setComment] = React.useState('');
-  const [update, setUpdate] = React.useState(false);
+  const [detail, setDetail] = useState({});
+  const [orgDetail, setOrgDetail] = useState({})
+  const [islike, setIslike] = useState(false);
+  const [isbook, setIsbook] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
+  const [openRegister, setOpenRegister] = useState(false);
+  const [share, setShare] = useState(false);
+  const [recomList, setRecomList] = useState([]);
+  const [editable, setEditable] = useState(false);
+  const [comment, setComment] = useState('');
+  const [update, setUpdate] = useState(false);
   const currentTime = new Date();
-
-  const usergroup = sessionStorage.getItem('usergroup');
-  const oid = sessionStorage.getItem('id');
   const token = sessionStorage.getItem('token');
+  const usergroup = sessionStorage.getItem('usergroup');
 
   const parsedDate = (dateString, format) => {
     return parse(dateString, format, new Date());
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getEvent = async () => {
       const res = await getEventDetails(eventId);
       if (res[0] === 200) {
-        console.log(res[1]);
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
-        // setBookedUsers(res[1].bookedUser);
-        // console.log(res[1].bookedUser);
-        // console.log(res[1]);
+        if (parseInt(sessionStorage.getItem('id')) === res[1].OrganizationId && usergroup === 'organization')
+        {
+          setEditable(true);
+        }
         if (res[1].favourite) {
           setIslike(true);
         }
@@ -176,20 +178,23 @@ function EventDetailsPage({ match }) {
           setIsbook(true);
         }
       }
-      if (usergroup === 'organization') {
-        const orgDetail = await getOrganizationProfile(oid);
-        // console.log(orgDetail[1].publishedEvent[0]);
-        // console.log(eventId);
-        // console.log(orgDetail[1].publishedEvent.indexOf(Number(eventId)));
-        if (orgDetail[1].publishedEvent.indexOf(Number(eventId)) >= 0) {
-          console.log('set Editable True');
-          setEditable(true);
-        }
-      }
     };
     getEvent();
     setUpdate(false);
-  }, [eventId, oid, usergroup, update]);
+  }, [eventId, update]);
+
+  useEffect(() => {
+    const fetchOrgData = async() => {
+      const Data = await getOrgSummary(detail.OrganizationId);
+      if (Data[0] === 200){
+        console.log(Data[1])
+        setOrgDetail(Data[1])
+      }
+    }
+    if(Object.keys(detail).length !== 0){
+      fetchOrgData()
+    }
+  }, [detail])
 
   const editEvent = () => {
     history.push(`/event/edit/${eventId}`);
@@ -203,7 +208,6 @@ function EventDetailsPage({ match }) {
       const res = await unlikeEvent(eventId);
       if (res[0] === 200) {
         setIslike(false);
-        // console.log('unlike success');
       } else {
         console.log('unlike error');
       }
@@ -212,15 +216,16 @@ function EventDetailsPage({ match }) {
       const res = await likeEvent(eventId);
       if (res[0] === 200) {
         setIslike(true);
-        // console.log('like success');
       } else {
         console.log('like error');
       }
     }
   };
+
   const handleShare = () => {
     setShare(true);
   };
+
   const handleBook = async () => {
     if (!token) {
       setOpenLogin(true);
@@ -257,6 +262,7 @@ function EventDetailsPage({ match }) {
   const toOrgPage = () => {
     history.push(`/organization/${detail.OrganizationId}`);
   };
+
 
   return (
     <div>
@@ -340,7 +346,7 @@ function EventDetailsPage({ match }) {
               )}
             </Grid>
             <Box alignSelf='flex-end'>
-              <div variant='body1'>
+              <Box fontSize='18px'>
                 By
                 <Link
                   color='inherit'
@@ -350,7 +356,7 @@ function EventDetailsPage({ match }) {
                 >
                   {detail.OrganizationName}
                 </Link>
-              </div>
+              </Box>
             </Box>
             <Grid className={classes.info}>
               <div className={classes.org}>
@@ -389,6 +395,7 @@ function EventDetailsPage({ match }) {
                     />
                     <Box display='flex' justifyContent='flex-end'>
                       <Form.Button
+                        type='submit'
                         size='tiny'
                         content='Add Comment'
                         labelPosition='left'
@@ -398,9 +405,11 @@ function EventDetailsPage({ match }) {
                     </Box>
                   </Form>
                 ) : (
-                  <div>Please Login as an individual user to post comment</div>
+                  <Box fontSize='16px'>
+                    Please Login as an individual user to post comment
+                  </Box>
                 )}
-                {detail.comments
+                {detail.comments && orgDetail
                   ? detail.comments.map((eachComment, idx) => {
                       return (
                         <SingleComment
@@ -408,18 +417,15 @@ function EventDetailsPage({ match }) {
                           content={eachComment}
                           eventId={eventId}
                           setUpdate={setUpdate}
+                          oId={detail.OrganizationId}
+                          orgName={detail.OrganizationName}
+                          orgDetail={orgDetail}
                         />
                       );
                     })
                   : null}
               </Comment.Group>
             </Grid>
-            {/* {usergroup ? (
-              <Grid className={classes.bookedUser}>
-                <Typography variant='h6'>Booked Users:</Typography>
-                <BookedUserTable bookedUsers={bookedUsers} />
-              </Grid>
-            ) : null} */}
             <Grid container className={classes.recommendation}>
               <Header as='h3'> Recommendation:</Header>
               <Grid container item width='100%' spacing={5}>

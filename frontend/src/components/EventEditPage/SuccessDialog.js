@@ -71,7 +71,7 @@ function SuccessDialog({ eventId, oId, open, setOpen, message }) {
             To Organization Page
           </Button>
         ) : (
-          <Button onClick={backToDashboard} variant='outlined' color='primary'>
+          <Button onClick={backToDashboard} variant='contained' color='primary'>
             Back to Dashboard
           </Button>
         )}

@@ -43,16 +43,16 @@ function EventSearchResult(props) {
   const classes = useStyles();
   return (
     <Grid container className={classes.container}>
-      <Grid item xs={6} className={classes.mapStyle}>
+      <Grid item xs={5} className={classes.mapStyle}>
         <EventMap />
       </Grid>
-      <Grid container item xs={6} className={classes.eventResult}>
+      <Grid container item xs={7} className={classes.eventResult}>
         <Box className={classes.titleStyle}>
           {props.result.length} matching results
         </Box>
         <Grid container item justify='space-between' spacing={3}>
           {props.result.map((eventId) => (
-            <Grid item xs={12} md={6}className={classes.item}>
+            <Grid item xs={12} md={5} lg={4} className={classes.item}>
               <EventCard key={eventId} eventId={eventId}></EventCard>
             </Grid>
           ))}
