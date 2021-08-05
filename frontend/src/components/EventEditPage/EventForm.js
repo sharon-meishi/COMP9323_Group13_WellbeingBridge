@@ -123,6 +123,7 @@ function EventForm({
   const [errorMsg, setErrorMsg] = useState('');
   const [eId, setEId] = useState(eventId)
 
+  // useForm setting and set default values
   const {
     reset,
     control,
@@ -203,7 +204,6 @@ function EventForm({
   };
 
   const setLatLng = (address) => {
-    console.log(address);
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -7,20 +8,24 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Grid from '@material-ui/core/Grid';
+import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from '@material-ui/core/Avatar';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
+import RoomIcon from '@material-ui/icons/Room';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
+import { red } from '@material-ui/core/colors';
 import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
 import RegisterModal from './NavigationBar/RegisterModal';
-import { getEventSummary, likeEvent, unlikeEvent } from './api';
+import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    // minWidth: 280,
+    minWidth: 290,
     maxWidth: 335,
     // margin: '20px 0 20px 0',
     display: 'flex',
@@ -30,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 280,
     },
     height: '100%',
+    // backgroundColor: '#EDFEFC'
   },
   media: {
     height: 0,
@@ -52,13 +58,13 @@ const useStyles = makeStyles((theme) => ({
   },
   location: {
     fontSize: '0.9rem',
-    justifyContent: 'end',
-    alignSelf: 'flex-end',
+    textAlign: 'end',
     fontWeight: 500,
   },
   date: {
     fontSize: '0.7rem',
     fontStyle: 'italic',
+    color: '#757575',
   },
   detail: {
     paddingTop: '2%',
@@ -76,23 +82,51 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
+  avatar: {
+    backgroundColor: red[500],
+  },
+  cardHeaderRoot: {
+    '& .MuiAvatar-root': {
+      width: '50px',
+      height: '50px',
+      cursor: 'pointer',
+    },
+    '& span': {
+      fontSize: '18px',
+      cursor: 'pointer',
+      fontWeight: 'bold',
+    },
+    '& .MuiCardHeader-action': {
+      alignSelf: 'center',
+    },
+  },
+  eventMarker: {
+    color: '#3f51b5'
+  },
+  selectedStyle: {
+    border: '3px solid #26A69A',
+    padding: '8px',
+    borderRadius: '5px',
+    boxSizing: 'border-box'
+  }
 }));
 
 function EventCard(props) {
   const classes = useStyles();
   const history = useHistory();
+  const context = useContext(AppContext);
   const [info, setInfo] = useState(null);
-  const [islike, setIslike] = React.useState(false);
-  const [openLogin, setOpenLogin] = React.useState(false);
-  const [openRegister, setOpenRegister] = React.useState(false);
-  const [share, setShare] = React.useState(false);
+  const [orgInfo, setOrgInfo] = useState(null);
+  const [islike, setIslike] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
+  const [openRegister, setOpenRegister] = useState(false);
+  const [share, setShare] = useState(false);
   const token = sessionStorage.getItem('token');
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
-        console.log(res[1]);
         setInfo(res[1]);
         if (res[1].favourite) {
           setIslike(true);
@@ -101,6 +135,18 @@ function EventCard(props) {
     };
     fetchData();
   }, [props.eventId]);
+
+  useEffect(() => {
+    if (info) {
+      const fetchOrgData = async () => {
+        const res = await getOrgSummary(info.orgid);
+        if (res[0] === 200) {
+          setOrgInfo(res[1]);
+        }
+      };
+      fetchOrgData();
+    }
+  }, [info]);
 
   const checkDetail = () => {
     history.push(`/event/${props.eventId}`);
@@ -130,17 +176,22 @@ function EventCard(props) {
   };
 
   const toSearchPage = () => {
-    const queryData = {category : info.category};
+    const queryData = { category: info.category };
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {
       pathname: '/event/search',
-      search: `?${queryPath}`
-    }
+      search: `?${queryPath}`,
+    };
     history.push(path);
-  }
+  };
+
+  const toOrgPage = () => {
+    history.push(`/organization/${info.orgid}`);
+  };
 
   return info ? (
-    <Card className={classes.root}>
+    <Box className={context.selected === props.order ? classes.selectedStyle : null}>
+    <Card className={classes.root} id={props.order || props.eventId}>
       {openLogin ? (
         <LoginModal
           open={openLogin}
@@ -156,6 +207,25 @@ function EventCard(props) {
         />
       ) : null}
       <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
+      {orgInfo ? (
+        <CardHeader
+          onClick={toOrgPage}
+          className={classes.cardHeaderRoot}
+          title={orgInfo.OrganizationName}
+          avatar={
+            <Avatar aria-label='organization Logo' src={orgInfo.Logo}>
+              {orgInfo.OrganizationName.charAt(0)}
+            </Avatar>
+          }
+          action={
+            props.order ? 
+            <Box display='flex' justifyContent='center' alignItems='center' className={classes.eventMarker}>
+              <Box fontSize='17px' fontWeight='bold'>{props.order}</Box>
+              <RoomIcon fontSize='large' color='primary'/>
+            </Box> : null
+          }
+        />
+      ) : null}
       <CardMedia
         className={classes.media}
         image={info.thumbnail}
@@ -171,14 +241,14 @@ function EventCard(props) {
         <CardContent className={classes.content}>
           <Box>
             <Grid container direction='column'>
-              <Box display='flex' justifyContent='space-between' >
+              <Box display='flex' justifyContent='space-between'>
                 <div onClick={checkDetail} className={classes.title}>
                   {info.name}
                 </div>
                 {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
               </Box>
 
-              <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
+              <Box justifyContent='space-between' mt={1} mb={1}>
                 <div className={classes.date} color='textSecondary'>
                   {info.startdate} to {info.enddate}
                 </div>
@@ -186,12 +256,17 @@ function EventCard(props) {
               </Box>
             </Grid>
 
-            <Grid className={classes.detail}>
+            {/* <Grid className={classes.detail}>
               <div>{info.introduction}</div>
-            </Grid>
+            </Grid> */}
           </Box>
           <Box alignSelf='flex-end'>
-            <Chip label={`#${info.category}`} clickable color='primary' onClick={toSearchPage} />
+            <Chip
+              label={`#${info.category}`}
+              clickable
+              color='primary'
+              onClick={toSearchPage}
+            />
           </Box>
         </CardContent>
 
@@ -223,6 +298,7 @@ function EventCard(props) {
         </CardActions>
       </Box>
     </Card>
+    </Box>
   ) : null;
 }
 

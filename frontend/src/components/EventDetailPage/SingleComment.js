@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Avatar } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import DeleteReminder from './DeleteReminder';
-import { updateComment, deleteComment } from '../api';
+import { updateComment, deleteComment, updateAnswer } from '../api';
 
 const useStyles = makeStyles(() => ({
   avatarStyle: {
@@ -15,13 +15,26 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function SingleComment({ oId, content, eventId, setUpdate }) {
+function SingleComment({
+  orgDetail,
+  oId,
+  orgName,
+  content,
+  eventId,
+  setUpdate,
+}) {
   const classes = useStyles();
   const [editMode, setEditMode] = useState(false);
   const [editAnswer, setEditAnswer] = useState(false);
   const [comment, setComment] = useState(content.comment);
-  const [answer, setAnswer] = useState('');
+  const [answer, setAnswer] = useState(content.answer || '');
   const [open, setOpen] = useState(false);
+  const isOrg =
+    sessionStorage.getItem('usergroup') === 'organization' &&
+    parseInt(sessionStorage.getItem('id')) === oId;
+  const isAuthor =
+    sessionStorage.getItem('usergroup') === 'individual' &&
+    parseInt(sessionStorage.getItem('id')) === content.userId;
 
   const toggleAnswer = () => {
     setEditAnswer(!editAnswer);
@@ -36,7 +49,6 @@ function SingleComment({ oId, content, eventId, setUpdate }) {
   };
 
   const handleSubmit = async () => {
-    console.log(comment);
     const Data = await updateComment(eventId, comment, content.commentId);
     if (Data[0] === 200) {
       setEditMode(false);
@@ -53,6 +65,15 @@ function SingleComment({ oId, content, eventId, setUpdate }) {
       setUpdate(true);
     } else {
       console.log(Data[1]);
+    }
+  };
+
+  const handleUpdateAnswer = async () => {
+    console.log(answer);
+    const Data = await updateAnswer(eventId, content.commentId, answer);
+    if (Data[0] === 200) {
+      setEditAnswer(false);
+      setUpdate(true);
     }
   };
 
@@ -73,7 +94,6 @@ function SingleComment({ oId, content, eventId, setUpdate }) {
         <Comment.Metadata>
           <div>{content.published}</div>
         </Comment.Metadata>
-
         <Comment.Text>
           {editMode ? (
             <Form onSubmit={handleSubmit}>
@@ -98,21 +118,42 @@ function SingleComment({ oId, content, eventId, setUpdate }) {
           )}
         </Comment.Text>
         <Comment.Actions>
-          {parseInt(sessionStorage.getItem('id')) === content.userId &&
-          sessionStorage.getItem('usergroup') === 'individual' ? (
+          {isOrg && !content.answer ? (
+            <Comment.Action onClick={toggleAnswer}>{'Reply'}</Comment.Action>
+          ) : null}
+          {isAuthor ? (
             <>
               <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}
-          <Comment.Action onClick={toggleAnswer}>{'Add Reply'}</Comment.Action>
-          {/* {parseInt(sessionStorage.getItem('id')) === oId &&
-          sessionStorage.getItem('usergroup') === 'organization' ? (
-            <Comment.Action onClick={toggleEdit}>Add Answer</Comment.Action>
-          ) : null} */}
         </Comment.Actions>
+        {content.answer ? (
+          <Comment.Group>
+            <Comment>
+              <Avatar
+                className={classes.avatarStyle}
+                variant='rounded'
+                src={orgDetail.Logo}
+              >
+                {orgName.charAt(0)}
+              </Avatar>
+              <Comment.Content style={{ marginLeft: '4em' }}>
+                <Comment.Author as='span'>{orgName}</Comment.Author>
+                <Comment.Text>{content.answer}</Comment.Text>
+                <Comment.Actions>
+                  {isOrg ? (
+                    <Comment.Action onClick={toggleAnswer}>
+                      Edit Answer
+                    </Comment.Action>
+                  ) : null}
+                </Comment.Actions>
+              </Comment.Content>
+            </Comment>
+          </Comment.Group>
+        ) : null}
         {editAnswer ? (
-          <Form reply>
+          <Form reply onSubmit={handleUpdateAnswer}>
             <Form.TextArea
               placeholder='Please leave your answer here'
               name='answer'

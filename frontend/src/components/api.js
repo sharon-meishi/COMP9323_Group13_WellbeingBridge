@@ -479,6 +479,30 @@ export const deleteComment = async (eventId, commentId) => {
   }
 };
 
+export const updateAnswer = async (eventId, commentId, answer) => {
+  const url = baseUrl + `/event/${eventId}/comment/${commentId}/answer`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const answerBody = {
+    answer: answer,
+  };
+  try {
+    const res = await axios.put(url, answerBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
 export const deleteEvent = async (eventId) => {
   console.log('delete')
   const url = baseUrl + `/event/${eventId}/summary`;
@@ -523,14 +547,16 @@ export const updateOrgPage = async (oId, uploadBody) => {
 };
 
 export const searchOrganization= async (keyword,typeList) => {
-  let url;
-  if (keyword && typeof typeList !== 'object'){
+  console.log(keyword, typeList)
+  let url = baseUrl + '/search/organization';
+  if (keyword && typeList.length !== 0){
     url = baseUrl + `/search/organization?name=${keyword}&type=${typeList}`;
   }else if (keyword){
     url = baseUrl + `/search/organization?name=${keyword}`;
-  }else{
+  }else if(typeList.length !==0) {
     url = baseUrl + `/search/organization?type=${typeList}`;
   }
+  console.log(url)
   try {
     const res = await axios.get(url,{
       headers: {

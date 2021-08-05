@@ -163,10 +163,9 @@ class Login(Resource):
             user_sql = f"SELECT Password,NickName,UserId FROM User WHERE Email='{email}';"
             org_sql = f"SELECT Password,OrganizationName,OrganizationId FROM Organization WHERE Email='{email}';"
             result_from_user = sql_command(user_sql)
-            print(result_from_user)
             result_from_org = sql_command(org_sql)
             if result_from_user:
-                type_flag = 'user'
+                type_flag = 'individual'
             elif result_from_org:
                 type_flag = 'organization'
             else:
@@ -175,7 +174,7 @@ class Login(Resource):
                 }
                 return output,403
             # check the identification of current user
-            if type_flag == 'user':
+            if type_flag == 'individual':
                 if password == result_from_user[0][0]:
                     token = encode_token(email, type_flag)
                     output={
@@ -212,8 +211,13 @@ class Login(Resource):
 @api.route('/popular/events')
 class GetPopularEvent(Resource):
     def get(self):
-        querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
-        event_id = sql_command(querry_string)[0]
+        query_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
+        if sql_command(query_string):
+            event_id = [1,2,3]
+            # event_id = sql_command(query_string)[0]
+            # print(sql_command(query_string))
+        else:
+            event_id = [1,2,3]
         output = { "event_id": event_id}
         return output, 200
 

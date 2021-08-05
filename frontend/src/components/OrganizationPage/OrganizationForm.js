@@ -104,7 +104,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [upload, setUpload] = useState(false)
 
   const {
     reset,
@@ -182,7 +181,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
   };
 
   const resetForm = () => {
-    setUpload(false)
     reset();
     setImg({
       alt: 'Upload an image',
@@ -194,13 +192,13 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
 
   const onSubmit = async (data) => {
-    // setLoading(true);
+    setLoading(true);
     console.log(data);
     setData(data);
     if (data.picture){
       handleUpload();
     } else {
-      setUpload(true)
+      setURL(preloadImg)
     }
   };
 
@@ -222,26 +220,22 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     };
 
     const sendData = async(uploadBody) =>{
-      console.log('senddata')
       const Data = await updateOrgPage(oId, uploadBody);
       if (Data[0] === 200){
         console.log('update success');
         setLoading(false);
         setOpen(true);
-        setUpload(false)
       } else{
         setLoading(false);
-        setUpload(false)
         setErrorMsg('There is something wrong when uploading, please try again')
       }
     }
-    if(url || upload){
+    if(url){
       const uploadBody = buildBody();
-      console.log(uploadBody)
       sendData(uploadBody)
     }
 
-  }, [url, upload]);
+  }, [url]);
 
   useEffect(() => {
     reset();
