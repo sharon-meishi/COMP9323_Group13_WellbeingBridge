@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -13,6 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Avatar from '@material-ui/core/Avatar';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
+import RoomIcon from '@material-ui/icons/Room';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
 import { red } from '@material-ui/core/colors';
@@ -83,25 +85,36 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
-  avatarRoot: {
+  cardHeaderRoot: {
     '& .MuiAvatar-root': {
       width: '50px',
-      height:'50px',
-      cursor:'pointer'
+      height: '50px',
+      cursor: 'pointer',
     },
     '& span': {
       fontSize: '18px',
-      cursor:'pointer',
-      fontWeight:'bold',
-      fontFamily: `Lato,'Helvetica Neue',Arial,Helvetica,sans-serif`
-    }
-    
+      cursor: 'pointer',
+      fontWeight: 'bold',
+    },
+    '& .MuiCardHeader-action': {
+      alignSelf: 'center',
+    },
   },
+  eventMarker: {
+    color: '#3f51b5'
+  },
+  selectedStyle: {
+    border: '3px solid #26A69A',
+    padding: '8px',
+    borderRadius: '5px',
+    boxSizing: 'border-box'
+  }
 }));
 
 function EventCard(props) {
   const classes = useStyles();
   const history = useHistory();
+  const context = useContext(AppContext);
   const [info, setInfo] = useState(null);
   const [orgInfo, setOrgInfo] = useState(null);
   const [islike, setIslike] = useState(false);
@@ -173,11 +186,12 @@ function EventCard(props) {
   };
 
   const toOrgPage = () => {
-    history.push(`/organization/${info.orgid}`)
-  }
+    history.push(`/organization/${info.orgid}`);
+  };
 
   return info ? (
-    <Card className={classes.root}>
+    <Box className={context.selected === props.order ? classes.selectedStyle : null}>
+    <Card className={classes.root} id={props.order || props.eventId}>
       {openLogin ? (
         <LoginModal
           open={openLogin}
@@ -196,17 +210,20 @@ function EventCard(props) {
       {orgInfo ? (
         <CardHeader
           onClick={toOrgPage}
-          className={classes.avatarRoot}
+          className={classes.cardHeaderRoot}
           title={orgInfo.OrganizationName}
           avatar={
-            <Avatar
-              aria-label='organization Logo'
-              src={orgInfo.Logo}
-            >
+            <Avatar aria-label='organization Logo' src={orgInfo.Logo}>
               {orgInfo.OrganizationName.charAt(0)}
             </Avatar>
           }
-          act
+          action={
+            props.order ? 
+            <Box display='flex' justifyContent='center' alignItems='center' className={classes.eventMarker}>
+              <Box fontSize='17px' fontWeight='bold'>{props.order}</Box>
+              <RoomIcon fontSize='large' color='primary'/>
+            </Box> : null
+          }
         />
       ) : null}
       <CardMedia
@@ -281,6 +298,7 @@ function EventCard(props) {
         </CardActions>
       </Box>
     </Card>
+    </Box>
   ) : null;
 }
 

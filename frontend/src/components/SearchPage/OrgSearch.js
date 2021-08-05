@@ -173,7 +173,7 @@ function OrgSearch() {
           </Input>
         </Box>
         <Box mt={5} >
-          <Link underline='always' style={{cursor: 'pointer'}} onClick={toSearchEvent}>Find Event</Link>
+          <Link underline='always' style={{cursor: 'pointer', fontSize:'17px'}} onClick={toSearchEvent}> Want to find events</Link>
         </Box>
       </Box>
       <Grid container className={classes.search} key={location.search}>
