@@ -388,7 +388,7 @@ function EventSearch() {
               Search
             </Button>
           </Box>
-          <Box mt={1}><Link onClick={toOrgSearch} style={{cursor: 'pointer'}}>Want to find organization?</Link></Box>
+          <Box mt={1}><Link onClick={toOrgSearch} style={{cursor: 'pointer', fontSize:'17px'}}>Want to find organization?</Link></Box>
         </Box>
       </form>
       <EventSearchResult key={location.search} result={resultList} address={address} center={center}/>

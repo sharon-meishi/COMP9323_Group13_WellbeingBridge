@@ -547,14 +547,16 @@ export const updateOrgPage = async (oId, uploadBody) => {
 };
 
 export const searchOrganization= async (keyword,typeList) => {
-  let url;
-  if (keyword && typeof typeList !== 'object'){
+  console.log(keyword, typeList)
+  let url = baseUrl + '/search/organization';
+  if (keyword && typeList.length !== 0){
     url = baseUrl + `/search/organization?name=${keyword}&type=${typeList}`;
   }else if (keyword){
     url = baseUrl + `/search/organization?name=${keyword}`;
-  }else{
+  }else if(typeList.length !==0) {
     url = baseUrl + `/search/organization?type=${typeList}`;
   }
+  console.log(url)
   try {
     const res = await axios.get(url,{
       headers: {
