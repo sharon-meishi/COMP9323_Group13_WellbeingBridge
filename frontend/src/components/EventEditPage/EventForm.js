@@ -123,6 +123,7 @@ function EventForm({
   const [errorMsg, setErrorMsg] = useState('');
   const [eId, setEId] = useState(eventId)
 
+  // useForm setting and set default values
   const {
     reset,
     control,

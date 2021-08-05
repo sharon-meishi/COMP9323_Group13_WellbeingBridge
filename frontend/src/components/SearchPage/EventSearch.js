@@ -98,6 +98,7 @@ function EventSearch() {
   const searchParam = new URLSearchParams(queryString);
   const [searchState, setSearchState] = useState(0);
   const [resultList, setresultList] = useState([]);
+  const [center, setCenter] = useState({lat: '', lng: ''})
 
   // parse Date value to 'dd/mm/yyyy' date string
   const parsedDate = (dateString, Format) => {
@@ -146,6 +147,7 @@ function EventSearch() {
       ? parsedDate(searchParam.get('enddate'), 'dd/MM/yyyy')
       : '',
     Postcode: searchParam.has('postcode') ? searchParam.get('postcode') : '',
+    address: {label: address, value: address}
   };
 
   const { control, handleSubmit } = useForm({
@@ -160,13 +162,17 @@ function EventSearch() {
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {
+        setCenter({
+          lat: lat,
+          lng: lng
+        })
         const locationQuery = `${queryString}&lat=${lat.toFixed(6)}&lng=${lng.toFixed(6)}`;
         fetchData(locationQuery);
       });
   };
 
   const handleSearch = async (data) => {
-    const address = data.address ? data.address.label : '';
+    const queryAddress = data.address ? data.address.label : ''
     const format = Format.map((each) => each.value);
     const category = Category.map((each) => each.value);
     const queryData = Object.assign(
@@ -176,7 +182,7 @@ function EventSearch() {
       category.length === 0 ? null : { category },
       startdate === '' ? null : { startdate },
       enddate === '' ? null : { enddate },
-      address === '' ? null : { address },
+      queryAddress === '' ? null : { address : queryAddress },
       range === '' ? null : { range },
     );
     const queryPath = new URLSearchParams(queryData).toString();
@@ -385,7 +391,7 @@ function EventSearch() {
           <Box mt={1}><Link onClick={toOrgSearch} style={{cursor: 'pointer'}}>Want to find organization?</Link></Box>
         </Box>
       </form>
-      <EventSearchResult key={location.search} result={resultList} address={address}/>
+      <EventSearchResult key={location.search} result={resultList} address={address} center={center}/>
     </>
   );
 }
