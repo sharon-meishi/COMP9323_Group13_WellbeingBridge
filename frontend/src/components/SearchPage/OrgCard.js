@@ -18,7 +18,18 @@ const useStyles = makeStyles({
     marginBottom:'15px',
   },
   media: {
-    height: 140,
+    height: 140,        
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    // objectFit: 'contain',
+    // overflow: 'hidden',
+  },
+  title:{
+    textDecoration: 'underline',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   intro:{
     minHeight:'65px',
@@ -72,7 +83,7 @@ export default function OrgCard({Id}) {
         />
         <CardContent>
           <Box display='flex' >
-          <Typography gutterBottom variant="h5" component="h2">
+          <Typography gutterBottom variant="h5" component="h2" className={classes.title} onClick={handleLink}>
           {cardInfo.OrganizationName}
           </Typography>
           <Chip label={`#${cardInfo.OrganizationType}`} className={classes.label}clickable color='primary' onClick={toOrgType} />

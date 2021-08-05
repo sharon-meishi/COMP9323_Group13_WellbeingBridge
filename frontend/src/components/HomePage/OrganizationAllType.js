@@ -56,8 +56,8 @@ function OrganizationAllType() {
       <Grid container className={classes.root}>
         <Grid item sm={10} md={9} xl={8} className={classes.item}>
           <Box className={classes.title} mt={2} mb={2}>
-            <Typography variant='h5' className={classes.titleStyle}>
-              What type of organization you are looking for?
+            <Typography variant='h4' className={classes.titleStyle}>
+              Organization Types
             </Typography>
             <HomePageButton text='Find Organization' onClick={toOrgSearch} />
           </Box>

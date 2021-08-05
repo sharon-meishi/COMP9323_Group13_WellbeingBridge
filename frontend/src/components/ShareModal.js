@@ -40,7 +40,7 @@ function ShareModal({
   React.useEffect(()=>{
     const url = document.URL.replace(/^(http:\/\/.*[0-9]{4}\/).*$/,'$1')+`event/${eventId}`;
     setUrlLink(url);
-  },[]);
+  },[eventId]);
   
   const handleCopy = async () => {
     // const res = await deleteEvent(eventId);

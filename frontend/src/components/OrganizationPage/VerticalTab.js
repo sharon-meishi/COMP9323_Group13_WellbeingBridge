@@ -209,7 +209,8 @@ export default function VerticalTabs({ profileData, setUpdate }) {
                   key={event.eventId}
                   eventId={event.eventId}
                   eventName={event.name}
-                  eventDate={event.date}
+                  startdate={event.startdate}
+                  enddate={event.enddate}
                   postcode={event.location.postcode}
                   introduction={event.introduction}
                   thumbnail={event.thumbnail}
