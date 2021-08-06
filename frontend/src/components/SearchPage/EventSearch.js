@@ -61,6 +61,7 @@ const useStyles = makeStyles({
 });
 
 const FormatOptions = [
+  { label: 'Online Event', value: 'Online Event' },
   { label: 'Class', value: 'Class' },
   { label: 'Conference', value: 'Conference' },
   { label: 'Festival', value: 'Festival' },
@@ -183,7 +184,7 @@ function EventSearch() {
       startdate === '' ? null : { startdate },
       enddate === '' ? null : { enddate },
       queryAddress === '' ? null : { address : queryAddress },
-      range === '' ? null : { range },
+      queryAddress === '' ? null : { range },
     );
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {

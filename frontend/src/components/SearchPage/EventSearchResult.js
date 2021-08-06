@@ -62,7 +62,10 @@ function EventSearchResult({ result, address, center }) {
       const data = await Promise.all(
         result.map((id) => getEventSummary(id, true))
       );
-      setEventList(data);
+      const notOnline = data.filter(
+        (event) => event.format !== 'Online Event'
+      )
+      setEventList(notOnline);
     };
     fetchData();
     context.setSelected(null)
