@@ -8,62 +8,64 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
+import Rating from '@material-ui/lab/Rating';
 import Typography from '@material-ui/core/Typography';
 import cardimg from '../../Assets/logo-placeholder.png';
-import {getOrgSummary} from '../api';
+import { getOrgSummary } from '../api';
+
 const useStyles = makeStyles({
   root: {
     maxWidth: 330,
     minWidth: 330,
-    marginBottom:'15px',
+    marginBottom: '15px',
   },
   media: {
-    height: 140,        
+    height: 140,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',
     backgroundPosition: 'center',
     // objectFit: 'contain',
     // overflow: 'hidden',
   },
-  title:{
+  title: {
     textDecoration: 'underline',
     '&:hover': {
       cursor: 'pointer',
     },
   },
-  intro:{
-    minHeight:'65px',
+  intro: {
+    minHeight: '65px',
   },
-  label:{
-    marginLeft:'20px',
+  label: {
+    marginLeft: '20px',
   },
   actionStyle: {
-    justifyContent: 'flex-end'
-  }
+    justifyContent: 'flex-end',
+  },
 });
 
-export default function OrgCard({Id}) {
+export default function OrgCard({ Id }) {
   const history = useHistory();
   const classes = useStyles();
   const [cardInfo, setCardInfo] = React.useState({});
   const [cardLogo, setCardLogo] = React.useState(cardimg);
-  const getInfo = async()=>{
+  const getInfo = async () => {
     const res = await getOrgSummary(Id);
-    if (res[0] === 200){
+    if (res[0] === 200) {
       setCardInfo(res[1]);
-      if (res[1].Logo){
+      if (res[1].Logo) {
         setCardLogo(res[1].Logo);
       }
     }
-  }
-  React.useEffect(()=>{
-    getInfo();
-  },[])
-
-  const handleLink = ()=>{
-    history.push(`/organization/${Id}`)
   };
-  const toOrgType = ()=>{
+  React.useEffect(() => {
+    getInfo();
+  }, []);
+
+  const handleLink = () => {
+    history.push(`/organization/${Id}`);
+  };
+  const toOrgType = () => {
     const data = { orgType: cardInfo.OrganizationType };
     const queryPath = new URLSearchParams(data).toString();
     const path = {
@@ -76,25 +78,54 @@ export default function OrgCard({Id}) {
     <Card className={classes.root}>
       {/* <CardActionArea> */}
 
-        <CardMedia
-          className={classes.media}
-          image={cardLogo}
-          title="Organization Logo"
-        />
-        <CardContent>
-          <Box display='flex' >
-          <Typography gutterBottom variant="h5" component="h2" className={classes.title} onClick={handleLink}>
-          {cardInfo.OrganizationName}
+      <CardMedia
+        className={classes.media}
+        image={cardLogo}
+        title='Organization Logo'
+      />
+      <CardContent>
+        <Box display='flex' alignItems='center'>
+          <Typography
+            gutterBottom
+            variant='h5'
+            component='h2'
+            className={classes.title}
+            onClick={handleLink}
+          >
+            {cardInfo.OrganizationName}
           </Typography>
-          <Chip label={`#${cardInfo.OrganizationType}`} className={classes.label}clickable color='primary' onClick={toOrgType} />
+          <Box ml={1}>
+            <Rating
+              value={cardInfo.rating}
+              name='read-only'
+              readOnly
+              precision={0.5}
+            />
           </Box>
-          <Typography className={classes.intro}variant="body2" color="textSecondary" component="p">
+        </Box>
+        <Box display='flex' flexDirection='column'>
+          <Typography
+            className={classes.intro}
+            variant='body2'
+            color='textSecondary'
+            component='p'
+          >
             {cardInfo.Introduction}
           </Typography>
-        </CardContent>
+          <Box alignSelf='flex-end'>
+            <Chip
+              label={`#${cardInfo.OrganizationType}`}
+              className={classes.label}
+              clickable
+              color='primary'
+              onClick={toOrgType}
+            />
+          </Box>
+        </Box>
+      </CardContent>
       {/* </CardActionArea> */}
       <CardActions className={classes.actionStyle}>
-        <Button size="small" color="primary" onClick={handleLink}>
+        <Button size='small' color='primary' onClick={handleLink}>
           Discover More
         </Button>
       </CardActions>

@@ -1074,6 +1074,8 @@ class search_event(Resource):
                         found_events.append(event_id)
         else:
             found_events = [output[0] for output in output_search]
+        
+        found_events.reverse()
 
         return found_events, 200
 

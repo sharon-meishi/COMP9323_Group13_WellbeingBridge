@@ -54,6 +54,7 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    
   },
   searchBar: {
     display: 'flex',
@@ -184,10 +185,11 @@ function OrgSearch() {
         </Box>
         
       </Box>
-      <Box className={classes.resultlabel}>
+
+      <Grid container className={classes.search} key={location.search}>
+      <Box className={classes.resultlabel} mb={1}>
             {searchResult.length} matching results:
       </Box>
-      <Grid container className={classes.search} key={location.search}>
         {searchResult.map((item, index) => (
           <Grid
             item
