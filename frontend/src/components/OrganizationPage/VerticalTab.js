@@ -134,7 +134,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
       );
       setEventList((prevEvents) => prevEvents.concat(data));
     };
-    if (end > start) {
+    if (end > start && eventList.length <= start) {
       fetchData();
     }
   }, [start]);

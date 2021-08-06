@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Menu } from 'semantic-ui-react';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import EventCard from '../EventCard';
@@ -78,7 +78,6 @@ function EventSearchResult({ result, address, center }) {
   const context = useContext(AppContext);
   const [eventList, setEventList] = useState([]);
   const [notOnlineList, setnotOnlineList] = useState([]);
-  const [sort, setSort] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,19 +154,23 @@ function EventSearchResult({ result, address, center }) {
           lg={8}
           className={classes.onlyEvents}
         >
-          <Box display='flex' justifyContent='space-between' mb={1}>
+          <Box display='flex' justifyContent='space-between' alignItems='baseline' mb={1}>
             <Box className={classes.titleStyle}>
               {result.length} matching results:
             </Box>
-            <Box>
-              sort by
+            <Box display='flex' alignItems='baseline'>
+              <Box fontSize='17px' mr={1} fontWeight='bold'>sort by</Box>
+              <Menu>
               <Dropdown
                 inline
+                simple
+                item
                 options={menuItem}
                 defaultValue={menuItem[0].value}
                 onChange={handleChange}
                 style={{ marginLeft: '3px' }}
               />
+              </Menu>
             </Box>
           </Box>
           <Grid container item>

@@ -57,6 +57,9 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     padding: '5px 8px',
     marginTop: '8px',
+    '& .react-datepicker__close-icon::after':{
+      color: 'black'
+    }
   },
 });
 
