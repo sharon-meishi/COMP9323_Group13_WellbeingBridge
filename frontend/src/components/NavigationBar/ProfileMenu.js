@@ -32,6 +32,10 @@ function ProfileMenu() {
   const toDashBoard = () => {
     history.push('/dashboard');
   };
+
+  const toOrgPage = () =>{
+    history.push(`/organization/${sessionStorage.getItem('id')}`)
+  }
   return (
     <div>
       <Button
@@ -39,7 +43,7 @@ function ProfileMenu() {
         aria-haspopup='true'
         onClick={handleClick}
       >
-        <Avatar>{sessionStorage.getItem('name').charAt(0)}</Avatar>
+        <Avatar>{sessionStorage.getItem('name').charAt(0).toUpperCase()}</Avatar>
       </Button>
       <Menu
         id='simple-menu'
@@ -51,7 +55,10 @@ function ProfileMenu() {
         {sessionStorage.getItem('usergroup') === 'individual' ? (
           <MenuItem onClick={toMyProfile}>Profile</MenuItem>
         ) : (
+          <>
+          <MenuItem onClick={toOrgPage}>My Page</MenuItem>
           <MenuItem onClick={toDashBoard}>Dashboard</MenuItem>
+          </>
         )}
 
         <MenuItem onClick={handleLogout}>Logout</MenuItem>

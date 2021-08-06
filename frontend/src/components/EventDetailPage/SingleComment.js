@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Comment, Button } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Avatar } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import DeleteReminder from './DeleteReminder';
 import { updateComment, deleteComment, updateAnswer } from '../api';
@@ -35,7 +35,6 @@ function SingleComment({
   const isAuthor =
     sessionStorage.getItem('usergroup') === 'individual' &&
     parseInt(sessionStorage.getItem('id')) === content.userId;
-
   const toggleAnswer = () => {
     setEditAnswer(!editAnswer);
   };
@@ -46,6 +45,7 @@ function SingleComment({
 
   const toggleDelete = () => {
     setOpen(true);
+    setEditMode(false)
   };
 
   const handleSubmit = async () => {
@@ -69,7 +69,6 @@ function SingleComment({
   };
 
   const handleUpdateAnswer = async () => {
-    console.log(answer);
     const Data = await updateAnswer(eventId, content.commentId, answer);
     if (Data[0] === 200) {
       setEditAnswer(false);
@@ -87,7 +86,7 @@ function SingleComment({
         />
       ) : null}
       <Avatar className={classes.avatarStyle} variant='rounded'>
-        {content.username.charAt(0)}
+        {content.username.charAt(0).toUpperCase()}
       </Avatar>
       <Comment.Content style={{ marginLeft: '4em' }}>
         <Comment.Author as='span'>{content.username}</Comment.Author>
@@ -99,6 +98,7 @@ function SingleComment({
             <Form onSubmit={handleSubmit}>
               <Form.Field>
                 <Form.TextArea
+                  required
                   value={comment}
                   onChange={(e) => {
                     setComment(e.target.value);
@@ -123,20 +123,20 @@ function SingleComment({
           ) : null}
           {isAuthor ? (
             <>
-              <Comment.Action onClick={toggleEdit}>Edit</Comment.Action>
+              <Comment.Action onClick={toggleEdit}>{editMode ? 'Cancel Edit' : 'Edit'}</Comment.Action>
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}
         </Comment.Actions>
         {content.answer ? (
-          <Comment.Group>
+          <Comment.Group size='large'>
             <Comment>
               <Avatar
                 className={classes.avatarStyle}
                 variant='rounded'
                 src={orgDetail.Logo}
               >
-                {orgName.charAt(0)}
+                {orgName.charAt(0).toUpperCase()}
               </Avatar>
               <Comment.Content style={{ marginLeft: '4em' }}>
                 <Comment.Author as='span'>{orgName}</Comment.Author>
@@ -144,7 +144,7 @@ function SingleComment({
                 <Comment.Actions>
                   {isOrg ? (
                     <Comment.Action onClick={toggleAnswer}>
-                      Edit Answer
+                      {editAnswer ? 'Cancel Edit' : 'Edit Answer'}
                     </Comment.Action>
                   ) : null}
                 </Comment.Actions>
@@ -163,7 +163,7 @@ function SingleComment({
             />
             <Box display='flex' justifyContent='flex-end'>
               <Button
-                content='Add Answer'
+                content={content.answer ? 'Save' :'Add Answer'}
                 labelPosition='left'
                 icon='edit'
                 primary
