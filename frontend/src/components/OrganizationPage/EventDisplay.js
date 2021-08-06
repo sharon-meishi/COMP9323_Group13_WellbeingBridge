@@ -71,14 +71,6 @@ function EventDisplay(props) {
         thumbnail={event.thumbnail}
          />
       ))}
-
-      {/* {event_list.map((eventId) => (
-        <OrgEventCard
-          key={eventId}
-          eventId={eventId}
-          className={classes.item}
-        ></OrgEventCard>
-      ))} */}
     </div>
     <Box>
         <Button color='primary' variant='contained' onClick={loadMoreHandler}>

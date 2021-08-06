@@ -187,7 +187,7 @@ function OrgSearch() {
       </Box>
 
       <Grid container className={classes.search} key={location.search}>
-      <Box className={classes.resultlabel}>
+      <Box className={classes.resultlabel} mb={1}>
             {searchResult.length} matching results:
       </Box>
         {searchResult.map((item, index) => (

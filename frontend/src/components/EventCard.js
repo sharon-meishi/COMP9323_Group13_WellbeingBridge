@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
       height: '50px',
       cursor: 'pointer',
     },
-    '& span': {
+    '& .MuiCardHeader-title': {
       fontSize: '18px',
       cursor: 'pointer',
       fontWeight: 'bold',
@@ -99,6 +99,9 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiCardHeader-action': {
       alignSelf: 'center',
     },
+    '& .MuiCardHeader-subheader':{
+      fontWeight: 'none',
+    }
   },
   eventMarker: {
     color: '#3f51b5',
@@ -135,6 +138,9 @@ function EventCard(props) {
     };
     if (props.eventInfo) {
       setInfo(props.eventInfo);
+      if(props.eventInfo.favourite){
+        setIslike(true)
+      }
     } else {
       fetchData();
     }
@@ -217,11 +223,11 @@ function EventCard(props) {
         <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
         {orgInfo ? (
           <CardHeader
-            onClick={toOrgPage}
             className={classes.cardHeaderRoot}
-            title={orgInfo.OrganizationName}
+            title={<span onClick={toOrgPage}>{orgInfo.OrganizationName}</span>}
+            subheader={`${info.bookedUser.length} people have booked` }
             avatar={
-              <Avatar aria-label='organization Logo' src={orgInfo.Logo}>
+              <Avatar aria-label='organization Logo' src={orgInfo.Logo} onClick={toOrgPage}>
                 {orgInfo.OrganizationName.charAt(0)}
               </Avatar>
             }
