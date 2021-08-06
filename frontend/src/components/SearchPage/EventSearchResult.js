@@ -1,11 +1,31 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import { makeStyles } from '@material-ui/core/styles';
+import { Dropdown } from 'semantic-ui-react'
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import EventCard from '../EventCard';
 import EventMap from './EventMap';
 import { getEventSummary } from '../api';
+
+  //three type of sort function
+  const menuItem = [
+    {
+      key: 'newest',
+      text: 'newest',
+      value: 'newest',
+    },
+    {
+      key: 'most popular',
+      text: 'most popular',
+      value: 'most popular',
+    },
+    {
+      key: 'type',
+      text: 'type',
+      value: 'type',
+    },
+  ];
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -56,6 +76,7 @@ function EventSearchResult({ result, address, center }) {
   const classes = useStyles();
   const context = useContext(AppContext);
   const [eventList, setEventList] = useState([]);
+  const [notOnlineList, setnotOnlineList] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,7 +86,8 @@ function EventSearchResult({ result, address, center }) {
       const notOnline = data.filter(
         (event) => event.format !== 'Online Event'
       )
-      setEventList(notOnline);
+      setnotOnlineList(notOnline)
+      setEventList(data);
     };
     fetchData();
     context.setSelected(null)
@@ -76,7 +98,7 @@ function EventSearchResult({ result, address, center }) {
       {address ? (
         <Grid container className={classes.container}>
           <Grid item xs={7} className={classes.mapStyle}>
-            <EventMap key={eventList} eventList={eventList} center={center} />
+            <EventMap key={notOnlineList} eventList={notOnlineList} center={center} />
           </Grid>
           <Grid container item xs={6} className={classes.eventResult}>
             <Box className={classes.titleStyle}>
@@ -112,9 +134,9 @@ function EventSearchResult({ result, address, center }) {
             {result.length} matching results:
           </Box>
           <Grid container item>
-            {result.map((eventId) => (
-              <Grid item xs={12} md={6} lg={4} className={classes.item}>
-                <EventCard key={eventId} eventId={eventId}></EventCard>
+            {eventList.map((event) => (
+              <Grid item xs={12} md={6} lg={4} className={classes.item} key={event.eventId}>
+                <EventCard  eventInfo={event} eventId={event.eventId}></EventCard>
               </Grid>
             ))}
           </Grid>

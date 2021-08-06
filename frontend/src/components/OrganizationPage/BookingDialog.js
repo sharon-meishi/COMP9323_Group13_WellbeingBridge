@@ -4,13 +4,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Link from '@material-ui/core/Link';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 
 const useStyles = makeStyles({
   itemStyle: {
     width:'50%',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '16px'
   },
   titleStyle: {
     width:'50%',
@@ -40,7 +42,7 @@ export default function BookingDialog(props) {
         {info.map((user) => (
           <ListItem key={user.email}>
             <ListItemText disableTypography  primary={user.username} className={classes.itemStyle}/>
-            <ListItemText disableTypography primary={user.email} className={classes.itemStyle}/>
+            <Link disableTypography className={classes.itemStyle} style={{cursor: 'pointer'}} href={`mailto:${user.email}`}>{user.email}</Link>
           </ListItem>
         ))}
       </List>

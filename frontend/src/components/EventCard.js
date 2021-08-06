@@ -138,7 +138,7 @@ function EventCard(props) {
     } else {
       fetchData();
     }
-  }, [props.eventId]);
+  }, [props.eventId, props.eventInfo]);
 
   useEffect(() => {
     if (info) {

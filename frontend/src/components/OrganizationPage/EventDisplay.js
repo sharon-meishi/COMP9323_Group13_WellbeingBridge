@@ -66,7 +66,7 @@ function EventDisplay(props) {
         eventId={event.eventId}
         eventName={event.name}
         eventDate={event.date}
-        postcode={event.location.postcode}
+        postcode={event.location.address}
         introduction={event.introduction}
         thumbnail={event.thumbnail}
          />
