@@ -101,14 +101,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   eventMarker: {
-    color: '#3f51b5'
+    color: '#3f51b5',
   },
   selectedStyle: {
     border: '3px solid #26A69A',
     padding: '8px',
     borderRadius: '5px',
-    boxSizing: 'border-box'
-  }
+    boxSizing: 'border-box',
+  },
 }));
 
 function EventCard(props) {
@@ -133,7 +133,11 @@ function EventCard(props) {
         }
       }
     };
-    fetchData();
+    if (props.eventInfo) {
+      setInfo(props.eventInfo);
+    } else {
+      fetchData();
+    }
   }, [props.eventId]);
 
   useEffect(() => {
@@ -190,114 +194,133 @@ function EventCard(props) {
   };
 
   return info ? (
-    <Box className={context.selected === props.order ? classes.selectedStyle : null}>
-    <Card className={classes.root} id={props.order || props.eventId}>
-      {openLogin ? (
-        <LoginModal
-          open={openLogin}
-          setOpenLogin={setOpenLogin}
-          setOpenRegister={setOpenRegister}
+    <Box
+      className={
+        context.selected === props.order ? classes.selectedStyle : null
+      }
+    >
+      <Card className={classes.root} id={props.order || props.eventId}>
+        {openLogin ? (
+          <LoginModal
+            open={openLogin}
+            setOpenLogin={setOpenLogin}
+            setOpenRegister={setOpenRegister}
+          />
+        ) : null}
+        {openRegister ? (
+          <RegisterModal
+            open={openRegister}
+            setOpenLogin={setOpenLogin}
+            setOpenRegister={setOpenRegister}
+          />
+        ) : null}
+        <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
+        {orgInfo ? (
+          <CardHeader
+            onClick={toOrgPage}
+            className={classes.cardHeaderRoot}
+            title={orgInfo.OrganizationName}
+            avatar={
+              <Avatar aria-label='organization Logo' src={orgInfo.Logo}>
+                {orgInfo.OrganizationName.charAt(0)}
+              </Avatar>
+            }
+            action={
+              props.order ? (
+                <Box
+                  display='flex'
+                  justifyContent='center'
+                  alignItems='center'
+                  className={classes.eventMarker}
+                >
+                  <Box fontSize='17px' fontWeight='bold'>
+                    {props.order}
+                  </Box>
+                  <RoomIcon fontSize='large' color='primary' />
+                </Box>
+              ) : null
+            }
+          />
+        ) : null}
+        <CardMedia
+          className={classes.media}
+          image={info.thumbnail}
+          title='Event Image'
         />
-      ) : null}
-      {openRegister ? (
-        <RegisterModal
-          open={openRegister}
-          setOpenLogin={setOpenLogin}
-          setOpenRegister={setOpenRegister}
-        />
-      ) : null}
-      <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
-      {orgInfo ? (
-        <CardHeader
-          onClick={toOrgPage}
-          className={classes.cardHeaderRoot}
-          title={orgInfo.OrganizationName}
-          avatar={
-            <Avatar aria-label='organization Logo' src={orgInfo.Logo}>
-              {orgInfo.OrganizationName.charAt(0)}
-            </Avatar>
-          }
-          action={
-            props.order ? 
-            <Box display='flex' justifyContent='center' alignItems='center' className={classes.eventMarker}>
-              <Box fontSize='17px' fontWeight='bold'>{props.order}</Box>
-              <RoomIcon fontSize='large' color='primary'/>
-            </Box> : null
-          }
-        />
-      ) : null}
-      <CardMedia
-        className={classes.media}
-        image={info.thumbnail}
-        title='Event Image'
-      />
 
-      <Box
-        display='flex'
-        flexDirection='column'
-        height='100%'
-        justifyContent='space-between'
-      >
-        <CardContent className={classes.content}>
-          <Box>
-            <Grid container direction='column'>
-              <Box display='flex' justifyContent='space-between'>
-                <div onClick={checkDetail} className={classes.title}>
-                  {info.name}
-                </div>
-                {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
-              </Box>
+        <Box
+          display='flex'
+          flexDirection='column'
+          height='100%'
+          justifyContent='space-between'
+        >
+          <CardContent className={classes.content}>
+            <Box>
+              <Grid container direction='column'>
+                <Box display='flex' justifyContent='space-between'>
+                  <div onClick={checkDetail} className={classes.title}>
+                    {info.name}
+                  </div>
+                  {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
+                </Box>
 
-              <Box justifyContent='space-between' mt={1} mb={1}>
-                <div className={classes.date} color='textSecondary'>
-                  {info.startdate} to {info.enddate}
-                </div>
-                <div className={classes.location}>{info.location.postcode}</div>
-              </Box>
-            </Grid>
+                <Box justifyContent='space-between' mt={1} mb={1}>
+                  <div className={classes.date} color='textSecondary'>
+                    {info.startdate} to {info.enddate}
+                  </div>
+                  <div className={classes.location}>
+                    {info.format === 'Online Event'
+                      ? 'ONLINE EVENT'
+                      : info.location.postcode}
+                  </div>
+                </Box>
+              </Grid>
+            </Box>
+            <Box alignSelf='flex-end'>
+              <Chip
+                label={`#${info.format}`}
+                clickable
+                color='primary'
+                onClick={toSearchPage}
+                style={{marginRight:'5px'}}
+              />
+              <Chip
+                label={`#${info.category}`}
+                clickable
+                color='primary'
+                onClick={toSearchPage}
+              />
+            </Box>
+          </CardContent>
 
-            {/* <Grid className={classes.detail}>
-              <div>{info.introduction}</div>
-            </Grid> */}
-          </Box>
-          <Box alignSelf='flex-end'>
-            <Chip
-              label={`#${info.category}`}
-              clickable
-              color='primary'
-              onClick={toSearchPage}
-            />
-          </Box>
-        </CardContent>
-
-        <CardActions className={classes.actions} disableSpacing>
-          <Box>
-            {sessionStorage.getItem('usergroup') === 'individual' ? (
-              <IconButton onClick={handleLike} aria-label='add to favorites'>
-                {islike ? (
-                  <FavoriteIcon color='secondary' fontSize='default' />
-                ) : (
-                  <FavoriteIcon color='disabled' fontSize='default' />
-                )}
+          <CardActions className={classes.actions} disableSpacing>
+            <Box>
+              {sessionStorage.getItem('usergroup') === 'individual' ? (
+                <IconButton onClick={handleLike} aria-label='add to favorites'>
+                  {islike ? (
+                    <FavoriteIcon color='secondary' fontSize='default' />
+                  ) : (
+                    <FavoriteIcon color='disabled' fontSize='default' />
+                  )}
+                </IconButton>
+              ) : null}
+              <IconButton aria-label='share' onClick={handleShare}>
+                <Tooltip title='Share' placement='right'>
+                  <ShareIcon />
+                </Tooltip>
               </IconButton>
-            ) : null}
-            <IconButton aria-label='share' onClick={handleShare}>
-              <Tooltip title='Share' placement='right'>
-                <ShareIcon />
-              </Tooltip>
-            </IconButton>
-          </Box>
-          <Button
-            onClick={checkDetail}
-            size='small'
-            color='primary'
-            className={classes.view}
-          >
-            Discover More
-          </Button>
-        </CardActions>
-      </Box>
-    </Card>
+            </Box>
+            <Button
+              onClick={checkDetail}
+              size='small'
+              color='primary'
+              className={classes.view}
+            >
+              Discover More
+            </Button>
+          </CardActions>
+        </Box>
+      </Card>
     </Box>
   ) : null;
 }
