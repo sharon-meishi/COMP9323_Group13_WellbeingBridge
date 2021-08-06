@@ -143,6 +143,18 @@ VALUES(0,"Kids Yoga Class",1,"HeadSpace" ,
     INSERT INTO `Comment` VALUES (0, 3, 'Cecilia', 1, 'That is great', '2021-07-08 21:51:26',NULL,NULL),
     (0, 4, 'Nick', 1, 'That is awsome!', '2021-07-08 21:51:30',NULL,NULL);
     '''
+    Review_table='''
+    CREATE TABLE IF NOT EXISTS `Review` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userid` int NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `rating` int NOT NULL,
+  `organizationid` int NOT NULL,
+  `review` varchar(255) NOT NULL,
+  `time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)
+    '''
     
     c.execute(user_table)
     c.execute(organization_table)
@@ -155,6 +167,8 @@ VALUES(0,"Kids Yoga Class",1,"HeadSpace" ,
     db.commit()
     c.execute(comment_table)
     c.execute(insert_comment)
+    db.commit()
+    c.execute(Review_table)
     db.commit()
     c.close()
 
