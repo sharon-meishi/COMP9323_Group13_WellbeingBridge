@@ -280,7 +280,7 @@ function ScrollspyContent({ oId }) {
               {data.websiteLink ? (
                 <div className={classes.service}>
                   <span className={classes.boldStyle}>Website Link:</span>{' '}
-                  {data.websiteLink}
+                  <a href={data.websiteLink}>{data.websiteLink}</a>
                 </div>
               ) : null}
             </section>
