@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Rating from '@material-ui/lab/Rating';
 
 const useStyles = makeStyles(() => ({
   titleStyle: {
@@ -65,13 +66,37 @@ function Dashboard({ profileData }) {
         width='80%'
         flexWrap='wrap'
       >
-        <Box display='flex' alignItems='baseline'>
-          <Typography variant='h2' className={classes.Hi}>
-            Hi,
-          </Typography>
-          <Typography variant='h3' className={classes.nameStyle}>
-            {profileData.organizationName}:)
-          </Typography>
+        <Box
+          display='flex'
+          alignItems='baseline'
+          justifyContent='space-between'
+          width='100%'
+          flexWrap='wrap'
+        >
+          <Box display='flex' alignItems='baseline' >
+            <Typography variant='h2' className={classes.Hi}>
+              Hi,
+            </Typography>
+            <Typography variant='h3' className={classes.nameStyle}>
+              {profileData.organizationName}:)
+            </Typography>
+          </Box>
+          <Box display='flex' alignItems='center' flexWrap='wrap'>
+            <Typography variant='h6' className={classes.Hi}>
+              Your current rating:
+            </Typography>
+            <Box display='flex' alignItems='center'>
+              <Rating
+                value={profileData.rating}
+                name='read-only'
+                readOnly
+                precision={0.5}
+              />
+              <Typography variant='h6' className={classes.Hi}>
+                {profileData.rating}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
       </Box>
       <Box mt={3} width='80%'>

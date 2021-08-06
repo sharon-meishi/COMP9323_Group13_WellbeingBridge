@@ -7,7 +7,6 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Rating from '@material-ui/lab/Rating';
-import EditIcon from '@material-ui/icons/Edit';
 import logoPlaceholder from '../../Assets/logo-placeholder.png';
 import comingSoon from '../../Assets/video-coming-soon.gif';
 import EventCard from '../EventCard';
@@ -87,7 +86,12 @@ const useStyles = makeStyles((theme) => ({
   },
   eventcard: {
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
+    width: '100%',
+    flexWrap: 'wrap',
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center',
+    },
   },
   video: {
     marginBottom: '15px',
@@ -111,6 +115,10 @@ const useStyles = makeStyles((theme) => ({
   linkStyle: {
     marginLeft: '8px',
     cursor: 'pointer',
+  },
+  eventItem: {
+    display: 'flex',
+    justifyContent: 'center',
   },
 }));
 
@@ -158,8 +166,6 @@ function ScrollspyContent({ oId }) {
     return false;
   };
 
-  const toEditPage = () => {};
-
   useEffect(() => {
     const getOrganization = async () => {
       const res = await getOrganizationDetails(oId);
@@ -199,16 +205,12 @@ function ScrollspyContent({ oId }) {
               Events
             </Link>
           </Scrollspy>
-          <Grid item xs={8} md={7} lg={6} xl={5} className={classes.content}>
+          <Grid item xs={9} md={8} lg={7} xl={6} className={classes.content}>
             <section id='Name' style={BottomSyle}>
               <div className={classes.box}>
                 <Box display='flex' flexDirection='column' flexWrap='wrap'>
-                  <Box display='flex' alignItems='baseline'>
+                  <Box display='flex' alignItems='baseline' >
                     <h2>{data.organizationName}</h2>
-                    <EditIcon
-                      style={{ marginLeft: '5px' }}
-                      onClick={toEditPage}
-                    />
                   </Box>
 
                   <Box display='flex' alignItems='center' flexWrap='wrap'>
@@ -274,7 +276,7 @@ function ScrollspyContent({ oId }) {
               <h2>Other Information:</h2>
               <div className={classes.service}>
                 <span className={classes.boldStyle}>Contract:</span>{' '}
-                {data.contact}
+                <Link style={{cursor: 'pointer'}} href={`mailto:${data.contact}`}>{data.contact}</Link>
               </div>
 
               {data.websiteLink ? (
@@ -287,50 +289,54 @@ function ScrollspyContent({ oId }) {
 
             <section id='Reviews' style={BottomSyle}>
               <h2>Reviews:</h2>
-              <Comment.Group size='large' style={{ maxWidth: '100%', marginBottom: '15px' }}>
-              {sessionStorage.getItem('usergroup') === 'individual' ? 
-                <Form onSubmit={submitNewReview}>
-                  
-                  <Box display='flex' mb={1}>
-                    <Rating
-                      value={newRating}
-                      onChange={(event, newValue) => {
-                        if(!newValue){
-                          setNewRating(1);
-                        }else{
-                          setNewRating(newValue);
-                        }
-                        
-                      }}
-                      onChangeActive={(event, newHover) => {
-                        setRatingHover(newHover);
-                      }}
+              <Comment.Group
+                size='large'
+                style={{ maxWidth: '100%', marginBottom: '15px' }}
+              >
+                {sessionStorage.getItem('usergroup') === 'individual' ? (
+                  <Form onSubmit={submitNewReview}>
+                    <Box display='flex' mb={1}>
+                      <Rating
+                        value={newRating}
+                        onChange={(event, newValue) => {
+                          if (!newValue) {
+                            setNewRating(1);
+                          } else {
+                            setNewRating(newValue);
+                          }
+                        }}
+                        onChangeActive={(event, newHover) => {
+                          setRatingHover(newHover);
+                        }}
+                      />
+                      {newRating !== null && (
+                        <Box ml={2}>
+                          {labels[ratingHover !== -1 ? ratingHover : newRating]}
+                        </Box>
+                      )}
+                    </Box>
+                    <Form.TextArea
+                      placeholder='Please leave your review here'
+                      name='review'
+                      value={review}
+                      onChange={(e) => setReview(e.target.value)}
+                      required
                     />
-                    {newRating !== null && (
-                      <Box ml={2}>
-                        {labels[ratingHover !== -1 ? ratingHover : newRating]}
-                      </Box>
-                    )}
-                  </Box>
-                  <Form.TextArea
-                    placeholder='Please leave your review here'
-                    name='review'
-                    value={review}
-                    onChange={(e) => setReview(e.target.value)}
-                    required
-                  />
-                  <Box display='flex' justifyContent='flex-end' mb={1}>
-                    <Form.Button
-                      size='tiny'
-                      content='Add Review'
-                      labelPosition='left'
-                      icon='edit'
-                      primary
-                    />
-                  </Box>
-                </Form> :                   <Box fontSize='16px'>
+                    <Box display='flex' justifyContent='flex-end' mb={1}>
+                      <Form.Button
+                        size='tiny'
+                        content='Add Review'
+                        labelPosition='left'
+                        icon='edit'
+                        primary
+                      />
+                    </Box>
+                  </Form>
+                ) : (
+                  <Box fontSize='16px'>
                     Please Login as an individual user to post review
-                  </Box>}
+                  </Box>
+                )}
                 {data.reviews
                   ? data.reviews.map((eachReview, idx) => (
                       <SingleReview
@@ -346,7 +352,7 @@ function ScrollspyContent({ oId }) {
 
             <Grid container id='Events' className={classes.eventBox}>
               <h2>Their Events: </h2>
-              <Grid container item className={classes.eventcard} spacing={3}>
+              <Grid container className={classes.eventcard}>
                 {data.otherEvents.length === 0 ? (
                   <div className={classes.introduction}>
                     No event at the moment, please wait:)
@@ -354,7 +360,14 @@ function ScrollspyContent({ oId }) {
                 ) : (
                   data.otherEvents.map((item) => {
                     return (
-                      <Grid item xs={11} md={6} lg={4}>
+                      <Grid
+                        item
+                        xs={11}
+                        md={6}
+                        lg={4}
+                        className={classes.eventItem}
+                        key={item}
+                      >
                         <EventCard eventId={item} />
                       </Grid>
                     );

@@ -48,21 +48,21 @@ function SingleReview({ content, oId, setUpdate }) {
   const handleSubmit = async () => {
     const Data = await updateReview(oId, rating, review, content.reviewId);
     if (Data[0] === 200) {
-        setEditMode(false);
-        setUpdate(true);
-      } else {
-        console.log(Data[1]);
-      }
+      setEditMode(false);
+      setUpdate(true);
+    } else {
+      console.log(Data[1]);
+    }
   };
 
   const handleDelete = async () => {
     const Data = await deleteReview(oId, content.reviewId);
     if (Data[0] === 200) {
-        setOpen(false);
-        setUpdate(true);
-      } else {
-        console.log(Data[1]);
-      }
+      setOpen(false);
+      setUpdate(true);
+    } else {
+      console.log(Data[1]);
+    }
   };
 
   return (
@@ -89,14 +89,14 @@ function SingleReview({ content, oId, setUpdate }) {
                 <Rating
                   value={rating}
                   onChange={(event, newValue) => {
-                    if(!newValue){
-                        setRating(1);
-                      }else{
-                        setRating(newValue);
-                      }
+                    if (!newValue) {
+                      setRating(1);
+                    } else {
+                      setRating(newValue);
+                    }
                   }}
                   onChangeActive={(event, newHover) => {
-                    console.log(newHover)
+                    console.log(newHover);
                     setRatingHover(newHover);
                   }}
                 />
@@ -108,7 +108,7 @@ function SingleReview({ content, oId, setUpdate }) {
               </Box>
               <Form.Field>
                 <Form.TextArea
-                    required
+                  required
                   value={review}
                   onChange={(e) => {
                     setReview(e.target.value);
@@ -136,7 +136,9 @@ function SingleReview({ content, oId, setUpdate }) {
         <Comment.Actions>
           {isAuthor ? (
             <>
-              <Comment.Action onClick={toggleEdit}>{editMode ? 'Cancel Edit' : 'Edit'}</Comment.Action>
+              <Comment.Action onClick={toggleEdit}>
+                {editMode ? 'Cancel Edit' : 'Edit'}
+              </Comment.Action>
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}
