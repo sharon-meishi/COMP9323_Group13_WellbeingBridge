@@ -31,6 +31,13 @@ const useStyles = makeStyles({
     fontSize: '35px',
     fontWeight: 'bold',
   },
+ resultlabel: {
+  marginTop: '2%',
+  fontSize: '20px',
+  fontWeight: 'bold',
+  width:'100%',
+  width: '75%',
+},
   dropDown: {
     minWidth: '350px',
     fontSize: '17px',
@@ -42,8 +49,6 @@ const useStyles = makeStyles({
     alignItems: 'center',
     margin: '2%',
     width: '70%',
-    // minHeight:'2000px',
-    // paddingBottom:'40%',//need be be changed
   },
   itemStyle: {
     display: 'flex',
@@ -178,6 +183,9 @@ function OrgSearch() {
           <Link underline='always' style={{cursor: 'pointer', fontSize:'17px'}} onClick={toSearchEvent}> Want to find events</Link>
         </Box>
         
+      </Box>
+      <Box className={classes.resultlabel}>
+            {searchResult.length} matching results:
       </Box>
       <Grid container className={classes.search} key={location.search}>
         {searchResult.map((item, index) => (
