@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import Scrollspy from 'react-scrollspy';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Comment, Form } from 'semantic-ui-react';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Rating from '@material-ui/lab/Rating';
+import EditIcon from '@material-ui/icons/Edit';
 import logoPlaceholder from '../../Assets/logo-placeholder.png';
 import comingSoon from '../../Assets/video-coming-soon.gif';
 import EventCard from '../EventCard';
 import YoutubeVideo from './YoutubeVideo';
-import { getOrganizationDetails } from '../api';
+import SingleReview from './SingleReview';
+import { getOrganizationDetails, postReview } from '../api';
 
 const useStyles = makeStyles((theme) => ({
   scrollspy: {
     display: 'flex',
     flexDirection: 'column',
-    fontSize:'20px',
+    fontSize: '20px',
     margin: '150px 0 0 5%',
     position: 'fixed',
     top: 0,
@@ -112,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const labels = {
-  1: 'Useless',
+  1: 'Worst',
   2: 'Poor',
   3: 'Ok',
   4: 'Good',
@@ -121,6 +124,7 @@ const labels = {
 
 function ScrollspyContent({ oId }) {
   const classes = useStyles();
+  const history = useHistory();
   const BottomSyle = {
     borderBottom: '1px solid #DCDCDC',
     marginBottom: '30px',
@@ -129,9 +133,19 @@ function ScrollspyContent({ oId }) {
   const [review, setReview] = useState('');
   const [newRating, setNewRating] = useState(3);
   const [ratingHover, setRatingHover] = useState(-1);
+  const [update, setUpdate] = useState(false);
+  const usergroup = sessionStorage.getItem('usergroup');
+  const isOrg =
+    sessionStorage.getItem('id') === oId && usergroup === 'organization';
 
   const submitNewReview = async () => {
-    console.log(review);
+    console.log(newRating, review);
+    const Data = await postReview(oId, newRating, review);
+    if (Data[0] === 200) {
+      setNewRating(3);
+      setReview('');
+      setUpdate(true);
+    }
   };
 
   const matchYoutubeUrl = (url) => {
@@ -144,18 +158,21 @@ function ScrollspyContent({ oId }) {
     return false;
   };
 
+  const toEditPage = () => {};
+
   useEffect(() => {
     const getOrganization = async () => {
       const res = await getOrganizationDetails(oId);
       if (res[0] === 200) {
-        console.log(res[1])
+        console.log(res[1]);
         setData(res[1]);
       } else {
         console.log('There is something wrong in getOrganization.');
       }
     };
     getOrganization();
-  }, [oId]);
+    setUpdate(false);
+  }, [oId, update]);
 
   return (
     <div>
@@ -186,12 +203,26 @@ function ScrollspyContent({ oId }) {
             <section id='Name' style={BottomSyle}>
               <div className={classes.box}>
                 <Box display='flex' flexDirection='column' flexWrap='wrap'>
-                  <h2>{data.organizationName}</h2>
+                  <Box display='flex' alignItems='baseline'>
+                    <h2>{data.organizationName}</h2>
+                    <EditIcon
+                      style={{ marginLeft: '5px' }}
+                      onClick={toEditPage}
+                    />
+                  </Box>
+
                   <Box display='flex' alignItems='center' flexWrap='wrap'>
-                    <Rating value={3.5} name='read-only' readOnly precision={0.5}/>
-                    <Box ml={1}>{3.5}</Box>
+                    <Rating
+                      value={data.rating}
+                      name='read-only'
+                      readOnly
+                      precision={0.5}
+                    />
+                    <Box ml={1}>{data.rating || ''}</Box>
                     <Link className={classes.linkStyle} href='#Reviews'>
-                      Add your review
+                      {data.rating === 0
+                        ? 'Be the first one to review'
+                        : 'Add your review'}
                     </Link>
                   </Box>
                 </Box>
@@ -256,19 +287,30 @@ function ScrollspyContent({ oId }) {
 
             <section id='Reviews' style={BottomSyle}>
               <h2>Reviews:</h2>
-              <Comment.Group size='large' style={{ maxWidth: '100%' }}>
+              <Comment.Group size='large' style={{ maxWidth: '100%', marginBottom: '15px' }}>
+              {sessionStorage.getItem('usergroup') === 'individual' ? 
                 <Form onSubmit={submitNewReview}>
+                  
                   <Box display='flex' mb={1}>
                     <Rating
                       value={newRating}
                       onChange={(event, newValue) => {
-                        setNewRating(newValue);
+                        if(!newValue){
+                          setNewRating(1);
+                        }else{
+                          setNewRating(newValue);
+                        }
+                        
                       }}
                       onChangeActive={(event, newHover) => {
                         setRatingHover(newHover);
                       }}
                     />
-                    {newRating !== null && <Box ml={2}>{labels[ratingHover !== -1 ? ratingHover : newRating]}</Box>}
+                    {newRating !== null && (
+                      <Box ml={2}>
+                        {labels[ratingHover !== -1 ? ratingHover : newRating]}
+                      </Box>
+                    )}
                   </Box>
                   <Form.TextArea
                     placeholder='Please leave your review here'
@@ -286,7 +328,19 @@ function ScrollspyContent({ oId }) {
                       primary
                     />
                   </Box>
-                </Form>
+                </Form> :                   <Box fontSize='16px'>
+                    Please Login as an individual user to post review
+                  </Box>}
+                {data.reviews
+                  ? data.reviews.map((eachReview, idx) => (
+                      <SingleReview
+                        key={idx}
+                        content={eachReview}
+                        oId={oId}
+                        setUpdate={setUpdate}
+                      />
+                    ))
+                  : null}
               </Comment.Group>
             </section>
 

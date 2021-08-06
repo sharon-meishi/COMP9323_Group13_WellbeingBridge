@@ -3,7 +3,6 @@ import axios from 'axios';
 const baseUrl = 'http://127.0.0.1:8000';
 
 export const loginRequest = async (data) => {
-  console.log(data);
   const url = baseUrl + '/login';
   const loginBody = {
     email: data.email,
@@ -614,3 +613,72 @@ export const searchEvent= async (data) => {
     }
   }
 };
+
+export const postReview = async (oId, rating, review) => {
+  const url = baseUrl + `/organization/${oId}/review`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const reviewBody = {
+    rating: rating,
+    review: review,
+  };
+  try {
+    const res = await axios.post(url, reviewBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
+export const updateReview = async (oId, rating, review, reviewId) => {
+  const url = baseUrl + `/organization/${oId}/review/${reviewId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const reviewBody = {
+    rating: rating,
+    review: review,
+  };
+  try {
+    const res = await axios.put(url, reviewBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
+export const deleteReview = async (oId, reviewId) => {
+  const url = baseUrl + `/organization/${oId}/review/${reviewId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.delete(url, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}

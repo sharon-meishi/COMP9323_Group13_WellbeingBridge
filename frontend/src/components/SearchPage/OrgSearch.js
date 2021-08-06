@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Button, Input } from 'semantic-ui-react';
+import { Button, Input, Icon } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import MultiSelect from 'react-multi-select-component';
@@ -78,7 +78,8 @@ function OrgSearch() {
     searchParam.has('keyword') ? searchParam.get('keyword') : ''
   );
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault();
     const orgType = searchType.map((each) => each.value);
     const queryData = Object.assign(
       {},
@@ -142,6 +143,7 @@ function OrgSearch() {
       >
         <div className={classes.titleStyle}>Find Organization</div>
         <Box mt={5} pl={5} pr={5}>
+          <form onSubmit={handleSearch}>
           <Input
             type='text'
             placeholder='Search...'
@@ -164,17 +166,18 @@ function OrgSearch() {
             />
             <Button
               type='submit'
-              onClick={handleSearch}
               color='teal'
               style={{ fontSize: '17px' }}
             >
               Search
             </Button>
           </Input>
+          </form>
         </Box>
         <Box mt={5} >
           <Link underline='always' style={{cursor: 'pointer', fontSize:'17px'}} onClick={toSearchEvent}> Want to find events</Link>
         </Box>
+        
       </Box>
       <Grid container className={classes.search} key={location.search}>
         {searchResult.map((item, index) => (

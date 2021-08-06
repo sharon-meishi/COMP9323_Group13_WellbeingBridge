@@ -121,7 +121,7 @@ function EventForm({
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [eId, setEId] = useState(eventId)
+  const [eId, setEId] = useState(eventId);
 
   // useForm setting and set default values
   const {
@@ -137,7 +137,9 @@ function EventForm({
   const [loading, setLoading] = useState(false);
 
   // event location
-  const [eventFormat, setEventFormat] = useState(eventId ? preloadedValues.EventFormat : '');
+  const [eventFormat, setEventFormat] = useState(
+    eventId ? preloadedValues.EventFormat : ''
+  );
   const [lat, setLat] = useState(eventId ? preloadedValues.lat : null);
   const [lng, setlng] = useState(eventId ? preloadedValues.lng : null);
 
@@ -192,7 +194,9 @@ function EventForm({
 
   const handleUpload = async () => {
     const date = new Date();
-    const fileName = `${sessionStorage.getItem('id')}-${date.toLocaleString()}-${file.name}`
+    const fileName = `${sessionStorage.getItem(
+      'id'
+    )}-${date.toLocaleString()}-${file.name}`;
     const ref = storage.ref(`/images/${fileName}`);
     const uploadTask = ref.put(file);
     uploadTask.on('state_changed', console.log, console.error, () => {
@@ -267,8 +271,8 @@ function EventForm({
         Data = await createEventRequest(uploadBody);
       }
       if (Data[0] === 200) {
-        console.log(Data[1].eventid)
-        setEId(Data[1].eventid)
+        console.log(Data[1].eventid);
+        setEId(Data[1].eventid);
         console.log('create/update success');
         setLoading(false);
         setOpen(true);
@@ -381,6 +385,9 @@ function EventForm({
                         <MenuItem value='Race'>Race</MenuItem>
                         <MenuItem value='Seminar'>Seminar</MenuItem>
                         <MenuItem value='Tour'>Tour</MenuItem>
+                        <MenuItem value='Other Activity'>
+                          Other Activity
+                        </MenuItem>
                       </Select>
                     );
                   }}
@@ -415,6 +422,7 @@ function EventForm({
                         <MenuItem value='Kids'>Community organised</MenuItem>
                         <MenuItem value='Seniors'>Seniors</MenuItem>
                         <MenuItem value='Young People'>Young People</MenuItem>
+                        <MenuItem value='Other'>Other</MenuItem>
                       </Select>
                     );
                   }}
@@ -543,15 +551,18 @@ function EventForm({
                   <Controller
                     render={({ field }) => (
                       <DatePicker
+                        isClearable
                         dateFormat='dd/MM/yyyy'
                         selected={field.value}
                         onChange={(e) => {
                           field.onChange(e);
-                          setStartDate(
-                            format(e, 'dd/MM/yyyy', {
-                              awareOfUnicodeTokens: true,
-                            })
-                          );
+                          if (e) {
+                            setStartDate(
+                              format(e, 'dd/MM/yyyy', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }
                         }}
                         inputRef={field.ref}
                         className={classes.pickerStyle}
@@ -571,15 +582,18 @@ function EventForm({
                   <Controller
                     render={({ field }) => (
                       <DatePicker
+                        isClearable
                         dateFormat='dd/MM/yyyy'
                         selected={field.value}
                         onChange={(e) => {
                           field.onChange(e);
-                          setEndDate(
-                            format(e, 'dd/MM/yyyy', {
-                              awareOfUnicodeTokens: true,
-                            })
-                          );
+                          if (e) {
+                            setEndDate(
+                              format(e, 'dd/MM/yyyy', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }
                         }}
                         inputRef={field.ref}
                         className={classes.pickerStyle}
