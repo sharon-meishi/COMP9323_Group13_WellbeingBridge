@@ -991,15 +991,30 @@ class search_event(Resource):
         if category is not None:
             cts = category.split(",")
             conds.append("( " + " OR ".join(["Category='{}'".format(f) for f in cts]) + " )")
+
         if startdate is not None:
-            conds.append("StartDate='{}'".format(startdate))
+            slst = startdate.split("/")
+            slst = list(reversed(slst))
+            startdate = "-".join(slst)
         if enddate is not None:
-            conds.append("EndDate='{}'".format(enddate))
+            elst = enddate.split("/")
+            elst = list(reversed(elst))
+            enddate = "-".join(elst)
+
+        if startdate is not None and enddate is not None:
+            conds.append("DATE_FORMAT(STR_TO_DATE(EndDate,'%d/%m/%Y') ,'%Y-%m-%d')>='{}' AND DATE_FORMAT(STR_TO_DATE(StartDate,'%d/%m/%Y'),'%Y-%m-%d')<='{}'".format(startdate, enddate))
+        elif startdate is not None and enddate is None:
+            conds.append("DATE_FORMAT(STR_TO_DATE(EndDate,'%d/%m/%Y'),'%Y-%m-%d')>='{}'".format(startdate))
+        elif startdate is None and enddate is not None:
+            conds.append("DATE_FORMAT(STR_TO_DATE(StartDate,'%d/%m/%Y'),'%Y-%m-%d')<='{}'".format(enddate))
 
         if conds:
             sql_eventsearch += " WHERE " + " AND ".join(conds) + ";"
         else:
             sql_eventsearch += ";"
+
+        print(sql_eventsearch)
+
 
         output_search = sql_command(sql_eventsearch)
         found_events = []
