@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: '85%', // 16:9
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   expand: {
     transform: 'rotate(0deg)',
@@ -252,6 +255,7 @@ function EventCard(props) {
           className={classes.media}
           image={info.thumbnail}
           title='Event Image'
+          onClick={checkDetail}
         />
 
         <Box

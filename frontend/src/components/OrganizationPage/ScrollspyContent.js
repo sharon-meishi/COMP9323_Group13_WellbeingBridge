@@ -186,9 +186,12 @@ function ScrollspyContent({ oId }) {
         <Grid container className={classes.root}>
           <Scrollspy
             className={classes.scrollspy}
-            items={['Details', 'Services', 'Video', 'Contact', 'Events']}
+            items={['Name','Details', 'Services', 'Video', 'Contact', 'Events']}
             currentClassName={classes.isCurrent}
           >
+            <Link className={classes.item} href='#Name' color='inherit'>
+              Name
+            </Link>            
             <Link className={classes.item} href='#Details' color='inherit'>
               Details
             </Link>
@@ -282,7 +285,7 @@ function ScrollspyContent({ oId }) {
               {data.websiteLink ? (
                 <div className={classes.service}>
                   <span className={classes.boldStyle}>Website Link:</span>{' '}
-                  {data.websiteLink}
+                  <a href={data.websiteLink}>{data.websiteLink}</a>
                 </div>
               ) : null}
             </section>
