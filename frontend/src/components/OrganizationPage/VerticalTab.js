@@ -137,7 +137,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     if (end > start && eventList.length <= start) {
       fetchData();
     }
-  }, [start]);
+  }, [start]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setLoadMore(event_list.length > 3 ? true : false);
@@ -154,7 +154,9 @@ export default function VerticalTabs({ profileData, setUpdate }) {
           OrganizationDetail: Data[1].details,
           OrganizationIntroduction: Data[1].introduction,
           OrganizationType: Data[1].organizationType,
-          serviceList: Data[1].serviceList ? Data[1].serviceList.map((x) => ({ service: x })) : null,
+          serviceList: Data[1].serviceList
+            ? Data[1].serviceList.map((x) => ({ service: x }))
+            : null,
           video: Data[1].video,
           websiteLink: Data[1].websiteLink,
         };
@@ -165,8 +167,6 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     };
     fetchData();
   }, [profileData.oId]);
-
-  console.log(eventList)
 
   return (
     <>
@@ -251,7 +251,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
             flexDirection='column'
           >
             <Typography className={classes.titleStyle}>
-              Edit your Organization Name and Password
+              Edit your account password
             </Typography>
             <ProfileEditForm
               currentName={profileData.organizationName}

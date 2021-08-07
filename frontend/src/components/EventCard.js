@@ -17,7 +17,6 @@ import ShareIcon from '@material-ui/icons/Share';
 import RoomIcon from '@material-ui/icons/Room';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
-import Rating from '@material-ui/lab/Rating';
 import { red } from '@material-ui/core/colors';
 import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
@@ -26,8 +25,8 @@ import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 290,
-    maxWidth: 335,
+    minWidth: 300,
+    maxWidth: 300,
     // margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',

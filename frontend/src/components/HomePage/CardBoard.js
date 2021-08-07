@@ -54,7 +54,6 @@ const CardBoard = () => {
   const fetchOrigin = async () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {
-      console.log(res[1])
       setEventlist(res[1].event_id);
     } else {
       console.log('something wrong in CardBoard');
@@ -79,7 +78,7 @@ const CardBoard = () => {
             <Typography variant='h4' className={classes.text}>
               Popular events
             </Typography>
-            <HomePageButton text='Find Event' onClick={toEventSearch}/>
+            <HomePageButton text='More Events' onClick={toEventSearch}/>
           </Box>
           <Grid container className={classes.eventBox}>
             {event_list.map((eventId) => (

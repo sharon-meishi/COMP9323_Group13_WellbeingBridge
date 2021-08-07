@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { useForm, Controller, set } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link';
 import MultiSelect from 'react-multi-select-component';
-import { Input, Button, Dropdown, Icon } from 'semantic-ui-react';
+import { Input, Button, Dropdown } from 'semantic-ui-react';
 import EventSearchResult from './EventSearchResult';
 import DatePicker from 'react-datepicker';
 import dateFormat from 'date-fns/Format';
@@ -57,9 +57,9 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     padding: '5px 8px',
     marginTop: '8px',
-    '& .react-datepicker__close-icon::after':{
-      color: 'black'
-    }
+    '& .react-datepicker__close-icon::after': {
+      color: 'black',
+    },
   },
 });
 
@@ -77,9 +77,9 @@ const FormatOptions = [
 ];
 
 const categoryOptions = [
-  { label: 'Health and fitness', value: 'Health and fitness' },
+  { label: 'Sports and fitness', value: 'Sports and fitness' },
   { label: 'Multicultural', value: 'Multicultural' },
-  { label: 'Sports and recreation', value: 'Sports and recreation' },
+  { label: 'Mental Health', value: 'Mental Health' },
   { label: 'Family', value: 'Family' },
   { label: 'Community organised', value: 'Community organised' },
   { label: 'Kids', value: 'Kids' },
@@ -154,7 +154,7 @@ function EventSearch() {
     address: { label: address, value: address },
   };
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: urlValue,
   });
 
@@ -203,13 +203,11 @@ function EventSearch() {
   const fetchData = async (q) => {
     const res = await searchEvent(q);
     if (res[0] === 200) {
-      console.log(res[1]);
       setresultList(res[1]);
     }
   };
 
   useEffect(() => {
-    console.log(`queryString=${queryString}`);
     // reset state after query string have change
     setresultList([]);
     setKeyword(searchParam.has('keyword') ? searchParam.get('keyword') : '');
@@ -235,18 +233,29 @@ function EventSearch() {
             .map((each) => ({ label: each, value: each }))
         : []
     );
-    // navigator.geolocation.getCurrentPosition(position => {
-    //   const a = position.coords;
-    //   console.log('sss',a);
-    //   // Show a map centered at latitude / longitude.
-    // });
+    setValue(
+      'startdate',
+      searchParam.has('startdate')
+        ? parsedDate(searchParam.get('startdate'), 'dd/MM/yyyy')
+        : ''
+    );
+    setValue(
+      'enddate',
+      searchParam.has('enddate')
+        ? parsedDate(searchParam.get('enddate'), 'dd/MM/yyyy')
+        : ''
+    );
+    setValue('address', {
+      label: searchParam.has('address') ? searchParam.get('address') : '',
+      value: searchParam.has('address') ? searchParam.get('address') : '',
+    });
     // if have location
     if (searchParam.has('address')) {
       setLatLng(searchParam.get('address'));
     } else {
       fetchData(queryString);
     }
-  }, [searchState, location.search]);
+  }, [searchState, location.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -264,7 +273,7 @@ function EventSearch() {
             <Box display='flex' flexDirection='column'>
               <label>Event Keyword: </label>
               <Input
-                icon={{ name: 'x', link: true, onClick: () => setKeyword('')}}
+                icon={{ name: 'x', link: true, onClick: () => setKeyword('') }}
                 placeholder='Event Keyword...'
                 className={classes.inputStyle}
                 value={keyword}
@@ -272,7 +281,6 @@ function EventSearch() {
                   setKeyword(data.value);
                 }}
               />
-             
             </Box>
             <Box ml={1}>
               <label>Event Format: </label>
@@ -308,7 +316,7 @@ function EventSearch() {
                 <Controller
                   render={({ field }) => (
                     <DatePicker
-                    isClearable
+                      isClearable
                       dateFormat='dd/MM/yyyy'
                       selected={field.value}
                       onChange={(e) => {
@@ -335,7 +343,7 @@ function EventSearch() {
                 <Controller
                   render={({ field }) => (
                     <DatePicker
-                    isClearable
+                      isClearable
                       dateFormat='dd/MM/yyyy'
                       selected={field.value}
                       onChange={(e) => {

@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import { useHistory } from 'react-router-dom';
 import GoogleMapReact from 'google-map-react';
@@ -9,6 +9,7 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/core/styles';
+import { Popup } from 'semantic-ui-react';
 
 const Marker = ({ text }) => {
   return (
@@ -33,9 +34,15 @@ const useStyles = makeStyles({
 function EventMap({ eventList, center }) {
   const classes = useStyles();
   const context = useContext(AppContext);
+  const history = useHistory();
 
   const handleMarkerClick = (id) => {
-    context.setSelected(id)
+    context.setSelected(id);
+  };
+
+  const openGoogleMap = (lat, lng) => {
+    console.log(lat, lng);
+    window.open('https://maps.google.com?q=' + lat + ',' + lng);
   };
 
   const getMapOptions = (maps) => {
@@ -68,29 +75,93 @@ function EventMap({ eventList, center }) {
         options={getMapOptions}
       >
         <Marker lat={center.lat} lng={center.lng} text='You' />
-        {eventList.map((each, idx) => (
-          <Tooltip
-            key={each.eventId}
-            title={<h1 style={{ fontSize: '18px'}}>{each.name}</h1>}
-            lat={parseFloat(each.location.Lat)}
-            lng={parseFloat(each.location.Lng)}
-            arrow
-            placement='top-start'
-            style={{margin: '-20px 0 0 -20px'}}
-          >
-            <Link href={`#${idx+1}`} underline='none' onClick={()=>handleMarkerClick(idx+1)}>
-              
-              <IconButton
-                color='primary'
-                size='large'
-                className={classes.button}
-              >
-                {idx + 1}
-                <RoomIcon fontSize='large' />
-              </IconButton>
-            </Link>
-          </Tooltip>
-        ))}
+        {eventList.map((each, idx) =>
+          each.location.Lat && each.location.Lng ? (
+            // <Tooltip
+            //   key={each.eventId}
+            //   title={
+            //     <Box>
+            //       <Box mb={1} style={{ fontSize: '18px' }}>
+            //         {each.name}
+            //       </Box>
+            //       <Link
+            //         style={{ color: 'lightblue', cursor: 'pointer' }}
+            //         onClick={() =>
+            //           openGoogleMap(
+            //             parseFloat(each.location.Lat),
+            //             parseFloat(each.location.Lng)
+            //           )
+            //         }
+            //       >
+            //         Open in google map
+            //       </Link>
+            //     </Box>
+            //   }
+            //   lat={parseFloat(each.location.Lat)}
+            //   lng={parseFloat(each.location.Lng)}
+            //   arrow
+            //   placement='top-start'
+            //   style={{ margin: '-20px 0 0 -20px' }}
+            // >
+            //   <Link
+            //     href={`#${idx + 1}`}
+            //     underline='none'
+            //     onClick={() => handleMarkerClick(idx + 1)}
+            //   >
+            //     <IconButton
+            //       color='primary'
+            //       size='large'
+            //       className={classes.button}
+            //     >
+            //       {idx + 1}
+            //       <RoomIcon fontSize='large' />
+            //     </IconButton>
+            //   </Link>
+            // </Tooltip>
+            <Popup
+              key={each.eventId}
+              on='click'
+              pinned
+              lat={parseFloat(each.location.Lat)}
+              lng={parseFloat(each.location.Lng)}
+              style={{ margin: '-20px 0 0 -20px' }}
+              content={
+                <Box >
+                  <Box mb={1} style={{ fontSize: '18px' }}>
+                    {each.name}
+                  </Box>
+                  <Link
+                    style={{ cursor: 'pointer' }}
+                    onClick={() =>
+                      openGoogleMap(
+                        parseFloat(each.location.Lat),
+                        parseFloat(each.location.Lng)
+                      )
+                    }
+                  >
+                    Open in google map
+                  </Link>
+                </Box>
+              }
+              trigger={
+                <Link
+                  href={`#${idx + 1}`}
+                  underline='none'
+                  onClick={() => handleMarkerClick(idx + 1)}
+                >
+                  <IconButton
+                    color='primary'
+                    size='large'
+                    className={classes.button}
+                  >
+                    {idx + 1}
+                    <RoomIcon fontSize='large' />
+                  </IconButton>
+                </Link>
+              }
+            />
+          ) : null
+        )}
       </GoogleMapReact>
     </div>
   );

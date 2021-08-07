@@ -29,10 +29,9 @@ function Searchbar({ defaultValue }) {
           type='text'
           placeholder='Type keyword for...'
           onChange={(e) => setKeyword(e.target.value)}
-          required
           action
         >
-          <input required />
+          <input />
           <Select
             options={options}
             value={select}
