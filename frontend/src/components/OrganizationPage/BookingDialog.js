@@ -30,7 +30,6 @@ const useStyles = makeStyles({
 export default function BookingDialog(props) {
   const { onClose, open, info, eventName} = props;
   const classes = useStyles()
-  console.log(info)
   return (
     <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
       <DialogTitle disableTypography id="simple-dialog-title" className={classes.boldStyle}>Users who have booked event '{eventName}'</DialogTitle>

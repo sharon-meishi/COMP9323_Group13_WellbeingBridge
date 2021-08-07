@@ -7,7 +7,6 @@ import Box from '@material-ui/core/Box';
 import EventCard from '../EventCard';
 import EventMap from './EventMap';
 import { getEventSummary } from '../api';
-import { set } from 'react-hook-form';
 
 //three type of sort function
 const menuItem = [
