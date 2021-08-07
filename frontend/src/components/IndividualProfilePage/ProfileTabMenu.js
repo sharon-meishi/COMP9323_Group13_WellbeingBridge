@@ -80,7 +80,6 @@ const useStyles = makeStyles((theme) => ({
   },
   feedStyle: {
     display: 'flex',
-    justifyContent: 'space-around',
     flexWrap: 'wrap',
     width: '100%',
   },

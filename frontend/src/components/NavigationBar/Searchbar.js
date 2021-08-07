@@ -38,7 +38,7 @@ function Searchbar({ defaultValue }) {
             value={select}
             onChange={(e, { value }) => setSelect(value)}
           />
-          <Button type='submit'>Search</Button>
+          <Button type='submit' color='teal'>Search</Button>
         </Input>
       </Form.Field>
     </Form>

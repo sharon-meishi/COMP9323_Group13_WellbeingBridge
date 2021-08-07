@@ -17,6 +17,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import RoomIcon from '@material-ui/icons/Room';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
+import Rating from '@material-ui/lab/Rating';
 import { red } from '@material-ui/core/colors';
 import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
@@ -40,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: '85%', // 16:9
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   expand: {
     transform: 'rotate(0deg)',
@@ -91,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
       height: '50px',
       cursor: 'pointer',
     },
-    '& span': {
+    '& .MuiCardHeader-title': {
       fontSize: '18px',
       cursor: 'pointer',
       fontWeight: 'bold',
@@ -99,16 +103,19 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiCardHeader-action': {
       alignSelf: 'center',
     },
+    '& .MuiCardHeader-subheader': {
+      fontWeight: 'none',
+    },
   },
   eventMarker: {
-    color: '#3f51b5'
+    color: '#3f51b5',
   },
   selectedStyle: {
     border: '3px solid #26A69A',
     padding: '8px',
     borderRadius: '5px',
-    boxSizing: 'border-box'
-  }
+    boxSizing: 'border-box',
+  },
 }));
 
 function EventCard(props) {
@@ -133,8 +140,15 @@ function EventCard(props) {
         }
       }
     };
-    fetchData();
-  }, [props.eventId]);
+    if (props.eventInfo) {
+      setInfo(props.eventInfo);
+      if (props.eventInfo.favourite) {
+        setIslike(true);
+      }
+    } else {
+      fetchData();
+    }
+  }, [props.eventId, props.eventInfo]);
 
   useEffect(() => {
     if (info) {
@@ -175,8 +189,18 @@ function EventCard(props) {
     }
   };
 
-  const toSearchPage = () => {
+  const searchCategory = () => {
     const queryData = { category: info.category };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+  };
+
+  const searchFormat = () => {
+    const queryData = { format: info.format };
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {
       pathname: '/event/search',
@@ -190,114 +214,149 @@ function EventCard(props) {
   };
 
   return info ? (
-    <Box className={context.selected === props.order ? classes.selectedStyle : null}>
-    <Card className={classes.root} id={props.order || props.eventId}>
-      {openLogin ? (
-        <LoginModal
-          open={openLogin}
-          setOpenLogin={setOpenLogin}
-          setOpenRegister={setOpenRegister}
-        />
-      ) : null}
-      {openRegister ? (
-        <RegisterModal
-          open={openRegister}
-          setOpenLogin={setOpenLogin}
-          setOpenRegister={setOpenRegister}
-        />
-      ) : null}
-      <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
-      {orgInfo ? (
-        <CardHeader
-          onClick={toOrgPage}
-          className={classes.cardHeaderRoot}
-          title={orgInfo.OrganizationName}
-          avatar={
-            <Avatar aria-label='organization Logo' src={orgInfo.Logo}>
-              {orgInfo.OrganizationName.charAt(0)}
-            </Avatar>
-          }
-          action={
-            props.order ? 
-            <Box display='flex' justifyContent='center' alignItems='center' className={classes.eventMarker}>
-              <Box fontSize='17px' fontWeight='bold'>{props.order}</Box>
-              <RoomIcon fontSize='large' color='primary'/>
-            </Box> : null
-          }
-        />
-      ) : null}
-      <CardMedia
-        className={classes.media}
-        image={info.thumbnail}
-        title='Event Image'
-      />
-
-      <Box
-        display='flex'
-        flexDirection='column'
-        height='100%'
-        justifyContent='space-between'
-      >
-        <CardContent className={classes.content}>
-          <Box>
-            <Grid container direction='column'>
-              <Box display='flex' justifyContent='space-between'>
-                <div onClick={checkDetail} className={classes.title}>
-                  {info.name}
-                </div>
-                {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
+    <Box
+      className={
+        context.selected === props.order ? classes.selectedStyle : null
+      }
+    >
+      <Card className={classes.root} id={props.order || props.eventId}>
+        {openLogin ? (
+          <LoginModal
+            open={openLogin}
+            setOpenLogin={setOpenLogin}
+            setOpenRegister={setOpenRegister}
+          />
+        ) : null}
+        {openRegister ? (
+          <RegisterModal
+            open={openRegister}
+            setOpenLogin={setOpenLogin}
+            setOpenRegister={setOpenRegister}
+          />
+        ) : null}
+        <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
+        {orgInfo ? (
+          <CardHeader
+            className={classes.cardHeaderRoot}
+            title={
+              <Box onClick={toOrgPage}>
+                {orgInfo.OrganizationName}
+                {/* <Rating
+                size="small" 
+                  value={orgInfo.rating}
+                  name='read-only'
+                  readOnly
+                  precision={0.5}
+                /> */}
               </Box>
+            }
+            subheader={`${info.bookedUser.length} people have booked`}
+            avatar={
+              <Avatar
+                aria-label='organization Logo'
+                src={orgInfo.Logo}
+                onClick={toOrgPage}
+              >
+                {orgInfo.OrganizationName.charAt(0)}
+              </Avatar>
+            }
+            action={
+              props.order ? (
+                <Box
+                  display='flex'
+                  justifyContent='center'
+                  alignItems='center'
+                  className={classes.eventMarker}
+                >
+                  <Box fontSize='17px' fontWeight='bold'>
+                    {props.order}
+                  </Box>
+                  <RoomIcon fontSize='large' color='primary' />
+                </Box>
+              ) : null
+            }
+          />
+        ) : null}
+        <CardMedia
+          className={classes.media}
+          image={info.thumbnail}
+          title='Event Image'
+          onClick={checkDetail}
+        />
 
-              <Box justifyContent='space-between' mt={1} mb={1}>
-                <div className={classes.date} color='textSecondary'>
-                  {info.startdate} to {info.enddate}
-                </div>
-                <div className={classes.location}>{info.location.postcode}</div>
-              </Box>
-            </Grid>
+        <Box
+          display='flex'
+          flexDirection='column'
+          height='100%'
+          justifyContent='space-between'
+        >
+          <CardContent className={classes.content}>
+            <Box>
+              <Grid container direction='column'>
+                <Box display='flex' justifyContent='space-between'>
+                  <div onClick={checkDetail} className={classes.title}>
+                    {info.name}
+                  </div>
+                  {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
+                </Box>
 
-            {/* <Grid className={classes.detail}>
-              <div>{info.introduction}</div>
-            </Grid> */}
-          </Box>
-          <Box alignSelf='flex-end'>
-            <Chip
-              label={`#${info.category}`}
-              clickable
-              color='primary'
-              onClick={toSearchPage}
-            />
-          </Box>
-        </CardContent>
+                <Box justifyContent='space-between' mt={1} mb={1}>
+                  <div className={classes.date} color='textSecondary'>
+                    {info.startdate} to {info.enddate}
+                  </div>
+                  <div className={classes.location}>
+                    {info.format === 'Online Event'
+                      ? 'ONLINE EVENT'
+                      : info.location.postcode}
+                  </div>
+                </Box>
+              </Grid>
+            </Box>
+            <Box alignSelf='flex-end'>
+              <Chip
+                label={`#${info.format}`}
+                clickable
+                color='primary'
+                onClick={searchFormat}
+                style={{ marginRight: '5px' }}
+              />
+              <Chip
+                label={`#${info.category}`}
+                clickable
+                color='primary'
+                onClick={searchCategory}
+              />
+            </Box>
+          </CardContent>
 
-        <CardActions className={classes.actions} disableSpacing>
-          <Box>
-            {sessionStorage.getItem('usergroup') === 'individual' ? (
-              <IconButton onClick={handleLike} aria-label='add to favorites'>
-                {islike ? (
-                  <FavoriteIcon color='secondary' fontSize='default' />
-                ) : (
-                  <FavoriteIcon color='disabled' fontSize='default' />
-                )}
+          <CardActions className={classes.actions} disableSpacing>
+            <Box>
+              {sessionStorage.getItem('usergroup') === 'individual' ? (
+                <IconButton onClick={handleLike} aria-label='add to favorites'>
+                  {islike ? (
+                    <FavoriteIcon color='secondary' fontSize='default' />
+                  ) : (
+                    <FavoriteIcon color='disabled' fontSize='default' />
+                  )}
+                </IconButton>
+              ) : null}
+              <IconButton aria-label='share' onClick={handleShare}>
+                <Tooltip title='Share' placement='right'>
+                  <ShareIcon />
+                </Tooltip>
               </IconButton>
-            ) : null}
-            <IconButton aria-label='share' onClick={handleShare}>
-              <Tooltip title='Share' placement='right'>
-                <ShareIcon />
-              </Tooltip>
-            </IconButton>
-          </Box>
-          <Button
-            onClick={checkDetail}
-            size='small'
-            color='primary'
-            className={classes.view}
-          >
-            Discover More
-          </Button>
-        </CardActions>
-      </Box>
-    </Card>
+            </Box>
+            <Button
+              onClick={checkDetail}
+              size='small'
+              color='primary'
+              className={classes.view}
+            >
+              Discover More
+            </Button>
+          </CardActions>
+        </Box>
+      </Card>
     </Box>
   ) : null;
 }
