@@ -389,9 +389,6 @@ function EventForm({
                         <MenuItem value='Race'>Race</MenuItem>
                         <MenuItem value='Seminar'>Seminar</MenuItem>
                         <MenuItem value='Tour'>Tour</MenuItem>
-                        <MenuItem value='Other Activity'>
-                          Other Activity
-                        </MenuItem>
                       </Select>
                     );
                   }}
@@ -415,18 +412,17 @@ function EventForm({
                         variant='outlined'
                         className={classes.selectStyle}
                       >
-                        <MenuItem value='Health and fitness'>
-                          Health and fitness
+                        <MenuItem value='Sports and fitness'>
+                        Sports and fitness
                         </MenuItem>
                         <MenuItem value='Multicultural'>Multicultural</MenuItem>
-                        <MenuItem value='Sports and recreation'>
-                          Sports and recreation
+                        <MenuItem value='Mental Health'>
+                        Mental Health
                         </MenuItem>
-                        <MenuItem value='Festival'>Family</MenuItem>
-                        <MenuItem value='Kids'>Community organised</MenuItem>
+                        <MenuItem value='Family'>Family</MenuItem>
+                        <MenuItem value='Community organised'>Community organised</MenuItem>
                         <MenuItem value='Seniors'>Seniors</MenuItem>
                         <MenuItem value='Young People'>Young People</MenuItem>
-                        <MenuItem value='Other'>Other</MenuItem>
                       </Select>
                     );
                   }}
@@ -694,6 +690,7 @@ function EventForm({
                       validate: (value) => {
                         const { StartTime } = getValues();
                         const diff = StartTime - value;
+                        console.log(StartTime, value)
                         return (
                           diff <= 0 ||
                           'End time should not be earlier than start time'

@@ -10,6 +10,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import Chip from '@material-ui/core/Chip';
 import EditIcon from '@material-ui/icons/Edit';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
@@ -200,6 +201,7 @@ function EventDetailsPage({ match }) {
   const editEvent = () => {
     history.push(`/event/edit/${eventId}`);
   };
+
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
@@ -261,6 +263,26 @@ function EventDetailsPage({ match }) {
 
   const toOrgPage = () => {
     history.push(`/organization/${detail.OrganizationId}`);
+  };
+
+  const searchCategory = () => {
+    const queryData = { category: detail.category };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+  };
+
+  const searchFormat = () => {
+    const queryData = { format: detail.format };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
   };
 
   return (
@@ -344,17 +366,34 @@ function EventDetailsPage({ match }) {
                 </CardActions>
               )}
             </Grid>
-            <Box alignSelf='flex-end'>
-              <Box fontSize='18px'>
-                By
-                <Link
-                  color='inherit'
-                  underline='always'
-                  onClick={toOrgPage}
-                  className={classes.orgLink}
-                >
-                  {detail.OrganizationName}
-                </Link>
+            <Box display='flex' justifyContent='space-between' alignItems='center'>
+              <Box>
+                <Chip
+                  label={`#${detail.format}`}
+                  clickable
+                  color='primary'
+                  onClick={searchFormat}
+                  style={{ marginRight: '5px' }}
+                />
+                <Chip
+                  label={`#${detail.category}`}
+                  clickable
+                  color='primary'
+                  onClick={searchCategory}
+                />
+              </Box>
+              <Box alignSelf='flex-end'>
+                <Box fontSize='18px'>
+                  By
+                  <Link
+                    color='inherit'
+                    underline='always'
+                    onClick={toOrgPage}
+                    className={classes.orgLink}
+                  >
+                    {detail.OrganizationName}
+                  </Link>
+                </Box>
               </Box>
             </Box>
             <Grid className={classes.info}>

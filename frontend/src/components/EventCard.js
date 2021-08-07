@@ -25,8 +25,8 @@ import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 290,
-    maxWidth: 335,
+    minWidth: 300,
+    maxWidth: 300,
     // margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',

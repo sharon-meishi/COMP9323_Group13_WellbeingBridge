@@ -135,9 +135,9 @@ function SingleReview({ content, oId, setUpdate }) {
         <Comment.Actions>
           {isAuthor ? (
             <>
-              <Comment.Action onClick={toggleEdit}>
+              {/* <Comment.Action onClick={toggleEdit}>
                 {editMode ? 'Cancel Edit' : 'Edit'}
-              </Comment.Action>
+              </Comment.Action> */}
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}

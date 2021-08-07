@@ -73,7 +73,7 @@ function Dashboard({ profileData }) {
           width='100%'
           flexWrap='wrap'
         >
-          <Box display='flex' alignItems='baseline' >
+          <Box display='flex' alignItems='baseline'>
             <Typography variant='h2' className={classes.Hi}>
               Hi,
             </Typography>
@@ -93,13 +93,17 @@ function Dashboard({ profileData }) {
                 precision={0.5}
               />
               <Typography variant='h6' className={classes.Hi}>
-                {profileData.rating}
+                {profileData.rating || ''}
               </Typography>
             </Box>
           </Box>
         </Box>
       </Box>
-      <Box mt={3} width='80%'>
+      <Box mt={3} width='80%'  display='flex' flexDirection='column'>
+        <Box display='flex' alignSelf='flex-end' fontSize='17px'>
+          <Box >Email:</Box>
+          {profileData.email}
+        </Box>
         <Box display='flex'>
           <Typography variant='h5' className={classes.titleStyle}>
             Welcome to your dashboard! Here is your organization page

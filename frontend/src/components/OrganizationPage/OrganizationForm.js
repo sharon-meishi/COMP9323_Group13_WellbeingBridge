@@ -180,6 +180,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
   const resetForm = () => {
     reset();
+    setVId(preloadValues.video ? matchYoutubeUrl(preloadValues.video) : '')
     setImg({
       alt: 'Upload an image',
       src: preloadImg,
@@ -324,7 +325,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                         Financial and Legal
                       </MenuItem>
                       <MenuItem value='Mental Health'>Mental Health</MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
+                      <MenuItem value='Seniors'>Seniors</MenuItem>
                       <MenuItem value='Youth'>Youth</MenuItem>
                     </Select>
                   );
@@ -509,6 +510,8 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                       const id = matchYoutubeUrl(e.target.value);
                       if (id) {
                         setVId(id);
+                      } else{
+                        setVId('')
                       }
                     }}
                     inputRef={field.ref}

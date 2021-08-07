@@ -59,6 +59,10 @@ const useStyles = makeStyles((theme) => ({
     height: '70vh',
     overflow: 'scroll',
     alignItems: 'flex-start',
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center'
+    },
+    
   },
   onlyEvents: {
     display: 'flex',

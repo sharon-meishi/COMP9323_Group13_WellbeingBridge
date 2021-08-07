@@ -123,7 +123,7 @@ function SingleComment({
           ) : null}
           {isAuthor ? (
             <>
-              <Comment.Action onClick={toggleEdit}>{editMode ? 'Cancel Edit' : 'Edit'}</Comment.Action>
+              {/* <Comment.Action onClick={toggleEdit}>{editMode ? 'Cancel Edit' : 'Edit'}</Comment.Action> */}
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}
