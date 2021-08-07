@@ -1,12 +1,10 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { AppContext } from '../../utils/store';
-import { useHistory } from 'react-router-dom';
 import GoogleMapReact from 'google-map-react';
 import markerCss from './marker.module.css';
 import RoomIcon from '@material-ui/icons/Room';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
-import Box from '@material-ui/core/Box';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -35,7 +33,8 @@ function EventMap({ eventList, center }) {
   const context = useContext(AppContext);
 
   const handleMarkerClick = (id) => {
-    context.setSelected(id)
+    context.setSelected(id);
+    console.log(id)
   };
 
   const getMapOptions = (maps) => {
@@ -68,29 +67,34 @@ function EventMap({ eventList, center }) {
         options={getMapOptions}
       >
         <Marker lat={center.lat} lng={center.lng} text='You' />
-        {eventList.map((each, idx) => (
-          <Tooltip
-            key={each.eventId}
-            title={<h1 style={{ fontSize: '18px'}}>{each.name}</h1>}
-            lat={parseFloat(each.location.Lat)}
-            lng={parseFloat(each.location.Lng)}
-            arrow
-            placement='top-start'
-            style={{margin: '-20px 0 0 -20px'}}
-          >
-            <Link href={`#${idx+1}`} underline='none' onClick={()=>handleMarkerClick(idx+1)}>
-              
-              <IconButton
-                color='primary'
-                size='large'
-                className={classes.button}
+        {eventList.map((each, idx) =>
+          each.location.Lat && each.location.Lng ? (
+            <Tooltip
+              key={each.eventId}
+              title={<h1 style={{ fontSize: '18px' }}>{each.name}</h1>}
+              lat={parseFloat(each.location.Lat)}
+              lng={parseFloat(each.location.Lng)}
+              arrow
+              placement='top-start'
+              style={{ margin: '-20px 0 0 -20px' }}
+            >
+              <Link
+                href={`#${idx + 1}`}
+                underline='none'
+                onClick={() => handleMarkerClick(idx + 1)}
               >
-                {idx + 1}
-                <RoomIcon fontSize='large' />
-              </IconButton>
-            </Link>
-          </Tooltip>
-        ))}
+                <IconButton
+                  color='primary'
+                  size='large'
+                  className={classes.button}
+                >
+                  {idx + 1}
+                  <RoomIcon fontSize='large' />
+                </IconButton>
+              </Link>
+            </Tooltip>
+          ) : null
+        )}
       </GoogleMapReact>
     </div>
   );

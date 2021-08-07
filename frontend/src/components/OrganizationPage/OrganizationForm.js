@@ -235,7 +235,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
       sendData(uploadBody)
     }
 
-  }, [url]);
+  }, [url]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     reset();

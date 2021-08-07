@@ -271,8 +271,11 @@ function EventForm({
         Data = await createEventRequest(uploadBody);
       }
       if (Data[0] === 200) {
-        console.log(Data[1].eventid);
-        setEId(Data[1].eventid);
+        if(eventId){
+          setEId(eventId);
+        }else {
+          setEId(Data[1].eventid)
+        }
         console.log('create/update success');
         setLoading(false);
         setOpen(true);
@@ -281,12 +284,16 @@ function EventForm({
       }
     };
 
-    if (url) {
+    if (url && lat && lng) {
+      const uploadBody = buildBody();
+      console.log(uploadBody);
+      sendData(uploadBody);
+    } else if (eventFormat === 'Online Event' && url){
       const uploadBody = buildBody();
       console.log(uploadBody);
       sendData(uploadBody);
     }
-  }, [url]);
+  }, [url, lat, lng]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     reset();

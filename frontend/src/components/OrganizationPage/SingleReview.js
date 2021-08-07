@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Comment, Button } from 'semantic-ui-react';
+import { Form, Comment } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Rating from '@material-ui/lab/Rating';

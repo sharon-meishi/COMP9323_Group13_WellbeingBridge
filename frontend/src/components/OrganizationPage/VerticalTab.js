@@ -137,7 +137,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     if (end > start && eventList.length <= start) {
       fetchData();
     }
-  }, [start]);
+  }, [start]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setLoadMore(event_list.length > 3 ? true : false);

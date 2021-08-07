@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Scrollspy from 'react-scrollspy';
-import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Comment, Form } from 'semantic-ui-react';
 import Link from '@material-ui/core/Link';
@@ -132,7 +131,6 @@ const labels = {
 
 function ScrollspyContent({ oId }) {
   const classes = useStyles();
-  const history = useHistory();
   const BottomSyle = {
     borderBottom: '1px solid #DCDCDC',
     marginBottom: '30px',
@@ -142,9 +140,6 @@ function ScrollspyContent({ oId }) {
   const [newRating, setNewRating] = useState(3);
   const [ratingHover, setRatingHover] = useState(-1);
   const [update, setUpdate] = useState(false);
-  const usergroup = sessionStorage.getItem('usergroup');
-  const isOrg =
-    sessionStorage.getItem('id') === oId && usergroup === 'organization';
 
   const submitNewReview = async () => {
     console.log(newRating, review);
@@ -219,7 +214,6 @@ function ScrollspyContent({ oId }) {
                   <Box display='flex' alignItems='center' flexWrap='wrap'>
                     <Rating
                       value={data.rating}
-                      name='read-only'
                       readOnly
                       precision={0.5}
                     />
@@ -285,7 +279,7 @@ function ScrollspyContent({ oId }) {
               {data.websiteLink ? (
                 <div className={classes.service}>
                   <span className={classes.boldStyle}>Website Link:</span>{' '}
-                  <a href={data.websiteLink}>{data.websiteLink}</a>
+                  <Link href={data.websiteLink} style={{cursor: 'pointer'}} underline='hover'>{data.websiteLink}</Link>
                 </div>
               ) : null}
             </section>

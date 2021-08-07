@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Button, Input, Icon } from 'semantic-ui-react';
+import { Button, Input } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import MultiSelect from 'react-multi-select-component';
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   fontSize: '20px',
   fontWeight: 'bold',
   width:'100%',
-  width: '75%',
+  marginLeft:'4%'
 },
   dropDown: {
     minWidth: '350px',
@@ -47,7 +47,6 @@ const useStyles = makeStyles({
     justifyContent: 'flex-start',
     flexWrap: 'wrap',
     alignItems: 'center',
-    margin: '2%',
     width: '70%',
   },
   itemStyle: {
@@ -130,7 +129,7 @@ function OrgSearch() {
       }
     };
     search();
-  }, [searchState, location.search]);
+  }, [searchState, location.search]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box

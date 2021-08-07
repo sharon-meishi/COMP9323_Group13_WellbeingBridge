@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { useForm, Controller, set } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link';
 import MultiSelect from 'react-multi-select-component';
-import { Input, Button, Dropdown, Icon } from 'semantic-ui-react';
+import { Input, Button, Dropdown } from 'semantic-ui-react';
 import EventSearchResult from './EventSearchResult';
 import DatePicker from 'react-datepicker';
 import dateFormat from 'date-fns/Format';
@@ -246,7 +246,7 @@ function EventSearch() {
     } else {
       fetchData(queryString);
     }
-  }, [searchState, location.search]);
+  }, [searchState, location.search]);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
