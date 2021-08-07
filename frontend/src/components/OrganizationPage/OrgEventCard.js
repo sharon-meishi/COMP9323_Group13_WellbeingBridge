@@ -176,11 +176,8 @@ function OrgEventCard({
                 <Typography className={classes.date} color='textSecondary'>
                   {startdate} to {enddate}
                 </Typography>
-                <Typography className={classes.location} style={{textAlign:'end'}}>{postcode}</Typography>
+                <Typography className={classes.location} style={{textAlign:'end'}}>{postcode || 'ONLINE EVENT'}</Typography>
               </Box>
-            </Grid>
-            <Grid className={classes.detail}>
-              <Typography>{introduction}</Typography>
             </Grid>
           </CardContent>
           <CardActions className={classes.actions} disableSpacing>

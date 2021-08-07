@@ -66,19 +66,11 @@ function EventDisplay(props) {
         eventId={event.eventId}
         eventName={event.name}
         eventDate={event.date}
-        postcode={event.location.postcode}
+        postcode={event.location.address}
         introduction={event.introduction}
         thumbnail={event.thumbnail}
          />
       ))}
-
-      {/* {event_list.map((eventId) => (
-        <OrgEventCard
-          key={eventId}
-          eventId={eventId}
-          className={classes.item}
-        ></OrgEventCard>
-      ))} */}
     </div>
     <Box>
         <Button color='primary' variant='contained' onClick={loadMoreHandler}>

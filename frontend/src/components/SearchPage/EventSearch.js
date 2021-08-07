@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, set } from 'react-hook-form';
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link';
 import MultiSelect from 'react-multi-select-component';
-import { Input, Button, Dropdown } from 'semantic-ui-react';
+import { Input, Button, Dropdown, Icon } from 'semantic-ui-react';
 import EventSearchResult from './EventSearchResult';
 import DatePicker from 'react-datepicker';
 import dateFormat from 'date-fns/Format';
@@ -57,10 +57,14 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     padding: '5px 8px',
     marginTop: '8px',
+    '& .react-datepicker__close-icon::after':{
+      color: 'black'
+    }
   },
 });
 
 const FormatOptions = [
+  { label: 'Online Event', value: 'Online Event' },
   { label: 'Class', value: 'Class' },
   { label: 'Conference', value: 'Conference' },
   { label: 'Festival', value: 'Festival' },
@@ -98,7 +102,7 @@ function EventSearch() {
   const searchParam = new URLSearchParams(queryString);
   const [searchState, setSearchState] = useState(0);
   const [resultList, setresultList] = useState([]);
-  const [center, setCenter] = useState({lat: '', lng: ''})
+  const [center, setCenter] = useState({ lat: '', lng: '' });
 
   // parse Date value to 'dd/mm/yyyy' date string
   const parsedDate = (dateString, Format) => {
@@ -147,7 +151,7 @@ function EventSearch() {
       ? parsedDate(searchParam.get('enddate'), 'dd/MM/yyyy')
       : '',
     Postcode: searchParam.has('postcode') ? searchParam.get('postcode') : '',
-    address: {label: address, value: address}
+    address: { label: address, value: address },
   };
 
   const { control, handleSubmit } = useForm({
@@ -155,8 +159,8 @@ function EventSearch() {
   });
 
   const toOrgSearch = () => {
-    history.push('/organization/search')
-  }
+    history.push('/organization/search');
+  };
 
   const setLatLng = (address) => {
     geocodeByAddress(address)
@@ -164,15 +168,17 @@ function EventSearch() {
       .then(({ lat, lng }) => {
         setCenter({
           lat: lat,
-          lng: lng
-        })
-        const locationQuery = `${queryString}&lat=${lat.toFixed(6)}&lng=${lng.toFixed(6)}`;
+          lng: lng,
+        });
+        const locationQuery = `${queryString}&lat=${lat.toFixed(
+          6
+        )}&lng=${lng.toFixed(6)}`;
         fetchData(locationQuery);
       });
   };
 
   const handleSearch = async (data) => {
-    const queryAddress = data.address ? data.address.label : ''
+    const queryAddress = data.address ? data.address.label : '';
     const format = Format.map((each) => each.value);
     const category = Category.map((each) => each.value);
     const queryData = Object.assign(
@@ -182,8 +188,8 @@ function EventSearch() {
       category.length === 0 ? null : { category },
       startdate === '' ? null : { startdate },
       enddate === '' ? null : { enddate },
-      queryAddress === '' ? null : { address : queryAddress },
-      range === '' ? null : { range },
+      queryAddress === '' ? null : { address: queryAddress },
+      queryAddress === '' ? null : { range }
     );
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {
@@ -211,7 +217,7 @@ function EventSearch() {
       searchParam.has('startdate') ? searchParam.get('startdate') : ''
     );
     setenddate(searchParam.has('enddate') ? searchParam.get('enddate') : '');
-    setAddress(searchParam.has('address') ? searchParam.get('address') : '')
+    setAddress(searchParam.has('address') ? searchParam.get('address') : '');
     setRange(searchParam.has('range') ? searchParam.get('range') : '5');
     setFormat(
       searchParam.has('format')
@@ -234,10 +240,10 @@ function EventSearch() {
     //   console.log('sss',a);
     //   // Show a map centered at latitude / longitude.
     // });
-    // if have location 
-    if(searchParam.has('address')){
-      setLatLng(searchParam.get('address'))
-    }else{
+    // if have location
+    if (searchParam.has('address')) {
+      setLatLng(searchParam.get('address'));
+    } else {
       fetchData(queryString);
     }
   }, [searchState, location.search]);
@@ -258,6 +264,7 @@ function EventSearch() {
             <Box display='flex' flexDirection='column'>
               <label>Event Keyword: </label>
               <Input
+                icon={{ name: 'x', link: true, onClick: () => setKeyword('')}}
                 placeholder='Event Keyword...'
                 className={classes.inputStyle}
                 value={keyword}
@@ -265,6 +272,7 @@ function EventSearch() {
                   setKeyword(data.value);
                 }}
               />
+             
             </Box>
             <Box ml={1}>
               <label>Event Format: </label>
@@ -300,15 +308,18 @@ function EventSearch() {
                 <Controller
                   render={({ field }) => (
                     <DatePicker
+                    isClearable
                       dateFormat='dd/MM/yyyy'
                       selected={field.value}
                       onChange={(e) => {
                         field.onChange(e);
-                        setstartdate(
-                          dateFormat(e, 'dd/MM/yyyy', {
-                            awareOfUnicodeTokens: true,
-                          })
-                        );
+                        if (e) {
+                          setstartdate(
+                            dateFormat(e, 'dd/MM/yyyy', {
+                              awareOfUnicodeTokens: true,
+                            })
+                          );
+                        }
                       }}
                       className={classes.pickerStyle}
                     />
@@ -324,15 +335,18 @@ function EventSearch() {
                 <Controller
                   render={({ field }) => (
                     <DatePicker
+                    isClearable
                       dateFormat='dd/MM/yyyy'
                       selected={field.value}
                       onChange={(e) => {
                         field.onChange(e);
-                        setenddate(
-                          dateFormat(e, 'dd/MM/yyyy', {
-                            awareOfUnicodeTokens: true,
-                          })
-                        );
+                        if (e) {
+                          setenddate(
+                            dateFormat(e, 'dd/MM/yyyy', {
+                              awareOfUnicodeTokens: true,
+                            })
+                          );
+                        }
                       }}
                       className={classes.pickerStyle}
                     />
@@ -362,7 +376,7 @@ function EventSearch() {
                           defaultValue: {
                             label: address,
                             value: address,
-                          }
+                          },
                         }}
                         minLengthAutocomplete={3}
                       />
@@ -388,10 +402,22 @@ function EventSearch() {
               Search
             </Button>
           </Box>
-          <Box mt={1}><Link onClick={toOrgSearch} style={{cursor: 'pointer', fontSize:'17px'}}>Want to find organization?</Link></Box>
+          <Box mt={1}>
+            <Link
+              onClick={toOrgSearch}
+              style={{ cursor: 'pointer', fontSize: '17px' }}
+            >
+              Want to find organization?
+            </Link>
+          </Box>
         </Box>
       </form>
-      <EventSearchResult key={location.search} result={resultList} address={address} center={center}/>
+      <EventSearchResult
+        key={location.search}
+        result={resultList}
+        address={address}
+        center={center}
+      />
     </>
   );
 }

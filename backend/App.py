@@ -236,7 +236,7 @@ token_parser.add_argument('Authorization', type=str, location='headers')
 class event(Resource):
     def get(self, eventid):
         token = token_parser.parse_args()['Authorization']
-        event_sql = f"SELECT EventId,Thumbnail,EventName,StartDate,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId,EndDate FROM Event WHERE EventId='{eventid}';"
+        event_sql = f"SELECT EventId,Thumbnail,EventName,StartDate,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId,EndDate,Format FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
 
         if token is None:
@@ -272,6 +272,7 @@ class event(Resource):
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
                              "thumbnail": result[0][1],
+                             "format":result[0][13],
                              "category": result[0][10],
                              "name": result[0][2],
                              "orgid": result[0][11],
@@ -1065,11 +1066,16 @@ class search_event(Resource):
         if lat is not None and lng is not None:
             orig_coords = (float(lat), float(lng))
             for event_id, e_lat, e_lng in output_search:
-                evt_coords = (float(e_lat), float(e_lng))
-                if distance.geodesic(orig_coords, evt_coords).km <= range:
+                if(e_lat == "" and e_lng == ""):
                     found_events.append(event_id)
+                else:
+                    evt_coords = (float(e_lat), float(e_lng))
+                    if distance.geodesic(orig_coords, evt_coords).km <= range:
+                        found_events.append(event_id)
         else:
             found_events = [output[0] for output in output_search]
+        
+        found_events.reverse()
 
         return found_events, 200
 

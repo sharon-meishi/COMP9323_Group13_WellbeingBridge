@@ -143,7 +143,7 @@ function EventDetailsPage({ match }) {
   const history = useHistory();
   const context = useContext(AppContext);
   const [detail, setDetail] = useState({});
-  const [orgDetail, setOrgDetail] = useState({})
+  const [orgDetail, setOrgDetail] = useState({});
   const [islike, setIslike] = useState(false);
   const [isbook, setIsbook] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
@@ -167,8 +167,10 @@ function EventDetailsPage({ match }) {
       if (res[0] === 200) {
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
-        if (parseInt(sessionStorage.getItem('id')) === res[1].OrganizationId && usergroup === 'organization')
-        {
+        if (
+          parseInt(sessionStorage.getItem('id')) === res[1].OrganizationId &&
+          usergroup === 'organization'
+        ) {
           setEditable(true);
         }
         if (res[1].favourite) {
@@ -184,17 +186,16 @@ function EventDetailsPage({ match }) {
   }, [eventId, update, usergroup]);
 
   useEffect(() => {
-    const fetchOrgData = async() => {
+    const fetchOrgData = async () => {
       const Data = await getOrgSummary(detail.OrganizationId);
-      if (Data[0] === 200){
-        console.log(Data[1])
-        setOrgDetail(Data[1])
+      if (Data[0] === 200) {
+        setOrgDetail(Data[1]);
       }
+    };
+    if (Object.keys(detail).length !== 0) {
+      fetchOrgData();
     }
-    if(Object.keys(detail).length !== 0){
-      fetchOrgData()
-    }
-  }, [detail])
+  }, [detail]);
 
   const editEvent = () => {
     history.push(`/event/edit/${eventId}`);
@@ -262,7 +263,6 @@ function EventDetailsPage({ match }) {
   const toOrgPage = () => {
     history.push(`/organization/${detail.OrganizationId}`);
   };
-
 
   return (
     <div>
@@ -367,10 +367,12 @@ function EventDetailsPage({ match }) {
                 <Header as='h4'> What time:</Header>
                 {detail.time}
               </div>
-              <div variant='body1' className={classes.org}>
-                <Header as='h4'> Where:</Header>
-                {detail.location ? detail.location.address : ''}
-              </div>
+              {detail.location ? (
+                <div variant='body1' className={classes.org}>
+                  <Header as='h4'> Where:</Header>
+                  {detail.location.address || detail.format}
+                </div>
+              ) : null}
             </Grid>
             <Grid className={classes.sectionStyle}>
               <Header as='h3'> Introduction:</Header>
