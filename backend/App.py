@@ -986,7 +986,7 @@ class search_org(Resource):
         conds = []
         if name is not None:
             ns = name.split(",")
-            conds.append("( " + " OR ".join(["OrganizationName='{}'".format(n) for n in ns]) + " )")
+            conds.append("( " + " OR ".join(["LOWER(OrganizationName) LIKE '%{}%'".format(n.lower()) for n in ns]) + " )")
         if orgtype is not None:
             ots = orgtype.split(",")
             conds.append("( " + " OR ".join(["OrganizationType='{}'".format(ot) for ot in ots]) + " )")
