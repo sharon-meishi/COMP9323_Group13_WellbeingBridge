@@ -127,7 +127,7 @@ function SingleReview({ content, oId, setUpdate }) {
           ) : (
             <Box>
               <Box>
-                <Rating value={content.rating} />
+                <Rating readOnly value={content.rating} />
               </Box>
               <Box>{content.review}</Box>
             </Box>

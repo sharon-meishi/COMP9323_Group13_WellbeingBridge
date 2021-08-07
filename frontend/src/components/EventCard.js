@@ -17,6 +17,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import RoomIcon from '@material-ui/icons/Room';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
+import Rating from '@material-ui/lab/Rating';
 import { red } from '@material-ui/core/colors';
 import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
@@ -102,9 +103,9 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiCardHeader-action': {
       alignSelf: 'center',
     },
-    '& .MuiCardHeader-subheader':{
+    '& .MuiCardHeader-subheader': {
       fontWeight: 'none',
-    }
+    },
   },
   eventMarker: {
     color: '#3f51b5',
@@ -141,8 +142,8 @@ function EventCard(props) {
     };
     if (props.eventInfo) {
       setInfo(props.eventInfo);
-      if(props.eventInfo.favourite){
-        setIslike(true)
+      if (props.eventInfo.favourite) {
+        setIslike(true);
       }
     } else {
       fetchData();
@@ -188,8 +189,18 @@ function EventCard(props) {
     }
   };
 
-  const toSearchPage = () => {
+  const searchCategory = () => {
     const queryData = { category: info.category };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+  };
+
+  const searchFormat = () => {
+    const queryData = { format: info.format };
     const queryPath = new URLSearchParams(queryData).toString();
     const path = {
       pathname: '/event/search',
@@ -227,10 +238,25 @@ function EventCard(props) {
         {orgInfo ? (
           <CardHeader
             className={classes.cardHeaderRoot}
-            title={<span onClick={toOrgPage}>{orgInfo.OrganizationName}</span>}
-            subheader={`${info.bookedUser.length} people have booked` }
+            title={
+              <Box onClick={toOrgPage}>
+                {orgInfo.OrganizationName}
+                {/* <Rating
+                size="small" 
+                  value={orgInfo.rating}
+                  name='read-only'
+                  readOnly
+                  precision={0.5}
+                /> */}
+              </Box>
+            }
+            subheader={`${info.bookedUser.length} people have booked`}
             avatar={
-              <Avatar aria-label='organization Logo' src={orgInfo.Logo} onClick={toOrgPage}>
+              <Avatar
+                aria-label='organization Logo'
+                src={orgInfo.Logo}
+                onClick={toOrgPage}
+              >
                 {orgInfo.OrganizationName.charAt(0)}
               </Avatar>
             }
@@ -291,14 +317,14 @@ function EventCard(props) {
                 label={`#${info.format}`}
                 clickable
                 color='primary'
-                onClick={toSearchPage}
-                style={{marginRight:'5px'}}
+                onClick={searchFormat}
+                style={{ marginRight: '5px' }}
               />
               <Chip
                 label={`#${info.category}`}
                 clickable
                 color='primary'
-                onClick={toSearchPage}
+                onClick={searchCategory}
               />
             </Box>
           </CardContent>
