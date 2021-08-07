@@ -96,7 +96,6 @@ function SingleReview({ content, oId, setUpdate }) {
                     }
                   }}
                   onChangeActive={(event, newHover) => {
-                    console.log(newHover);
                     setRatingHover(newHover);
                   }}
                 />

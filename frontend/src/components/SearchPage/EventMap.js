@@ -34,7 +34,6 @@ function EventMap({ eventList, center }) {
 
   const handleMarkerClick = (id) => {
     context.setSelected(id);
-    console.log(id)
   };
 
   const getMapOptions = (maps) => {

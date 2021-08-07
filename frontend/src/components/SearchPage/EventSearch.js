@@ -203,13 +203,11 @@ function EventSearch() {
   const fetchData = async (q) => {
     const res = await searchEvent(q);
     if (res[0] === 200) {
-      console.log(res[1]);
       setresultList(res[1]);
     }
   };
 
   useEffect(() => {
-    console.log(`queryString=${queryString}`);
     // reset state after query string have change
     setresultList([]);
     setKeyword(searchParam.has('keyword') ? searchParam.get('keyword') : '');
@@ -235,11 +233,6 @@ function EventSearch() {
             .map((each) => ({ label: each, value: each }))
         : []
     );
-    // navigator.geolocation.getCurrentPosition(position => {
-    //   const a = position.coords;
-    //   console.log('sss',a);
-    //   // Show a map centered at latitude / longitude.
-    // });
     // if have location
     if (searchParam.has('address')) {
       setLatLng(searchParam.get('address'));

@@ -24,7 +24,6 @@ function EventEditPage(props) {
     const fetchData = async (eventId) => {
       const Data = await getEventDetails(eventId);
       if (Data[0] === 200) {
-        console.log(Data[1]);
         setRawData(Data[1]);
         
         const time = Data[1].time.split('to');

@@ -115,8 +115,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     defaultValues: preloadValues,
   });
 
-  console.log(preloadValues)
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'serviceList',
@@ -193,7 +191,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log(data);
     setData(data);
     if (data.picture){
       handleUpload();

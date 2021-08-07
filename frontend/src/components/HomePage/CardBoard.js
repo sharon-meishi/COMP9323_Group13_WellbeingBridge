@@ -54,7 +54,6 @@ const CardBoard = () => {
   const fetchOrigin = async () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {
-      console.log(res[1])
       setEventlist(res[1].event_id);
     } else {
       console.log('something wrong in CardBoard');

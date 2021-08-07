@@ -124,7 +124,6 @@ function OrgSearch() {
     const search = async () => {
       const res = await searchOrganization(urlKeyword, typeList);
       if (res[0] === 200) {
-        console.log(res[1].organizationId);
         setSearchResult(res[1].organizationId);
       }
     };

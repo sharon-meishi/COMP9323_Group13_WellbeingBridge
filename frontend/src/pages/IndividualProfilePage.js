@@ -67,7 +67,6 @@ function IndividualUserProfilePage() {
     const fetchData = async () => {
       const Data = await getUserProfile();
       if (Data[0] === 200) {
-        console.log(Data[1]);
         setProfileData(Data[1]);
         setUpdate(false);
       } else {

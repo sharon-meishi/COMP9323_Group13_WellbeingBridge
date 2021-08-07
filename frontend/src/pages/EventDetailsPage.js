@@ -252,7 +252,6 @@ function EventDetailsPage({ match }) {
   };
 
   const submitNewComment = async () => {
-    console.log(comment);
     const Data = await postComment(eventId, comment);
     if (Data[0] === 200) {
       setComment('');

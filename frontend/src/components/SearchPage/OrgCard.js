@@ -54,7 +54,6 @@ export default function OrgCard({ Id }) {
     const getInfo = async () => {
       const res = await getOrgSummary(Id);
       if (res[0] === 200) {
-        console.log(res[1])
         setCardInfo(res[1]);
         if (res[1].Logo) {
           setCardLogo(res[1].Logo);
@@ -76,7 +75,6 @@ export default function OrgCard({ Id }) {
     };
     history.push(path);
   };
-  console.log(cardInfo.rating)
   return (
     <Card className={classes.root}>
       {/* <CardActionArea> */}

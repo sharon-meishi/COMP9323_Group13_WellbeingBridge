@@ -71,8 +71,6 @@ function ProfileEditForm({ currentName, oId, setOpen, setUpdate }) {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
-
     const updateProfile = async () => {
       let Data;
       if (oId) {
@@ -80,14 +78,12 @@ function ProfileEditForm({ currentName, oId, setOpen, setUpdate }) {
           organizationName: data.name,
           password: data.password || '',
         };
-        console.log(updateBody);
         Data = await updateOrganizationProfile(oId, updateBody);
       } else {
         const updateBody = {
           Nickname: data.name,
           Password: data.password || '',
         };
-        console.log(updateBody);
         Data = await updateUserProfile(updateBody);
       }
       if (Data[0] === 200) {

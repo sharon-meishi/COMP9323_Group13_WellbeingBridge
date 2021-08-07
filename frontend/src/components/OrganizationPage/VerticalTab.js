@@ -166,8 +166,6 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     fetchData();
   }, [profileData.oId]);
 
-  console.log(eventList)
-
   return (
     <>
       {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}

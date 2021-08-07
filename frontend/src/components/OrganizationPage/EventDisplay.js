@@ -21,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
 function EventDisplay(props) {
   const classes = useStyles();
   const event_list = props.profileData.publishedEvent;
-  console.log(event_list)
   const [start, setStart] = useState(0);
   const [eventList, setEventList] = useState([]);
   const [loadMore, setLoadMore] = useState(event_list.length > 3 ? true : false);
@@ -53,10 +52,7 @@ function EventDisplay(props) {
   useEffect(() => {
     setLoadMore(event_list.length > 3 ? true : false)
   }, [event_list])
-  console.log('eventlist');
-  console.log(eventList)
-
-
+  
   return (
     <>
     <div className={classes.eventBox}>

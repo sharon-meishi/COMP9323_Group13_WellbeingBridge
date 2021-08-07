@@ -219,7 +219,6 @@ function EventForm({
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log(data);
     setData(data);
     if (data.picture) {
       handleUpload();
@@ -286,11 +285,9 @@ function EventForm({
 
     if (url && lat && lng) {
       const uploadBody = buildBody();
-      console.log(uploadBody);
       sendData(uploadBody);
     } else if (eventFormat === 'Online Event' && url){
       const uploadBody = buildBody();
-      console.log(uploadBody);
       sendData(uploadBody);
     }
   }, [url, lat, lng]);// eslint-disable-line react-hooks/exhaustive-deps
@@ -654,7 +651,7 @@ function EventForm({
                         inputRef={field.ref}
                         className={classes.pickerStyle}
                         onChangeRaw={(event) => {
-                          console.log(event.target.value);
+                          // console.log(event.target.value);
                         }}
                       />
                     )}
