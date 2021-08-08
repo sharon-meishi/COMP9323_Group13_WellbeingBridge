@@ -141,6 +141,7 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
           <TextField
             {...register('nickname', {
               required: true,
+              pattern: /^[a-zA-Z0-9_.-]*$/
             })}
             autoFocus
             margin='normal'
@@ -153,6 +154,9 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
           />
           {errors?.nickname?.type === 'required' && (
             <Alert severity='error'>This field is required</Alert>
+          )}
+          {errors?.nickname?.type === 'pattern' && (
+            <Alert severity='error'>Invalid username</Alert>
           )}
           <TextField
             {...register('email', {
@@ -172,7 +176,9 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
           {errors?.emailRegister?.type === 'required' && (
             <Alert severity='error'>This field is required</Alert>
           )}
-          {errors?.emailRegister?.type === 'pattern' && 'Invalid email input'}
+          {errors?.emailRegister?.type === 'pattern' && (
+            <Alert>Invalid email input</Alert>
+          )}
           <TextField
             {...register('password', {
               required: true,

@@ -230,7 +230,6 @@ export default function VerticalTabs({ profileData, setUpdate }) {
                 Load More
               </Button>
             </Box>
-            {/* <EventDisplay profileData={profileData} /> */}
           </Box>
         </TabPanel>
         <TabPanel value={value} index={2} className={classes.tabpanel}>

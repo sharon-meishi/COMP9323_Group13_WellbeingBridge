@@ -20,7 +20,7 @@ token_parser.add_argument('Authorization', type=str, location='headers')
 class event(Resource):
     def get(self, eventid):
         token = token_parser.parse_args()['Authorization']
-        event_sql = f"SELECT EventId,Thumbnail,EventName,StartDate,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId,EndDate FROM Event WHERE EventId='{eventid}';"
+        event_sql = f"SELECT EventId,Thumbnail,EventName,StartDate,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId,EndDate,Format FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
 
         if token is None:
@@ -56,6 +56,7 @@ class event(Resource):
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
                              "thumbnail": result[0][1],
+                             "format":result[0][13],
                              "category": result[0][10],
                              "name": result[0][2],
                              "orgid": result[0][11],
@@ -236,16 +237,15 @@ class PublishEvent(Resource):
             org_email = user_info['email']
             org_sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email = '{org_email}';"
             org_result = sql_command(org_sql)[0]
-            introduction=escape_string(data['introduction'])
             sql = '''INSERT INTO Event VALUES (0,"{}", {}, "{}", "{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}");'''. \
-                format(data['eventName'], org_result[0], org_result[1], data['thumbnail'], data['format'],
+                format(escape_string(data['eventName']), org_result[0], org_result[1], data['thumbnail'], data['format'],
                        data['category'],
                        data['location']['postcode'], data['location']['address'],
                        data['location']['lat'], data['location']['lng'], data['startdate'], data['enddate'],
                        data['time'],
-                       introduction, data['details'])
+                       escape_string(data['introduction']), escape_string(data['details']))
             sql_command(sql)
-            event_sql = f"SELECT EventId FROM Event WHERE EventName='{data['eventName']}' and OrganizationId={org_result[0]};"
+            event_sql = f"SELECT EventId FROM Event WHERE EventName='{escape_string(data['eventName'])}' and OrganizationId={org_result[0]};"
             eventid = sql_command(event_sql)[0][0]
             output = {
                 "message": "success",
@@ -367,7 +367,9 @@ class GetEventbyId(Resource):
                     "message": "wrong token!"
                 }
                 return output, 403
-            update_sql = f"UPDATE Event SET EventName='{data['eventName']}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Category='{data['category']}',Postcode='{data['location']['postcode']}',Address='{data['location']['address']}',Lat='{data['location']['lat']}',lng='{data['location']['lng']}',StartDate='{data['startdate']}', EndDate='{data['enddate']}',Time='{data['time']}',Introduction='{data['introduction']}',Details='{data['details']}' WHERE Eventid={eventid};"
+            introduction=escape_string(data['introduction'])
+            details=escape_string(data['details'])
+            update_sql = f"UPDATE Event SET EventName='{escape_string(data['eventName'])}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Category='{data['category']}',Postcode='{data['location']['postcode']}',Address='{data['location']['address']}',Lat='{data['location']['lat']}',lng='{data['location']['lng']}',StartDate='{data['startdate']}', EndDate='{data['enddate']}',Time='{data['time']}',Introduction='{introduction}',Details='{details}' WHERE Eventid={eventid};"
             sql_command(update_sql)
             output = {
                 "message": "Success"
@@ -404,7 +406,7 @@ class Organization_profile(Resource):
         event_result = sql_command(find_event_sql)
         if len(event_result):
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{data['comment']}','{time}',NULL,NULL);"
+            sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{escape_string(data['comment'])}','{time}',NULL,NULL);"
             sql_command(sql)
             output = {
                 "message": "success"
@@ -424,7 +426,7 @@ class comment(Resource):
     def put(self, eventid, commentid):
         token = token_parser.parse_args()['Authorization']
         data = api.payload
-        edit_comment_sql = f"UPDATE COMMENT SET comment='{data['comment']}' WHERE id={commentid}"
+        edit_comment_sql = f"UPDATE COMMENT SET comment='{escape_string(data['comment'])}' WHERE id={commentid}"
         sql_command(edit_comment_sql)
         output = {
             "message": "Success"
@@ -465,7 +467,7 @@ class reply_comment(Resource):
             result = sql_command(sql)[0]
             userid = result[0]
 
-        sql = f"UPDATE COMMENT SET answer='{data['answer']}',replyid={userid} WHERE id={commentid};"
+        sql = f"UPDATE COMMENT SET answer='{escape_string(data['answer'])}',replyid={userid} WHERE id={commentid};"
         sql_command(sql)
         output = {
             "message": "success"
