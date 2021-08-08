@@ -27,12 +27,17 @@ function App() {
   const [userType, setUserType] = React.useState(
     sessionStorage.getItem('userType')
   );
+  const [selected, setSelected] = React.useState(
+    null
+  )
 
   const store = {
     isLoginState,
     setIsLoginState,
     userType,
     setUserType,
+    selected,
+    setSelected
   };
 
   return (

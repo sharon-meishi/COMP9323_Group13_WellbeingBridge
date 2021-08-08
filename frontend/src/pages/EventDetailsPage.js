@@ -1,15 +1,16 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import parse from 'date-fns/parse';
 import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Comment, Form, Header } from 'semantic-ui-react';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import CardMedia from '@material-ui/core/CardMedia';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import Chip from '@material-ui/core/Chip';
 import EditIcon from '@material-ui/icons/Edit';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,11 +21,9 @@ import EventCard from '../components/EventCard';
 import BackToTop from '../components/BackToTop';
 import NavBar from '../components/NavigationBar/NavBar';
 import ShareModal from '../components/ShareModal';
-import BookedUserTable from '../components/BookedUserTable';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
-
 import {
   getEventDetails,
   likeEvent,
@@ -32,7 +31,7 @@ import {
   bookEvent,
   unbookEvent,
   postComment,
-  getOrganizationProfile,
+  getOrgSummary,
 } from '../components/api';
 
 const useStyles = makeStyles((theme) => ({
@@ -59,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
     margin: '3%',
     width: '60%',
     height: '50%',
-
   },
   title: {
     display: 'flex',
@@ -107,6 +105,7 @@ const useStyles = makeStyles((theme) => ({
   org: {
     display: 'flex',
     alignItems: 'baseline',
+    fontSize: '16px',
   },
   info: {
     display: 'flex',
@@ -120,6 +119,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: '3%',
     paddingBottom: '3%',
     borderBottom: '1px solid #DCDCDC',
+    fontSize: '16px',
   },
   recommendation: {
     display: 'flex',
@@ -131,6 +131,7 @@ const useStyles = makeStyles((theme) => ({
   orgLink: {
     cursor: 'pointer',
     marginLeft: '3px',
+    fontWeight: 'bold',
   },
   eventBox: {
     justifyContent: 'space-between',
@@ -138,34 +139,41 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function EventDetailsPage({ match }) {
-  const classes = useStyles();
   const eventId = match.params.eventId;
+  const classes = useStyles();
   const history = useHistory();
-  const [detail, setDetail] = React.useState({});
-  const [islike, setIslike] = React.useState(false);
-  const [isbook, setIsbook] = React.useState(false);
-  const [openLogin, setOpenLogin] = React.useState(false);
-  const [openRegister, setOpenRegister] = React.useState(false);
-  const [share, setShare] = React.useState(false);
-  const [recomList, setRecomList] = React.useState([]);
-  const [editable, setEditable] = React.useState(false);
-  const [bookedUsers, setBookedUsers] = React.useState([]);
-  const usergroup = sessionStorage.getItem('usergroup');
-  const oid = sessionStorage.getItem('id');
-  const [comment, setComment] = React.useState('');
-  const [update, setUpdate] = React.useState(false);
   const context = useContext(AppContext);
+  const [detail, setDetail] = useState({});
+  const [orgDetail, setOrgDetail] = useState({});
+  const [islike, setIslike] = useState(false);
+  const [isbook, setIsbook] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
+  const [openRegister, setOpenRegister] = useState(false);
+  const [share, setShare] = useState(false);
+  const [recomList, setRecomList] = useState([]);
+  const [editable, setEditable] = useState(false);
+  const [comment, setComment] = useState('');
+  const [update, setUpdate] = useState(false);
+  const currentTime = new Date();
   const token = sessionStorage.getItem('token');
+  const usergroup = sessionStorage.getItem('usergroup');
 
-  React.useEffect(() => {
+  const parsedDate = (dateString, format) => {
+    return parse(dateString, format, new Date());
+  };
+
+  useEffect(() => {
     const getEvent = async () => {
       const res = await getEventDetails(eventId);
       if (res[0] === 200) {
         setDetail(res[1]);
         setRecomList(res[1].recommendation);
-        setBookedUsers(res[1].bookedUser);
-        // console.log(res[1].bookedUser);
-        // console.log(res[1]);
+        if (
+          parseInt(sessionStorage.getItem('id')) === res[1].OrganizationId &&
+          usergroup === 'organization'
+        ) {
+          setEditable(true);
+        }
         if (res[1].favourite) {
           setIslike(true);
         }
@@ -173,34 +181,36 @@ function EventDetailsPage({ match }) {
           setIsbook(true);
         }
       }
-      if (usergroup === 'organization') {
-        const orgDetail = await getOrganizationProfile(oid);
-        // console.log(orgDetail[1].publishedEvent[0]);
-        // console.log(eventId);
-        // console.log(orgDetail[1].publishedEvent.indexOf(Number(eventId)));
-        if (orgDetail[1].publishedEvent.indexOf(Number(eventId)) >= 0) {
-          console.log('set Editable True');
-          setEditable(true);
-        }
-      }
     };
     getEvent();
     setUpdate(false);
-  }, [eventId, oid, usergroup, update]);
+  }, [eventId, update, usergroup]);
+
+  useEffect(() => {
+    const fetchOrgData = async () => {
+      const Data = await getOrgSummary(detail.OrganizationId);
+      if (Data[0] === 200) {
+        setOrgDetail(Data[1]);
+      }
+    };
+    if (Object.keys(detail).length !== 0) {
+      fetchOrgData();
+    }
+  }, [detail]);
 
   const editEvent = () => {
     history.push(`/event/edit/${eventId}`);
   };
+
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
-      return
+      return;
     }
     if (islike) {
       const res = await unlikeEvent(eventId);
       if (res[0] === 200) {
         setIslike(false);
-        // console.log('unlike success');
       } else {
         console.log('unlike error');
       }
@@ -209,19 +219,20 @@ function EventDetailsPage({ match }) {
       const res = await likeEvent(eventId);
       if (res[0] === 200) {
         setIslike(true);
-        // console.log('like success');
       } else {
         console.log('like error');
       }
     }
   };
+
   const handleShare = () => {
     setShare(true);
   };
+
   const handleBook = async () => {
     if (!token) {
       setOpenLogin(true);
-      return
+      return;
     }
     if (isbook) {
       const res = await unbookEvent(eventId);
@@ -243,7 +254,6 @@ function EventDetailsPage({ match }) {
   };
 
   const submitNewComment = async () => {
-    console.log(comment);
     const Data = await postComment(eventId, comment);
     if (Data[0] === 200) {
       setComment('');
@@ -253,6 +263,26 @@ function EventDetailsPage({ match }) {
 
   const toOrgPage = () => {
     history.push(`/organization/${detail.OrganizationId}`);
+  };
+
+  const searchCategory = () => {
+    const queryData = { category: detail.category };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+  };
+
+  const searchFormat = () => {
+    const queryData = { format: detail.format };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
   };
 
   return (
@@ -289,11 +319,6 @@ function EventDetailsPage({ match }) {
               </Box>
               {usergroup === 'organization' ? (
                 <CardActions>
-                  {/* {editable ? (
-                    <Tooltip title='Delete' placement='left'>
-                      <DeleteOutlinedIcon />
-                    </Tooltip>
-                  ) : null} */}
                   {editable ? (
                     <Tooltip title='Edit' placement='right'>
                       <IconButton onClick={editEvent}>
@@ -320,7 +345,15 @@ function EventDetailsPage({ match }) {
                     onClick={handleBook}
                     aria-label='add to favorites'
                   >
-                    {isbook ? (
+                    {currentTime > parsedDate(detail.enddate, 'dd/MM/yyyy') ? (
+                      <Button
+                        variant='contained'
+                        className={classes.isbook}
+                        disabled
+                      >
+                        Expired
+                      </Button>
+                    ) : isbook ? (
                       <Button variant='contained' className={classes.isbook}>
                         UNBOOK
                       </Button>
@@ -333,48 +366,63 @@ function EventDetailsPage({ match }) {
                 </CardActions>
               )}
             </Grid>
-            <Box alignSelf='flex-end'>
-              <div variant='body1'>
-                By
-                <Link
-                  color='inherit'
-                  underline='always'
-                  onClick={toOrgPage}
-                  className={classes.orgLink}
-                >
-                  {detail.OrganizationName}
-                </Link>
-              </div>
+            <Box display='flex' justifyContent='space-between' alignItems='center'>
+              <Box>
+                <Chip
+                  label={`#${detail.format}`}
+                  clickable
+                  color='primary'
+                  onClick={searchFormat}
+                  style={{ marginRight: '5px' }}
+                />
+                <Chip
+                  label={`#${detail.category}`}
+                  clickable
+                  color='primary'
+                  onClick={searchCategory}
+                />
+              </Box>
+              <Box alignSelf='flex-end'>
+                <Box fontSize='18px'>
+                  By
+                  <Link
+                    color='inherit'
+                    underline='always'
+                    onClick={toOrgPage}
+                    className={classes.orgLink}
+                  >
+                    {detail.OrganizationName}
+                  </Link>
+                </Box>
+              </Box>
             </Box>
             <Grid className={classes.info}>
               <div className={classes.org}>
                 <Header as='h4'> When:</Header>
-                {detail.date}
+                {detail.startdate} to {detail.enddate}
               </div>
               <div variant='body1' className={classes.org}>
                 <Header as='h4'> What time:</Header>
                 {detail.time}
               </div>
-              <div variant='body1' className={classes.org}>
-                <Header as='h4'> Where:</Header>
-                {detail.location ? detail.location.address : ''}
-              </div>
+              {detail.location ? (
+                <div variant='body1' className={classes.org}>
+                  <Header as='h4'> Where:</Header>
+                  {detail.location.address || detail.format}
+                </div>
+              ) : null}
             </Grid>
             <Grid className={classes.sectionStyle}>
               <Header as='h3'> Introduction:</Header>
-              <div variant='body1'>
-                {detail.introduction}
-              </div>
+              <div variant='body1'>{detail.introduction}</div>
             </Grid>
             <Grid className={classes.sectionStyle}>
-            <Header as='h3'> More about this event:</Header>
-              <div variant='body1'>
-                {detail.details}
-              </div>
+              <Header as='h3'> More about this event:</Header>
+              <div variant='body1'>{detail.details}</div>
             </Grid>
             <Grid className={classes.sectionStyle}>
-            <Header as='h3'> Comments:</Header>
-              <Comment.Group size='large' style={{ maxWidth: '100%' }} >
+              <Header as='h3'> Comments:</Header>
+              <Comment.Group size='large' style={{ maxWidth: '100%' }}>
                 {context.isLoginState &&
                 sessionStorage.getItem('usergroup') === 'individual' ? (
                   <Form onSubmit={submitNewComment}>
@@ -387,8 +435,9 @@ function EventDetailsPage({ match }) {
                     />
                     <Box display='flex' justifyContent='flex-end'>
                       <Form.Button
+                        type='submit'
                         size='tiny'
-                        content='Add Reply'
+                        content='Add Comment'
                         labelPosition='left'
                         icon='edit'
                         primary
@@ -396,9 +445,11 @@ function EventDetailsPage({ match }) {
                     </Box>
                   </Form>
                 ) : (
-                  <div>Please Login as an individual user to post comment</div>
+                  <Box fontSize='16px'>
+                    Please Login as an individual user to post comment
+                  </Box>
                 )}
-                {detail.comments
+                {detail.comments && orgDetail
                   ? detail.comments.map((eachComment, idx) => {
                       return (
                         <SingleComment
@@ -406,21 +457,18 @@ function EventDetailsPage({ match }) {
                           content={eachComment}
                           eventId={eventId}
                           setUpdate={setUpdate}
+                          oId={detail.OrganizationId}
+                          orgName={detail.OrganizationName}
+                          orgDetail={orgDetail}
                         />
                       );
                     })
                   : null}
               </Comment.Group>
             </Grid>
-            {/* {usergroup ? (
-              <Grid className={classes.bookedUser}>
-                <Typography variant='h6'>Booked Users:</Typography>
-                <BookedUserTable bookedUsers={bookedUsers} />
-              </Grid>
-            ) : null} */}
             <Grid container className={classes.recommendation}>
-            <Header as='h3'> Recommendation:</Header>
-              <Grid container item width='100%' spacing={5} >
+              <Header as='h3'> Recommendation:</Header>
+              <Grid container item width='100%' spacing={5}>
                 {recomList.map((eventId) => (
                   <Grid item xs={11} md={6} lg={4}>
                     <EventCard key={eventId} eventId={eventId} />

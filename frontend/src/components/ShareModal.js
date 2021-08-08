@@ -1,30 +1,23 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-import clsx from 'clsx';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+
 const useStyles = makeStyles(() => ({
   modalStyle: {
     minWidth: '300px',
-    // backgroundColor:'grey',
-    // padding:'5% 2%',
   },
   content:{
-    // backgroundColor:'darkgreen',
     minWidth:'400px',
-    // minHeight:'100px',
   },
   textField:{
-    // backgroundColor:'darkgreen',
     minWidth:'350px',
   },
   eventNameStyle: {
@@ -47,7 +40,7 @@ function ShareModal({
   React.useEffect(()=>{
     const url = document.URL.replace(/^(http:\/\/.*[0-9]{4}\/).*$/,'$1')+`event/${eventId}`;
     setUrlLink(url);
-  },[]);
+  },[eventId]);
   
   const handleCopy = async () => {
     // const res = await deleteEvent(eventId);

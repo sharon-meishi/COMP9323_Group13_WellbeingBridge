@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import Scrollspy from 'react-scrollspy';
 import { makeStyles } from '@material-ui/core/styles';
+import { Comment, Form } from 'semantic-ui-react';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
+import Rating from '@material-ui/lab/Rating';
 import logoPlaceholder from '../../Assets/logo-placeholder.png';
 import comingSoon from '../../Assets/video-coming-soon.gif';
 import EventCard from '../EventCard';
-import { getOrganizationDetails } from '../api';
 import YoutubeVideo from './YoutubeVideo';
+import SingleReview from './SingleReview';
+import { getOrganizationDetails, postReview } from '../api';
 
 const useStyles = makeStyles((theme) => ({
   scrollspy: {
-    fontFamily: 'Noto Sans',
     display: 'flex',
     flexDirection: 'column',
+    fontSize: '20px',
     margin: '150px 0 0 5%',
     position: 'fixed',
     top: 0,
@@ -82,7 +85,11 @@ const useStyles = makeStyles((theme) => ({
   },
   eventcard: {
     display: 'flex',
-    justifyContent: 'center',
+    width: '100%',
+    flexWrap: 'wrap',
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center',
+    },
   },
   video: {
     marginBottom: '15px',
@@ -101,17 +108,46 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
   },
   eventBox: {
-    marginBottom:'20px'
-  }
+    marginBottom: '20px',
+  },
+  linkStyle: {
+    marginLeft: '8px',
+    cursor: 'pointer',
+  },
+  eventItem: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
 }));
+
+const labels = {
+  1: 'Worst',
+  2: 'Poor',
+  3: 'Ok',
+  4: 'Good',
+  5: 'Excellent',
+};
 
 function ScrollspyContent({ oId }) {
   const classes = useStyles();
   const BottomSyle = {
-    borderBottom: '3px solid rgba(0, 0, 0, 0.1)',
+    borderBottom: '1px solid #DCDCDC',
     marginBottom: '30px',
   };
   const [data, setData] = useState(null);
+  const [review, setReview] = useState('');
+  const [newRating, setNewRating] = useState(3);
+  const [ratingHover, setRatingHover] = useState(-1);
+  const [update, setUpdate] = useState(false);
+
+  const submitNewReview = async () => {
+    const Data = await postReview(oId, newRating, review);
+    if (Data[0] === 200) {
+      setNewRating(3);
+      setReview('');
+      setUpdate(true);
+    }
+  };
 
   const matchYoutubeUrl = (url) => {
     const p =
@@ -133,9 +169,8 @@ function ScrollspyContent({ oId }) {
       }
     };
     getOrganization();
-  }, [oId]);
-
-  console.log(data);
+    setUpdate(false);
+  }, [oId, update]);
 
   return (
     <div>
@@ -143,9 +178,12 @@ function ScrollspyContent({ oId }) {
         <Grid container className={classes.root}>
           <Scrollspy
             className={classes.scrollspy}
-            items={['Details', 'Services', 'Video', 'Contact', 'Events']}
+            items={['Name','Details', 'Services', 'Video', 'Contact', 'Reviews', 'Events']}
             currentClassName={classes.isCurrent}
           >
+            <Link className={classes.item} href='#Name' color='inherit'>
+              Name
+            </Link>            
             <Link className={classes.item} href='#Details' color='inherit'>
               Details
             </Link>
@@ -158,14 +196,35 @@ function ScrollspyContent({ oId }) {
             <Link className={classes.item} href='#Contact' color='inherit'>
               Contact
             </Link>
+            <Link className={classes.item} href='#Reviews' color='inherit'>
+            Reviews
+            </Link>
             <Link className={classes.item} href='#Events' color='inherit'>
               Events
             </Link>
           </Scrollspy>
-          <Grid item xs={8} md={7} lg={6} xl={5} className={classes.content}>
+          <Grid item xs={9} md={8} lg={7} xl={6} className={classes.content}>
             <section id='Name' style={BottomSyle}>
               <div className={classes.box}>
-                <h2>{data.organizationName}</h2>
+                <Box display='flex' flexDirection='column' flexWrap='wrap'>
+                  <Box display='flex' alignItems='baseline' >
+                    <h2>{data.organizationName}</h2>
+                  </Box>
+
+                  <Box display='flex' alignItems='center' flexWrap='wrap'>
+                    <Rating
+                      value={data.rating}
+                      readOnly
+                      precision={0.5}
+                    />
+                    <Box ml={1}>{data.rating || ''}</Box>
+                    <Link className={classes.linkStyle} href='#Reviews'>
+                      {data.rating === 0
+                        ? 'Be the first one to review'
+                        : 'Add your review'}
+                    </Link>
+                  </Box>
+                </Box>
                 <div>
                   <img
                     alt='logo'
@@ -176,13 +235,15 @@ function ScrollspyContent({ oId }) {
               </div>
               <div className={classes.introduction}>{data.introduction}</div>
             </section>
+
             <section id='Details' style={BottomSyle}>
               <h2>Details</h2>
               <div className={classes.introduction}>
                 {data.details || 'Nothing at the moment, please wait:)'}
               </div>
             </section>
-            <section id='Service' style={BottomSyle}>
+
+            <section id='Services' style={BottomSyle}>
               <h2>Services: </h2>
               {data.serviceList.length === 0 ? (
                 <div className={classes.introduction}>
@@ -194,7 +255,8 @@ function ScrollspyContent({ oId }) {
                 })
               )}
             </section>
-            <section id='Contact' style={BottomSyle}>
+
+            <section id='Video' style={BottomSyle}>
               <h2>Video:</h2>
               {data.video ? (
                 <YoutubeVideo vId={matchYoutubeUrl(data.video)} />
@@ -206,23 +268,88 @@ function ScrollspyContent({ oId }) {
                 />
               )}
             </section>
-            <section id='Events' style={BottomSyle}>
+
+            <section id='Contact' style={BottomSyle}>
               <h2>Other Information:</h2>
               <div className={classes.service}>
                 <span className={classes.boldStyle}>Contract:</span>{' '}
-                {data.contact}
+                <Link style={{cursor: 'pointer'}} href={`mailto:${data.contact}`}>{data.contact}</Link>
               </div>
 
               {data.websiteLink ? (
                 <div className={classes.service}>
                   <span className={classes.boldStyle}>Website Link:</span>{' '}
-                  {data.websiteLink}
+                  <Link href={data.websiteLink} style={{cursor: 'pointer'}} underline='hover'>{data.websiteLink}</Link>
                 </div>
               ) : null}
             </section>
+
+            <section id='Reviews' style={BottomSyle}>
+              <h2>Reviews:</h2>
+              <Comment.Group
+                size='large'
+                style={{ maxWidth: '100%', marginBottom: '15px' }}
+              >
+                {sessionStorage.getItem('usergroup') === 'individual' ? (
+                  <Form onSubmit={submitNewReview}>
+                    <Box display='flex' mb={1}>
+                      <Rating
+                        value={newRating}
+                        onChange={(event, newValue) => {
+                          if (!newValue) {
+                            setNewRating(1);
+                          } else {
+                            setNewRating(newValue);
+                          }
+                        }}
+                        onChangeActive={(event, newHover) => {
+                          setRatingHover(newHover);
+                        }}
+                      />
+                      {newRating !== null && (
+                        <Box ml={2}>
+                          {labels[ratingHover !== -1 ? ratingHover : newRating]}
+                        </Box>
+                      )}
+                    </Box>
+                    <Form.TextArea
+                      placeholder='Please leave your review here'
+                      name='review'
+                      value={review}
+                      onChange={(e) => setReview(e.target.value)}
+                      required
+                    />
+                    <Box display='flex' justifyContent='flex-end' mb={1}>
+                      <Form.Button
+                        size='tiny'
+                        content='Add Review'
+                        labelPosition='left'
+                        icon='edit'
+                        primary
+                      />
+                    </Box>
+                  </Form>
+                ) : (
+                  <Box fontSize='16px'>
+                    Please Login as an individual user to post review
+                  </Box>
+                )}
+                {data.reviews
+                  ? data.reviews.map((eachReview, idx) => (
+                      <SingleReview
+                        key={idx}
+                        content={eachReview}
+                        oId={oId}
+                        setUpdate={setUpdate}
+                      />
+                    ))
+                  : null}
+              </Comment.Group>
+            </section>
+
             <Grid container id='Events' className={classes.eventBox}>
               <h2>Their Events: </h2>
-              <Grid container item className={classes.eventcard} spacing={3}>
+              <Grid container className={classes.eventcard} spacing={2}>
                 {data.otherEvents.length === 0 ? (
                   <div className={classes.introduction}>
                     No event at the moment, please wait:)
@@ -230,7 +357,14 @@ function ScrollspyContent({ oId }) {
                 ) : (
                   data.otherEvents.map((item) => {
                     return (
-                      <Grid item xs={11} md={6} lg={4}>
+                      <Grid
+                        item
+                        xs={11}
+                        md={6}
+                        xl={4}
+                        className={classes.eventItem}
+                        key={item}
+                      >
                         <EventCard eventId={item} />
                       </Grid>
                     );

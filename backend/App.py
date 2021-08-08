@@ -6,10 +6,12 @@ import json
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import jwt
+from geopy import distance
 
 app = Flask(__name__)
 api = Api(app, title='COMP9323', description='hello')
 CORS(app)
+
 
 def sql_command(command):
     db = pymysql.connect(
@@ -51,7 +53,7 @@ class IndividualRegister(Resource):
             return output, 400
         else:
             sql = f"SELECT * FROM User WHERE Email='{email}';"
-            org_sql=f"SELECT * FROM Organization WHERE Email='{email}';"
+            org_sql = f"SELECT * FROM Organization WHERE Email='{email}';"
             if sql_command(sql):
                 output = {
                     "message": "email already used as individual"
@@ -61,7 +63,7 @@ class IndividualRegister(Resource):
                 output = {
                     "message": "email already used as organization"
                 }
-                return output,403
+                return output, 403
             else:
                 userid = 0
                 sql = "INSERT INTO User VALUES ({},'{}', '{}', '{}', NULL);".format(userid, nickname, email, password)
@@ -150,7 +152,7 @@ class Login(Resource):
     @api.response(201, 'Created')
     @api.expect(login_model)
     def post(self):
-        data = json.loads(request.get_data())
+        data = api.payload
         email = data['email']
         password = data['password']
         if email == "" or password == "":
@@ -158,50 +160,66 @@ class Login(Resource):
                 "message": "Missing email or password"
             }
             return output, 400
-        code = login(email, password)
-        return code
-
-
-def login(username, password):
-    sql_login_u = f"SELECT UserId, Password, NickName FROM User WHERE Email = '{username}';"
-    sql_login_o = f"SELECT OrganizationId, Password,OrganizationName FROM Organization WHERE Email = '{username}';"
-    result_u = sql_command(sql_login_u)
-    result_o = sql_command(sql_login_o)
-    tag = 'string'
-    password_final = 0
-    if len(result_u) > 0:
-        group_id = result_u[0][0]
-        password_final = result_u[0][1]
-        name=result_u[0][2]
-        tag = 'individual'
-    elif len(result_o) > 0:
-        group_id = result_o[0][0]
-        password_final = result_o[0][1]
-        name=result_o[0][2]
-        tag = 'organization'
-
-    if password == password_final:
-        token = encode_token(username, tag)
-        output = {
-            "userId": group_id,
-            "usergroup": tag,
-            "name": name,
-            "token": token
-        }
-        return output, 200
-    else:
-        output = {
-            "message": "Wrong email or password"
-        }
-        return output, 400
+        else:
+            user_sql = f"SELECT Password,NickName,UserId FROM User WHERE Email='{email}';"
+            org_sql = f"SELECT Password,OrganizationName,OrganizationId FROM Organization WHERE Email='{email}';"
+            result_from_user = sql_command(user_sql)
+            result_from_org = sql_command(org_sql)
+            if result_from_user:
+                type_flag = 'individual'
+            elif result_from_org:
+                type_flag = 'organization'
+            else:
+                output = {
+                    "message": "email not signup as individual / organization"
+                }
+                return output, 403
+            # check the identification of current user
+            if type_flag == 'individual':
+                if password == result_from_user[0][0]:
+                    token = encode_token(email, type_flag)
+                    output = {
+                        "message": "success",
+                        "token": token,
+                        "usergroup": 'individual',
+                        "name": result_from_user[0][1],
+                        "id": result_from_user[0][2]
+                    }
+                    return output, 200
+                else:
+                    output = {
+                        "message": "Wrong password"
+                    }
+                    return output, 403
+            else:
+                if password == result_from_org[0][0]:
+                    token = encode_token(email, type_flag)
+                    output = {
+                        "message": "success",
+                        "token": token,
+                        "usergroup": type_flag,
+                        "name": result_from_org[0][1],
+                        "id": result_from_org[0][2]
+                    }
+                    return output, 200
+                else:
+                    output = {
+                        "message": "Wrong password"
+                    }
+                    return output, 403
 
 
 @api.route('/popular/events')
 class GetPopularEvent(Resource):
     def get(self):
-        # querry_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
-        # return sql_command(querry_string), 200
-        return {'event_id': [1, 2, 3]}, 200
+        all_event = '''SELECT EventId FROM Event LIMIT 9'''
+        query_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
+        if sql_command(query_string):
+            event_id = sql_command(query_string)
+        else:
+            event_id = sql_command(all_event)
+        output = {"event_id": event_id}
+        return output, 200
 
 
 parser = api.parser()
@@ -217,7 +235,7 @@ token_parser.add_argument('Authorization', type=str, location='headers')
 class event(Resource):
     def get(self, eventid):
         token = token_parser.parse_args()['Authorization']
-        event_sql = f"SELECT EventId,Thumbnail,EventName,Date,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId FROM Event WHERE EventId='{eventid}';"
+        event_sql = f"SELECT EventId,Thumbnail,EventName,StartDate,Postcode,Address,Lat,Lng, Introduction,Time,Category,OrganizationId,EndDate,Format FROM Event WHERE EventId='{eventid}';"
         result = sql_command(event_sql)
 
         if token is None:
@@ -244,19 +262,21 @@ class event(Resource):
             booked_event_user = []
             for i in booked_userid:
                 booked_temp = {}
-                id=i[0]
-                sql=f"SELECT NickName,Email FROM User WHERE UserId={id};"
-                x=sql_command(sql)[0]
-                booked_temp['username']=x[0]
-                booked_temp['email']=x[1]
+                id = i[0]
+                sql = f"SELECT NickName,Email FROM User WHERE UserId={id};"
+                x = sql_command(sql)[0]
+                booked_temp['username'] = x[0]
+                booked_temp['email'] = x[1]
                 booked_event_user.append(booked_temp)
             # location = {"postcode": result[0][4], "suburb": result[0][5]}
             result_output = {"eventId": result[0][0],
                              "thumbnail": result[0][1],
+                             "format":result[0][13],
                              "category": result[0][10],
                              "name": result[0][2],
-                             "orgid":result[0][11],
-                             "date": result[0][3],
+                             "orgid": result[0][11],
+                             "startdate": result[0][3],
+                             "enddate": result[0][12],
                              "time": result[0][9],
                              "location": {
                                  "postcode": result[0][4],
@@ -266,21 +286,22 @@ class event(Resource):
                              },
                              "introduction": result[0][8],
                              "favourite": favourite,
-                             "bookedUser":booked_event_user}
+                             "bookedUser": booked_event_user}
             return result_output, 200
         else:
             output = {
                 "message": "Not Found"
             }
             return output, 404
-        
-    def delete(self,eventid):
+
+    def delete(self, eventid):
         try:
-            delete_sql=f'delete from Event where EventId={eventid};'
+            delete_sql = f'delete from Event where EventId={eventid};'
             sql_command(delete_sql)
-            return {"message": 'Success!'},200
+            return {"message": 'Success!'}, 200
         except:
             return {"message": 'Wrong ID. Please try again.'}, 400
+
 
 def get_user_id_by_token(token):
     user_email = decode_token(token)['email']
@@ -313,7 +334,7 @@ class favourite(Resource):
                 output = {
                     "message": "Internal Error: event is already favourited."
                 }
-                return output, 500
+                return output, 200
             favourite_id = curr_favourite_id + ',' + str(eventid)
         else:
             favourite_id = str(eventid)
@@ -410,6 +431,7 @@ class unbook(Resource):
             output = {
                 "message": "No booking for this event."
             }
+            return output, 404
         else:
             sql = f"DELETE FROM Booking WHERE UserId = '{user_id}' AND EventId = '{eventid}';"
             sql_command(sql)
@@ -425,7 +447,6 @@ user_model = api.model("user", {
     "FavouriteId": fields.String
 })
 
-
 location_model = api.model("location", {
     "postcode": fields.String,
     "address": fields.String,
@@ -438,7 +459,8 @@ event_model = api.model("event", {
     "format": fields.String,
     "category": fields.String,
     "location": fields.Nested(location_model),
-    "date": fields.String,
+    "startdate": fields.String,
+    "enddate": fields.String,
     "time": fields.String,
     "introduction": fields.String,
     "details": fields.String
@@ -454,6 +476,7 @@ org_model = api.model("org", {
     "serviceList": fields.String,
     "websiteLink": fields.String
 })
+
 
 @api.route("/event", doc={"description": "publish details of an event"})
 @api.doc(parser=token_parser)
@@ -478,18 +501,19 @@ class PublishEvent(Resource):
             org_email = user_info['email']
             org_sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email = '{org_email}';"
             org_result = sql_command(org_sql)[0]
-            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
+            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
                 format(data['eventName'], org_result[0], org_result[1], data['thumbnail'], data['format'],
                        data['category'],
                        data['location']['postcode'], data['location']['address'],
-                       data['location']['lat'], data['location']['lng'], data['date'], data['time'],
+                       data['location']['lat'], data['location']['lng'], data['startdate'], data['enddate'],
+                       data['time'],
                        data['introduction'], data['details'])
             sql_command(sql)
-            event_sql=f"SELECT EventId FROM Event WHERE EventName='{data['eventName']}' and OrganizationId={org_result[0]};"
-            eventid=sql_command(event_sql)[0][0]
+            event_sql = f"SELECT EventId FROM Event WHERE EventName='{data['eventName']}' and OrganizationId={org_result[0]};"
+            eventid = sql_command(event_sql)[0][0]
             output = {
                 "message": "success",
-                "eventid":eventid
+                "eventid": eventid
             }
         return output, 200
 
@@ -540,6 +564,8 @@ class GetEventbyId(Resource):
             comment_temp['username'] = data[2]
             comment_temp['published'] = str(data[5])
             comment_temp['comment'] = data[4]
+            comment_temp['answer'] = data[6]
+            comment_temp['replyid'] = data[7]
             # comment_temp = json.dumps(comment_temp)
             comments.append(comment_temp)
         comments.reverse()
@@ -548,11 +574,11 @@ class GetEventbyId(Resource):
         booked_event_user = []
         for i in booked_userid:
             booked_temp = {}
-            id=i[0]
-            sql=f"SELECT NickName,Email FROM User WHERE UserId={id};"
-            result=sql_command(sql)[0]
-            booked_temp['username']=result[0]
-            booked_temp['email']=result[1]
+            id = i[0]
+            sql = f"SELECT NickName,Email FROM User WHERE UserId={id};"
+            result = sql_command(sql)[0]
+            booked_temp['username'] = result[0]
+            booked_temp['email'] = result[1]
             booked_event_user.append(booked_temp)
 
         other_event_sql = f"SELECT * FROM Event WHERE Category='{event_info[6]}' and EventId!={eventid};"
@@ -575,10 +601,11 @@ class GetEventbyId(Resource):
                 "lat": event_info[9],
                 "lng": event_info[10],
             },
-            "date": event_info[11],
-            "time": event_info[12],
-            "introduction": event_info[13],
-            "details": event_info[14],
+            "startdate": event_info[11],
+            "enddate": event_info[12],
+            "time": event_info[13],
+            "introduction": event_info[14],
+            "details": event_info[15],
             "comments": comments,
             "recommendation": recommendation,
             "bookedUser": booked_event_user,
@@ -596,7 +623,7 @@ class GetEventbyId(Resource):
             output = {
                 "message": "bad request!"
             }
-            return output, 405
+            return output, 400
         else:
             user_type = decode_token(token)['type']
             if user_type != 'organization':
@@ -604,17 +631,19 @@ class GetEventbyId(Resource):
                     "message": "wrong token!"
                 }
                 return output, 403
-            update_sql = f"UPDATE Event SET EventName='{data['eventName']}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Category='{data['category']}',Postcode='{data['location']['postcode']}',Address='{data['location']['address']}',Lat='{data['location']['lat']}',lng='{data['location']['lng']}',Date='{data['date']}',Time='{data['time']}',Introduction='{data['introduction']}',Details='{data['details']}' WHERE Eventid={eventid};"
+            update_sql = f"UPDATE Event SET EventName='{data['eventName']}', Thumbnail='{data['thumbnail']}',Format='{data['format']}',Category='{data['category']}',Postcode='{data['location']['postcode']}',Address='{data['location']['address']}',Lat='{data['location']['lat']}',lng='{data['location']['lng']}',StartDate='{data['startdate']}', EndDate='{data['enddate']}',Time='{data['time']}',Introduction='{data['introduction']}',Details='{data['details']}' WHERE Eventid={eventid};"
             sql_command(update_sql)
             output = {
                 "message": "Success"
             }
         return output, 200
 
+
 user_update_model = api.model("user", {
     "Nickname": fields.String,
     "Password": fields.String,
 })
+
 
 @api.route("/user/profile", doc={"description": "get current user profile"})
 @api.doc(parser=token_parser)
@@ -623,7 +652,7 @@ class GetUserProfilebyId(Resource):
         token = token_parser.parse_args()['Authorization']
         user_id = get_user_id_by_token(token)
         user_sql = f"SELECT * FROM User WHERE UserId={user_id};"
-        book_sql = f"SELECT BookingID FROM Booking WHERE UserId={user_id};"
+        book_sql = f"SELECT EventId FROM Booking WHERE UserId={user_id};"
         user_info = sql_command(user_sql)[0]
         bood_info = sql_command(book_sql)
         booking_lst = [info[0] for info in bood_info]
@@ -659,19 +688,43 @@ class GetUserProfilebyId(Resource):
                 format(data['Nickname'],
                        user_id)
         else:
-           sql = '''UPDATE User SET
+            sql = '''UPDATE User SET
                              Nickname = '{}', 
                              Password = '{}'
             WHERE UserId = {}'''. \
-            format(data['Nickname'],
-                   data['Password'],
-                   user_id)
+                format(data['Nickname'],
+                       data['Password'],
+                       user_id)
         sql_command(sql)
 
         output = {
             "message": "success"
         }
 
+        return output, 200
+
+
+@api.route("/organization/<int:oid>/summary",
+           doc={"description": "get the summary of an organization"})
+@api.doc(parser=token_parser)
+class Organization_profile(Resource):
+    def get(self, oid):
+        sql = f"SELECT OrganizationName,OrganizationType,Logo,Introduction FROM Organization WHERE OrganizationId={oid};"
+        result = sql_command(sql)
+        rating_sql = f'select avg(rating) from Review where organizationid={oid};'
+        rating_result = sql_command(rating_sql)[0]
+        if rating_result[0] is None:
+            rating=0
+        else:
+            rating=float(rating_result[0])
+        output = {
+            "oId": oid,
+            "OrganizationName": result[0][0],
+            "OrganizationType": result[0][1],
+            "Logo": result[0][2],
+            "Introduction": result[0][3],
+            "rating":rating
+        }
         return output, 200
 
 
@@ -691,7 +744,7 @@ class Organization_profile(Resource):
             output = {
                 "message": "bad request!"
             }
-            return output, 405
+            return output, 400
         else:
             user_type = decode_token(token)['type']
             if user_type != 'organization':
@@ -708,12 +761,19 @@ class Organization_profile(Resource):
                 for i in event_list:
                     event_id.append(i[0])
             event_id.reverse()
+            rating_sql = f'select avg(rating) from Review where organizationid={oid};'
+            rating_result = sql_command(rating_sql)[0]
+            if rating_result[0] is None:
+                rating = 0
+            else:
+                rating = float(rating_result[0])
             if len(result):
                 output = {
                     "oId": oid,
                     "organizationName": result[0][0],
                     "email": result[0][1],
-                    "publishedEvent": event_id
+                    "publishedEvent": event_id,
+                    "rating":rating
                 }
                 return output, 200
             output = {
@@ -729,7 +789,7 @@ class Organization_profile(Resource):
             output = {
                 "message": "bad request!"
             }
-            return output, 405
+            return output, 400
         else:
             user_type = decode_token(token)['type']
             if user_type != 'organization':
@@ -783,7 +843,7 @@ class Organization_profile(Resource):
         event_result = sql_command(find_event_sql)
         if len(event_result):
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{data['comment']}','{time}');"
+            sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{data['comment']}','{time}',NULL,NULL);"
             sql_command(sql)
             output = {
                 "message": "success"
@@ -795,90 +855,110 @@ class Organization_profile(Resource):
             }
             return output, 404
 
+
 @api.route("/organization/<int:orgid>", doc={"description": "get details of an organization"})
 @api.doc(parser=token_parser)
 class org(Resource):
-    def get(self,orgid):
+    def get(self, orgid):
         token = token_parser.parse_args()['Authorization']
         org_sql = f"SELECT * FROM Organization WHERE OrganizationId={orgid};"
 
-        output_org=sql_command(org_sql)
-        if len(output_org)==0:
+        output_org = sql_command(org_sql)
+        if len(output_org) == 0:
             return 404, 'Not Found'
         org_info = output_org[0]
 
-        orgname=value_check(org_info,3)
-        orgtype=value_check(org_info,4)
-        logo=value_check(org_info,5)
-        contact=value_check(org_info,6)
-        orgintro=value_check(org_info,7)
-        detail=value_check(org_info,8)
-        video=value_check(org_info,9)
+        orgname = value_check(org_info, 3)
+        orgtype = value_check(org_info, 4)
+        logo = value_check(org_info, 5)
+        contact = value_check(org_info, 6)
+        orgintro = value_check(org_info, 7)
+        detail = value_check(org_info, 8)
+        video = value_check(org_info, 9)
 
-        if org_info[10] !=None:
-            servicelist=org_info[10]
-            servicelist=servicelist.replace("\n",'').split('@')
+        if org_info[10] != None:
+            servicelist = org_info[10]
+            servicelist = servicelist.replace("\n", '').split('@')
         else:
-            servicelist=[]
-        website=value_check(org_info,11)
+            servicelist = []
+        website = value_check(org_info, 11)
 
-        otherlist=[]
+        otherlist = []
 
-        event_sql_list=f"select EventId from Event inner join Organization on (Event.OrganizationId=Organization.OrganizationId) where Organization.OrganizationId={orgid};"
-        popular_list_top3=[]
-        result_event=sql_command(event_sql_list)
-        if len(result_event)>0:
+        event_sql_list = f"select EventId from Event inner join Organization on (Event.OrganizationId=Organization.OrganizationId) where Organization.OrganizationId={orgid};"
+        popular_list_top3 = []
+        result_event = sql_command(event_sql_list)
+        if len(result_event) > 0:
             for i in result_event:
                 otherlist.append(i[0])
             # else:
             #     popular_list_top3=None
 
-        event_popular={}
+        event_popular = {}
         for i in otherlist:
-            event_sql=f'select count(userId) from Booking inner join Event on (Booking.EventId=Event.EventId) where Event.Eventid ={i};'
-            event_number=sql_command(event_sql)[0][0]
-            number=int(event_number)
-            event_popular[i]=number
+            event_sql = f'select count(userId) from Booking inner join Event on (Booking.EventId=Event.EventId) where Event.Eventid ={i};'
+            event_number = sql_command(event_sql)[0][0]
+            number = int(event_number)
+            event_popular[i] = number
 
-        new_dic=zip(event_popular.keys(),event_popular.values())
-        new_dic=sorted(new_dic)
+        new_dic = zip(event_popular.keys(), event_popular.values())
+        new_dic = sorted(new_dic)
         for i in new_dic:
             popular_list_top3.append(i[0])
-            if len(popular_list_top3)>=3:
+            if len(popular_list_top3) >= 3:
                 break
-        
-        output={
-            'oId':orgid,
-            'organizationName':orgname,
-            'organizationType':orgtype,
-            'logo':logo,
-            'contact':contact,
-            'introduction':orgintro,
-            "details":detail,
-            "video":video,
-            "serviceList":servicelist,
-            "websiteLink":website,
-            "otherEvents":popular_list_top3
+        rating_sql = f'select avg(rating) from Review where organizationid={orgid};'
+        rating_result = sql_command(rating_sql)[0]
+        if rating_result[0] is None:
+            rating=0
+        else:
+            rating=float(rating_result[0])
+        review_sql = f'select id,userid,username,rating,review,time from Review where organizationid={orgid};'
+        reviews=[]
+        review_result=sql_command(review_sql)
+        for review in review_result:
+            temp={}
+            temp['reviewId']=review[0]
+            temp['userId']=review[1]
+            temp['username']=review[2]
+            temp['rating']=review[3]
+            temp['review']=review[4]
+            temp['published']=str(review[5])
+            reviews.append(temp)
+        output = {
+            'oId': orgid,
+            'organizationName': orgname,
+            'organizationType': orgtype,
+            'logo': logo,
+            'contact': contact,
+            'introduction': orgintro,
+            "details": detail,
+            "video": video,
+            "serviceList": servicelist,
+            "websiteLink": website,
+            "otherEvents": popular_list_top3,
+            "rating": rating,
+            "reviews":reviews
         }
 
-        return output,200
+        return output, 200
 
     @api.expect(org_model)
-    def put(self,orgid):
+    def put(self, orgid):
         data = api.payload
         token = token_parser.parse_args()['Authorization']
         if token is None:
             output = {
                 "message": "bad request!"
             }
-            return output, 405
-        
+            return output, 400
+
         user_type = decode_token(token)['type']
         if user_type != 'organization':
-                output = {
-                    "message": "wrong token!"
-                }
-                return output, 403
+            output = {
+                "message": "wrong token!"
+            }
+            return output, 403
 
         update_sql = f"UPDATE Organization SET OrganizationName='{data['organizationName']}', \
             OrganizationType='{data['organizationType']}',Logo='{data['logo']}',\
@@ -890,15 +970,120 @@ class org(Resource):
             WebsiteLink='{data['websiteLink']}' WHERE OrganizationId={orgid};"
         sql_command(update_sql)
         output = {
-                "message": "Success"
-            }
+            "message": "Success"
+        }
         return output, 200
+
+
+@api.route("/search/organization", doc={"description": "get details of an organization"})
+@api.doc(params={'name': 'orgname', 'type': 'orgtype'})
+class search_org(Resource):
+    def get(self):
+        name = request.args.get('name')
+        orgtype = request.args.get('type')
+
+        sql_orgsearch = "select OrganizationId from Organization"
+        conds = []
+        if name is not None:
+            ns = name.split(",")
+            conds.append("( " + " OR ".join(["LOWER(OrganizationName) LIKE '%{}%'".format(n.lower()) for n in ns]) + " )")
+        if orgtype is not None:
+            ots = orgtype.split(",")
+            conds.append("( " + " OR ".join(["OrganizationType='{}'".format(ot) for ot in ots]) + " )")
+
+        if conds:
+            sql_orgsearch += " WHERE " + " AND ".join(conds) + ";"
+        else:
+            sql_orgsearch += ";"
+        output_search = sql_command(sql_orgsearch)
+        org_info = output_search
+
+        org_list = [oi[0] for oi in org_info]
+        output = {"organizationId": org_list}
+
+        return output, 200
+
+
+@api.route("/search/event", doc={"description": "search event based on criterions."})
+@api.doc(params={"keyword": "search keywords", "format": "event format", "category": "event category",
+                 "startdate": "date of start", "enddate": "date of end", "lat": "latitude", "lng": "longitude",
+                 "range": "default range = 5km"})
+class search_event(Resource):
+    def get(self):
+        keyword = request.args.get('keyword')
+        formats = request.args.get('format')
+        category = request.args.get('category')
+        startdate = request.args.get('startdate')
+        enddate = request.args.get('enddate')
+        lat = request.args.get('lat')
+        lng = request.args.get('lng')
+        range = request.args.get('range')
+        if range == "" or range is None:
+            range = 5
+        else:
+            range = int(range)
+
+        sql_eventsearch = "select EventId, Lat, Lng from Event"
+        conds = []
+        if keyword is not None:
+            kws = keyword.split(",")
+            conds.append("( " + " OR ".join(["EventName LIKE '%{}%'".format(kw) for kw in kws]) + " )")
+        if formats is not None:
+            fs = formats.split(",")
+            conds.append("( " + " OR ".join(["FORMAT='{}'".format(f) for f in fs]) + " )")
+        if category is not None:
+            cts = category.split(",")
+            conds.append("( " + " OR ".join(["Category='{}'".format(f) for f in cts]) + " )")
+
+        if startdate is not None:
+            slst = startdate.split("/")
+            slst = list(reversed(slst))
+            startdate = "-".join(slst)
+        if enddate is not None:
+            elst = enddate.split("/")
+            elst = list(reversed(elst))
+            enddate = "-".join(elst)
+
+        if startdate is not None and enddate is not None:
+            conds.append(
+                "DATE_FORMAT(STR_TO_DATE(EndDate,'%d/%m/%Y') ,'%Y-%m-%d')>='{}' AND DATE_FORMAT(STR_TO_DATE(StartDate,'%d/%m/%Y'),'%Y-%m-%d')<='{}'".format(
+                    startdate, enddate))
+        elif startdate is not None and enddate is None:
+            conds.append("DATE_FORMAT(STR_TO_DATE(EndDate,'%d/%m/%Y'),'%Y-%m-%d')>='{}'".format(startdate))
+        elif startdate is None and enddate is not None:
+            conds.append("DATE_FORMAT(STR_TO_DATE(StartDate,'%d/%m/%Y'),'%Y-%m-%d')<='{}'".format(enddate))
+
+        if conds:
+            sql_eventsearch += " WHERE " + " AND ".join(conds) + ";"
+        else:
+            sql_eventsearch += ";"
+
+        print(sql_eventsearch)
+
+        output_search = sql_command(sql_eventsearch)
+        found_events = []
+        if lat is not None and lng is not None:
+            orig_coords = (float(lat), float(lng))
+            for event_id, e_lat, e_lng in output_search:
+                if(e_lat == "" and e_lng == ""):
+                    found_events.append(event_id)
+                else:
+                    evt_coords = (float(e_lat), float(e_lng))
+                    if distance.geodesic(orig_coords, evt_coords).km <= range:
+                        found_events.append(event_id)
+        else:
+            found_events = [output[0] for output in output_search]
+        
+        found_events.reverse()
+
+        return found_events, 200
+
 
 @api.route("/event/<int:eventid>/comment/<int:commentid>", doc={"description": "edit comments under one event"})
 @api.doc(parser=token_parser)
 class comment(Resource):
     @api.expect(comment_model)
-    def put(self,eventid, commentid):
+    def put(self, eventid, commentid):
         token = token_parser.parse_args()['Authorization']
         data = api.payload
         edit_comment_sql = f"UPDATE COMMENT SET comment='{data['comment']}' WHERE id={commentid}"
@@ -911,17 +1096,146 @@ class comment(Resource):
     def delete(self, eventid, commentid):
         try:
             token = token_parser.parse_args()['Authorization']
-            delete_sql=f'DELETE FROM COMMENT where id={commentid};'
+            delete_sql = f'DELETE FROM COMMENT where id={commentid};'
             sql_command(delete_sql)
-            return {"message": 'Success!'},200
+            return {"message": 'Success!'}, 200
         except:
             return {"message": 'Wrong ID. Please try again.'}, 400
 
-def value_check(org_info,i):
-    result=None
-    if org_info[i] !=None:
-        result=org_info[i].replace("\n",'')
+
+def value_check(org_info, i):
+    result = None
+    if org_info[i] != None:
+        result = org_info[i].replace("\n", '')
     return result
+
+
+reply_model = api.model("reply", {
+    "answer": fields.String
+})
+
+
+@api.route("/event/<int:eventid>/comment/<int:commentid>/answer",
+           doc={"description": "reply to a comment on a specific event"})
+@api.doc(parser=token_parser)
+class reply_comment(Resource):
+    @api.expect(reply_model)
+    def put(self, eventid, commentid):
+        data = api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        type = decode_token(token)['type']
+        if type == 'individual':
+            sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+            result = sql_command(sql)[0]
+            userid = result[0]
+        else:
+            sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email='{email}';"
+            result = sql_command(sql)[0]
+            userid = result[0]
+
+        sql = f"UPDATE COMMENT SET answer='{data['answer']}',replyid={userid} WHERE id={commentid};"
+        sql_command(sql)
+        output = {
+            "message": "success"
+        }
+        return output, 200
+
+
+review_model = api.model("review", {
+    "review": fields.String,
+    "rating": fields.Integer
+})
+
+
+@api.route("/organization/<int:oid>/review", doc={"description": "give a review to an orgnization"})
+@api.doc(parser=token_parser)
+class review(Resource):
+    @api.expect(review_model)
+    def post(self, oid):
+        data = api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+        result = sql_command(sql)[0]
+        userid = result[0]
+        username = result[1]
+        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sql = f"INSERT INTO Review VALUES (0,{userid},'{username}',{data['rating']},{oid},'{data['review']}','{time}');"
+        sql_command(sql)
+        output = {
+            "message": "success"
+        }
+        return output, 200
+
+
+@api.route("/organization/<int:oid>/review/<int:reviewid>", doc={"description": "review function"})
+@api.doc(parser=token_parser)
+class review_function(Resource):
+    @api.expect(review_model)
+    def put(self, oid, reviewid):
+        data = api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+        result = sql_command(sql)[0]
+        userid = result[0]
+        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        review_sql = f"SELECT Userid FROM Review WHERE id={reviewid};"
+        review_result = sql_command(review_sql)[0]
+        if userid!=review_result[0]:
+            output={
+                "message":"You cannot change others' reviews!"
+            }
+            return output,403
+        change_sql=f"UPDATE REVIEW SET review='{data['review']}',rating={data['rating']},time='{time}' WHERE id={reviewid};"
+        sql_command(change_sql)
+        output={
+            "message":"success"
+        }
+        return output,200
+    def delete(self,oid,reviewid):
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+        result = sql_command(sql)[0]
+        userid = result[0]
+        review_sql = f"SELECT Userid FROM Review WHERE id={reviewid};"
+        review_result = sql_command(review_sql)[0]
+        if userid!=review_result[0]:
+            output={
+                "message":"You cannot delete others's review!"
+            }
+            return output,403
+        sql=f"DELETE FROM REVIEW WHERE id={reviewid};"
+        sql_command(sql)
+        output={
+            "message":"success"
+        }
+        return output,200
+
+
+
 
 
 if __name__ == "__main__":

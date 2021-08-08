@@ -16191,13 +16191,14 @@ const renderGroup = (params) => [
   params.children,
 ];
 
-export default function Virtualize({ onChange: ignored, control }) {
+export default function Virtualize({ onChange: ignored, control, search }) {
   const classes = useStyles();
   return (
     <Controller
       render={({field}) => (
         <Autocomplete
-        defaultValue={null}
+          
+          defaultValue={null}
           value={field.value || null}
           onChange={ (e,data) => field.onChange(data)}
           disableListWrap
@@ -16213,6 +16214,7 @@ export default function Virtualize({ onChange: ignored, control }) {
               variant='outlined'
               size='small'
               margin='dense'
+              style={{backgroundColor:'white', marginBottom:'0px'}}
               
             />
           )}
@@ -16221,7 +16223,7 @@ export default function Virtualize({ onChange: ignored, control }) {
       onChange={([, data]) => data}
       name='Postcode'
       control={control}
-      rules={{ required: true }}
+      rules={{ required: search ? false : true }}
     />
   );
 }

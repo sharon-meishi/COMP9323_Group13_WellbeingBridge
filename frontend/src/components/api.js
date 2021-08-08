@@ -3,8 +3,7 @@ import axios from 'axios';
 const baseUrl = 'http://127.0.0.1:8000';
 
 export const loginRequest = async (data) => {
-  console.log(data);
-  const url = baseUrl + '/login';
+  const url = baseUrl + '/auth/login';
   const loginBody = {
     email: data.email,
     password: data.password,
@@ -28,7 +27,7 @@ export const loginRequest = async (data) => {
 };
 
 export const registerRequest = async (data) => {
-  const url = baseUrl + '/signup/user';
+  const url = baseUrl + '/auth/signup/user';
   const signupBody = {
     nickname: data.nickname,
     email: data.email,
@@ -52,7 +51,7 @@ export const registerRequest = async (data) => {
 };
 
 export const organizationApplyRequest = async (data) => {
-  const url = baseUrl + '/signup/organization';
+  const url = baseUrl + '/auth/signup/organization';
   const applyBody = {
     organizationName: data.OrganizationName,
     email: data.Email,
@@ -79,7 +78,7 @@ export const organizationApplyRequest = async (data) => {
 };
 
 export const createEventRequest = async (uploadBody) => {
-  const url = baseUrl + '/event';
+  const url = baseUrl + '/event/';
   const headers = {
     Authorization: `${sessionStorage.getItem('token')}`,
     'content-Type': 'application/json',
@@ -88,7 +87,7 @@ export const createEventRequest = async (uploadBody) => {
     const res = await axios.post(url, uploadBody, {
       headers: headers,
     });
-    return [res.status, ''];
+    return [res.status, res.data];
   } catch (error) {
     console.log(error);
     if (error.response) {
@@ -124,7 +123,11 @@ export const getEventSummary = async (eventId, dataOnly) => {
       return [res.status, res.data];
     }
   } catch (error) {
-    return [error.response.status, error.response.data.message];
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
   }
 };
 
@@ -475,6 +478,30 @@ export const deleteComment = async (eventId, commentId) => {
   }
 };
 
+export const updateAnswer = async (eventId, commentId, answer) => {
+  const url = baseUrl + `/event/${eventId}/comment/${commentId}/answer`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const answerBody = {
+    answer: answer,
+  };
+  try {
+    const res = await axios.put(url, answerBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
 export const deleteEvent = async (eventId) => {
   console.log('delete')
   const url = baseUrl + `/event/${eventId}/summary`;
@@ -517,3 +544,141 @@ export const updateOrgPage = async (oId, uploadBody) => {
     }
   }
 };
+
+export const searchOrganization= async (keyword,typeList) => {
+  console.log(keyword, typeList)
+  let url = baseUrl + '/search/organization';
+  if (keyword && typeList.length !== 0){
+    url = baseUrl + `/search/organization?name=${keyword}&type=${typeList}`;
+  }else if (keyword){
+    url = baseUrl + `/search/organization?name=${keyword}`;
+  }else if(typeList.length !==0) {
+    url = baseUrl + `/search/organization?type=${typeList}`;
+  }
+  console.log(url)
+  try {
+    const res = await axios.get(url,{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const getOrgSummary= async (oid) => {
+  const url = baseUrl + `/organization/${oid}/summary`;
+  try {
+    const res = await axios.get(url,{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const searchEvent= async (data) => {
+  const url = baseUrl + `/search/event${data}`;
+  try {
+    const res = await axios.get(url,{
+      headers: {
+        accept: 'application/json',
+        'content-Type': 'application/json',
+      },
+    });
+    return [res.status, res.data];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+};
+
+export const postReview = async (oId, rating, review) => {
+  const url = baseUrl + `/organization/${oId}/review`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const reviewBody = {
+    rating: rating,
+    review: review,
+  };
+  try {
+    const res = await axios.post(url, reviewBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
+export const updateReview = async (oId, rating, review, reviewId) => {
+  const url = baseUrl + `/organization/${oId}/review/${reviewId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  const reviewBody = {
+    rating: rating,
+    review: review,
+  };
+  try {
+    const res = await axios.put(url, reviewBody, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}
+export const deleteReview = async (oId, reviewId) => {
+  const url = baseUrl + `/organization/${oId}/review/${reviewId}`;
+  const headers = {
+    Authorization: `${sessionStorage.getItem('token')}`,
+    'content-Type': 'application/json',
+  };
+  try {
+    const res = await axios.delete(url, {
+      headers: headers,
+    });
+    return [res.status, ''];
+  } catch (error) {
+    console.log(error);
+    if (error.response) {
+      return [error.response.status, error.response.data.message];
+    } else {
+      return [error, ''];
+    }
+  }
+}

@@ -121,7 +121,9 @@ function EventForm({
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [eId, setEId] = useState(eventId);
 
+  // useForm setting and set default values
   const {
     reset,
     control,
@@ -135,7 +137,9 @@ function EventForm({
   const [loading, setLoading] = useState(false);
 
   // event location
-  const [eventFormat, setEventFormat] = useState(eventId ? preloadedValues.EventFormat : '');
+  const [eventFormat, setEventFormat] = useState(
+    eventId ? preloadedValues.EventFormat : ''
+  );
   const [lat, setLat] = useState(eventId ? preloadedValues.lat : null);
   const [lng, setlng] = useState(eventId ? preloadedValues.lng : null);
 
@@ -190,7 +194,9 @@ function EventForm({
 
   const handleUpload = async () => {
     const date = new Date();
-    const fileName = `${sessionStorage.getItem('id')}-${date.toLocaleString()}-${file.name}`
+    const fileName = `${sessionStorage.getItem(
+      'id'
+    )}-${date.toLocaleString()}-${file.name}`;
     const ref = storage.ref(`/images/${fileName}`);
     const uploadTask = ref.put(file);
     uploadTask.on('state_changed', console.log, console.error, () => {
@@ -202,7 +208,6 @@ function EventForm({
   };
 
   const setLatLng = (address) => {
-    console.log(address);
     geocodeByAddress(address)
       .then((results) => getLatLng(results[0]))
       .then(({ lat, lng }) => {
@@ -214,7 +219,6 @@ function EventForm({
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log(data);
     setData(data);
     if (data.picture) {
       handleUpload();
@@ -228,12 +232,6 @@ function EventForm({
 
   useEffect(() => {
     const buildBody = () => {
-      let date = '';
-      if (startDate === endDate) {
-        date = startDate;
-      } else {
-        date = `${startDate} to ${endDate}`;
-      }
       let location = {};
       if (eventFormat === 'Online Event') {
         location = {
@@ -256,7 +254,8 @@ function EventForm({
         format: data.EventFormat,
         category: data.EventCategory,
         location: location,
-        date: date,
+        startdate: startDate,
+        enddate: endDate,
         time: `${startTime} to ${endTime}`,
         introduction: data.EventIntroduction,
         details: data.EventDetails,
@@ -271,21 +270,27 @@ function EventForm({
         Data = await createEventRequest(uploadBody);
       }
       if (Data[0] === 200) {
+        if(eventId){
+          setEId(eventId);
+        }else {
+          setEId(Data[1].eventid)
+        }
         console.log('create/update success');
         setLoading(false);
         setOpen(true);
-        reset();
       } else {
         setErrorMsg(`Something wrong ${Data[1]}`);
       }
     };
 
-    if (url) {
+    if (url && lat && lng) {
       const uploadBody = buildBody();
-      console.log(uploadBody);
+      sendData(uploadBody);
+    } else if (eventFormat === 'Online Event' && url){
+      const uploadBody = buildBody();
       sendData(uploadBody);
     }
-  }, [url]);
+  }, [url, lat, lng]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     reset();
@@ -319,7 +324,7 @@ function EventForm({
         <SuccessDialog
           open={open}
           setOpen={setOpen}
-          eventId={eventId}
+          eventId={eId}
           message={
             eventId
               ? 'Thank you! Your event information has been updated successfully!'
@@ -407,15 +412,15 @@ function EventForm({
                         variant='outlined'
                         className={classes.selectStyle}
                       >
-                        <MenuItem value='Health and fitness'>
-                          Health and fitness
+                        <MenuItem value='Sports and fitness'>
+                        Sports and fitness
                         </MenuItem>
                         <MenuItem value='Multicultural'>Multicultural</MenuItem>
-                        <MenuItem value='Sports and recreation'>
-                          Sports and recreation
+                        <MenuItem value='Mental Health'>
+                        Mental Health
                         </MenuItem>
-                        <MenuItem value='Festival'>Family</MenuItem>
-                        <MenuItem value='Kids'>Community organised</MenuItem>
+                        <MenuItem value='Family'>Family</MenuItem>
+                        <MenuItem value='Community organised'>Community organised</MenuItem>
                         <MenuItem value='Seniors'>Seniors</MenuItem>
                         <MenuItem value='Young People'>Young People</MenuItem>
                       </Select>
@@ -546,15 +551,18 @@ function EventForm({
                   <Controller
                     render={({ field }) => (
                       <DatePicker
+                        isClearable
                         dateFormat='dd/MM/yyyy'
                         selected={field.value}
                         onChange={(e) => {
                           field.onChange(e);
-                          setStartDate(
-                            format(e, 'dd/MM/yyyy', {
-                              awareOfUnicodeTokens: true,
-                            })
-                          );
+                          if (e) {
+                            setStartDate(
+                              format(e, 'dd/MM/yyyy', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }
                         }}
                         inputRef={field.ref}
                         className={classes.pickerStyle}
@@ -574,15 +582,18 @@ function EventForm({
                   <Controller
                     render={({ field }) => (
                       <DatePicker
+                        isClearable
                         dateFormat='dd/MM/yyyy'
                         selected={field.value}
                         onChange={(e) => {
                           field.onChange(e);
-                          setEndDate(
-                            format(e, 'dd/MM/yyyy', {
-                              awareOfUnicodeTokens: true,
-                            })
-                          );
+                          if (e) {
+                            setEndDate(
+                              format(e, 'dd/MM/yyyy', {
+                                awareOfUnicodeTokens: true,
+                              })
+                            );
+                          }
                         }}
                         inputRef={field.ref}
                         className={classes.pickerStyle}
@@ -636,7 +647,7 @@ function EventForm({
                         inputRef={field.ref}
                         className={classes.pickerStyle}
                         onChangeRaw={(event) => {
-                          console.log(event.target.value);
+                          // console.log(event.target.value);
                         }}
                       />
                     )}
@@ -679,6 +690,7 @@ function EventForm({
                       validate: (value) => {
                         const { StartTime } = getValues();
                         const diff = StartTime - value;
+                        console.log(StartTime, value)
                         return (
                           diff <= 0 ||
                           'End time should not be earlier than start time'

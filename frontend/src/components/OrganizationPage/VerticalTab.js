@@ -134,10 +134,10 @@ export default function VerticalTabs({ profileData, setUpdate }) {
       );
       setEventList((prevEvents) => prevEvents.concat(data));
     };
-    if (end > start) {
+    if (end > start && eventList.length <= start) {
       fetchData();
     }
-  }, [start]);
+  }, [start]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setLoadMore(event_list.length > 3 ? true : false);
@@ -154,7 +154,9 @@ export default function VerticalTabs({ profileData, setUpdate }) {
           OrganizationDetail: Data[1].details,
           OrganizationIntroduction: Data[1].introduction,
           OrganizationType: Data[1].organizationType,
-          serviceList: Data[1].serviceList.map((x) => ({ service: x })),
+          serviceList: Data[1].serviceList
+            ? Data[1].serviceList.map((x) => ({ service: x }))
+            : null,
           video: Data[1].video,
           websiteLink: Data[1].websiteLink,
         };
@@ -165,8 +167,6 @@ export default function VerticalTabs({ profileData, setUpdate }) {
     };
     fetchData();
   }, [profileData.oId]);
-
-  console.log(eventList)
 
   return (
     <>
@@ -209,7 +209,8 @@ export default function VerticalTabs({ profileData, setUpdate }) {
                   key={event.eventId}
                   eventId={event.eventId}
                   eventName={event.name}
-                  eventDate={event.date}
+                  startdate={event.startdate}
+                  enddate={event.enddate}
                   postcode={event.location.postcode}
                   introduction={event.introduction}
                   thumbnail={event.thumbnail}
@@ -229,7 +230,6 @@ export default function VerticalTabs({ profileData, setUpdate }) {
                 Load More
               </Button>
             </Box>
-            {/* <EventDisplay profileData={profileData} /> */}
           </Box>
         </TabPanel>
         <TabPanel value={value} index={2} className={classes.tabpanel}>
@@ -250,7 +250,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
             flexDirection='column'
           >
             <Typography className={classes.titleStyle}>
-              Edit your Organization Name and Password
+              Edit your account password
             </Typography>
             <ProfileEditForm
               currentName={profileData.organizationName}

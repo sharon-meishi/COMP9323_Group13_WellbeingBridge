@@ -45,9 +45,12 @@ const useStyles = makeStyles((theme) => ({
 
 function ProfileEditForm({ currentName, oId, setOpen, setUpdate }) {
   const classes = useStyles();
+  const isUser = sessionStorage.getItem('usergroup') === 'individual'
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(isUser ? false : true);
+
+
 
   const {
     reset,
@@ -71,8 +74,7 @@ function ProfileEditForm({ currentName, oId, setOpen, setUpdate }) {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
-
+    console.log(data)
     const updateProfile = async () => {
       let Data;
       if (oId) {
@@ -80,24 +82,23 @@ function ProfileEditForm({ currentName, oId, setOpen, setUpdate }) {
           organizationName: data.name,
           password: data.password || '',
         };
-        console.log(updateBody);
         Data = await updateOrganizationProfile(oId, updateBody);
       } else {
         const updateBody = {
           Nickname: data.name,
           Password: data.password || '',
         };
-        console.log(updateBody);
         Data = await updateUserProfile(updateBody);
       }
       if (Data[0] === 200) {
+        setErrorMsg('')
         setSuccessMsg('Your profile has been updated successfully!');
         reset({ name: data.name });
         sessionStorage.setItem('name', data.name);
         setUpdate(true);
       } else {
-        setErrorMsg('Something Wrong, please try again');
         setSuccessMsg('');
+        setErrorMsg('Something Wrong, please try again');
       }
     };
     updateProfile();
@@ -111,31 +112,38 @@ function ProfileEditForm({ currentName, oId, setOpen, setUpdate }) {
         className={classes.backgroundStyle}
         onSubmit={handleSubmit(onSubmit)}
       >
-        <section className={classes.formStyle}>
-          <label>
-            {sessionStorage.getItem('usergroup') === 'individual'
-              ? 'Nickname:'
-              : 'Organization Name:'}
-          </label>
-          <Controller
-            render={({ field }) => (
-              <TextField
-                value={field.value || ''}
-                onChange={field.onChange}
-                inputRef={field.ref}
-                variant='outlined'
-                size='small'
-                margin='dense'
-                required
-              />
-            )}
-            name='name'
-            control={control}
-          />
-        </section>
+        {sessionStorage.getItem('usergroup') === 'individual' ? (
+          <section className={classes.formStyle}>
+            <label>Nickname</label>
+            <Controller
+              render={({ field }) => (
+                <TextField
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  inputRef={field.ref}
+                  variant='outlined'
+                  size='small'
+                  margin='dense'
+                  required
+                />
+              )}
+              rules={{required: true, pattern: /^[a-zA-Z0-9_.-]*$/}}
+              name='name'
+              control={control}
+            />
+          {errors.name?.type === 'required' && (
+            <Alert severity='error'>This field is required.</Alert>
+          )}
+          {errors.name?.type === 'pattern' && (
+            <Alert severity='error'>Invalid username</Alert>
+          )}
+          </section>
+          
+        ) : null}
+        {isUser ?
         <Link onClick={toggleShow} className={classes.linkStyle}>
-          Edit Password
-        </Link>
+          Edit Password 
+        </Link> : null}
         {show ? (
           <Box
             width='100%'

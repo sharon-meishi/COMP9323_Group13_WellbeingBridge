@@ -114,7 +114,6 @@ function OrganizationApplyPage() {
           sm={8}
           md={6}
           lg={5}
-          xl={3}
           className={classes.GridStyle}
         >
           {errorMsg ? (
@@ -177,7 +176,7 @@ function OrganizationApplyPage() {
                         Financial and Legal
                       </MenuItem>
                       <MenuItem value='Mental Health'>Mental Health</MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
+                      <MenuItem value='Seniors'>Senior</MenuItem>
                       <MenuItem value='Youth'>Youth</MenuItem>
                     </Select>
                   );

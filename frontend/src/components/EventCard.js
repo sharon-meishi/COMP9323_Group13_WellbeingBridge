@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -7,21 +8,25 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Grid from '@material-ui/core/Grid';
+import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
+import Avatar from '@material-ui/core/Avatar';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
+import RoomIcon from '@material-ui/icons/Room';
 import Box from '@material-ui/core/Box';
+import Chip from '@material-ui/core/Chip';
+import { red } from '@material-ui/core/colors';
 import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
 import RegisterModal from './NavigationBar/RegisterModal';
-import { getEventSummary, likeEvent, unlikeEvent } from './api';
+import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    // minWidth: 280,
-    maxWidth: 335,
+    minWidth: 300,
+    maxWidth: 300,
     // margin: '20px 0 20px 0',
     display: 'flex',
     flexDirection: 'column',
@@ -29,11 +34,15 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       minWidth: 280,
     },
-    height:'100%'
+    height: '100%',
+    // backgroundColor: '#EDFEFC'
   },
   media: {
     height: 0,
     paddingTop: '85%', // 16:9
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   expand: {
     transform: 'rotate(0deg)',
@@ -52,17 +61,16 @@ const useStyles = makeStyles((theme) => ({
   },
   location: {
     fontSize: '0.9rem',
-    justifyContent: 'end',
-    alignSelf: 'flex-end',
+    textAlign: 'end',
     fontWeight: 500,
   },
   date: {
     fontSize: '0.7rem',
     fontStyle: 'italic',
+    color: '#757575',
   },
   detail: {
     paddingTop: '2%',
-    height: '10%',
   },
   actions: {
     display: 'flex',
@@ -71,16 +79,54 @@ const useStyles = makeStyles((theme) => ({
   view: {
     fontSize: '10px',
   },
+  content: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  avatar: {
+    backgroundColor: red[500],
+  },
+  cardHeaderRoot: {
+    '& .MuiAvatar-root': {
+      width: '50px',
+      height: '50px',
+      cursor: 'pointer',
+    },
+    '& .MuiCardHeader-title': {
+      fontSize: '18px',
+      cursor: 'pointer',
+      fontWeight: 'bold',
+    },
+    '& .MuiCardHeader-action': {
+      alignSelf: 'center',
+    },
+    '& .MuiCardHeader-subheader': {
+      fontWeight: 'none',
+    },
+  },
+  eventMarker: {
+    color: '#3f51b5',
+  },
+  selectedStyle: {
+    border: '3px solid #26A69A',
+    padding: '8px',
+    borderRadius: '5px',
+    boxSizing: 'border-box',
+  },
 }));
 
 function EventCard(props) {
   const classes = useStyles();
-  const [info, setInfo] = useState(null);
-  const [islike, setIslike] = React.useState(false);
   const history = useHistory();
-  const [openLogin, setOpenLogin] = React.useState(false);
-  const [openRegister, setOpenRegister] = React.useState(false);
-  const [share, setShare] = React.useState(false);
+  const context = useContext(AppContext);
+  const [info, setInfo] = useState(null);
+  const [orgInfo, setOrgInfo] = useState(null);
+  const [islike, setIslike] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
+  const [openRegister, setOpenRegister] = useState(false);
+  const [share, setShare] = useState(false);
   const token = sessionStorage.getItem('token');
 
   useEffect(() => {
@@ -88,128 +134,229 @@ function EventCard(props) {
       const res = await getEventSummary(props.eventId);
       if (res[0] === 200) {
         setInfo(res[1]);
-        // console.log(res[1]);
-        // console.log(res[1].favourite);
         if (res[1].favourite) {
-          // console.log('initial liked');
           setIslike(true);
         }
       }
     };
-    fetchData();
-  }, [props.eventId]);
+    if (props.eventInfo) {
+      setInfo(props.eventInfo);
+      if (props.eventInfo.favourite) {
+        setIslike(true);
+      }
+    } else {
+      fetchData();
+    }
+  }, [props.eventId, props.eventInfo]);
+
+  useEffect(() => {
+    if (info) {
+      const fetchOrgData = async () => {
+        const res = await getOrgSummary(info.orgid);
+        if (res[0] === 200) {
+          setOrgInfo(res[1]);
+        }
+      };
+      fetchOrgData();
+    }
+  }, [info]);
 
   const checkDetail = () => {
     history.push(`/event/${props.eventId}`);
   };
   const handleShare = () => {
     setShare(true);
-  }
+  };
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
     }
     if (islike) {
-      // console.log('now it is liked');
       const res = await unlikeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(false);
-        // console.log('unlike success');
       } else {
         console.log('unlike error');
       }
     } else {
-      // console.log('now it is not liked');
       const res = await likeEvent(props.eventId);
       if (res[0] === 200) {
         setIslike(true);
-        // console.log('like success');
       } else {
         console.log('like error');
       }
     }
   };
+
+  const searchCategory = () => {
+    const queryData = { category: info.category };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+  };
+
+  const searchFormat = () => {
+    const queryData = { format: info.format };
+    const queryPath = new URLSearchParams(queryData).toString();
+    const path = {
+      pathname: '/event/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+  };
+
+  const toOrgPage = () => {
+    history.push(`/organization/${info.orgid}`);
+  };
+
   return info ? (
-    <Card className={classes.root}>
-      {openLogin ? (
-        <LoginModal
-          open={openLogin}
-          setOpenLogin={setOpenLogin}
-          setOpenRegister={setOpenRegister}
+    <Box
+      className={
+        context.selected === props.order ? classes.selectedStyle : null
+      }
+    >
+      <Card className={classes.root} id={props.order || props.eventId}>
+        {openLogin ? (
+          <LoginModal
+            open={openLogin}
+            setOpenLogin={setOpenLogin}
+            setOpenRegister={setOpenRegister}
+          />
+        ) : null}
+        {openRegister ? (
+          <RegisterModal
+            open={openRegister}
+            setOpenLogin={setOpenLogin}
+            setOpenRegister={setOpenRegister}
+          />
+        ) : null}
+        <ShareModal open={share} setShare={setShare} eventId={props.eventId} />
+        {orgInfo ? (
+          <CardHeader
+            className={classes.cardHeaderRoot}
+            title={
+              <Box onClick={toOrgPage}>
+                {orgInfo.OrganizationName}
+                {/* <Rating
+                size="small" 
+                  value={orgInfo.rating}
+                  name='read-only'
+                  readOnly
+                  precision={0.5}
+                /> */}
+              </Box>
+            }
+            subheader={`${info.bookedUser.length} people have booked`}
+            avatar={
+              <Avatar
+                aria-label='organization Logo'
+                src={orgInfo.Logo}
+                onClick={toOrgPage}
+              >
+                {orgInfo.OrganizationName.charAt(0)}
+              </Avatar>
+            }
+            action={
+              props.order ? (
+                <Box
+                  display='flex'
+                  justifyContent='center'
+                  alignItems='center'
+                  className={classes.eventMarker}
+                >
+                  <Box fontSize='17px' fontWeight='bold'>
+                    {props.order}
+                  </Box>
+                  <RoomIcon fontSize='large' color='primary' />
+                </Box>
+              ) : null
+            }
+          />
+        ) : null}
+        <CardMedia
+          className={classes.media}
+          image={info.thumbnail}
+          title='Event Image'
+          onClick={checkDetail}
         />
-      ) : null}
-      {openRegister ? (
-        <RegisterModal
-          open={openRegister}
-          setOpenLogin={setOpenLogin}
-          setOpenRegister={setOpenRegister}
-        />
-      ) : null}
-      <ShareModal
-        open={share}
-        setShare={setShare}
-        eventId={props.eventId}
-      />
-      <CardMedia
-        className={classes.media}
-        image={info.thumbnail}
-        title='Event Image'
-      />
 
-      <Box
-        display='flex'
-        flexDirection='column'
-        height='100%'
-        justifyContent='space-between'
-      >
-        <CardContent>
-          <Grid container direction='column'>
-            <div onClick={checkDetail} className={classes.title}>
-              {info.name}
-            </div>
-            <Box display='flex' justifyContent='space-between' mt={1} mb={1}>
-              <div className={classes.date} color='textSecondary'>
-                {info.date}
-              </div>
-              <div className={classes.location}>
-                {info.location.postcode}
-              </div>
+        <Box
+          display='flex'
+          flexDirection='column'
+          height='100%'
+          justifyContent='space-between'
+        >
+          <CardContent className={classes.content}>
+            <Box>
+              <Grid container direction='column'>
+                <Box display='flex' justifyContent='space-between'>
+                  <div onClick={checkDetail} className={classes.title}>
+                    {info.name}
+                  </div>
+                  {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
+                </Box>
+
+                <Box justifyContent='space-between' mt={1} mb={1}>
+                  <div className={classes.date} color='textSecondary'>
+                    {info.startdate} to {info.enddate}
+                  </div>
+                  <div className={classes.location}>
+                    {info.format === 'Online Event'
+                      ? 'ONLINE EVENT'
+                      : info.location.postcode}
+                  </div>
+                </Box>
+              </Grid>
             </Box>
-          </Grid>
+            <Box alignSelf='flex-end'>
+              <Chip
+                label={`#${info.format}`}
+                clickable
+                color='primary'
+                onClick={searchFormat}
+                style={{ marginRight: '5px' }}
+              />
+              <Chip
+                label={`#${info.category}`}
+                clickable
+                color='primary'
+                onClick={searchCategory}
+              />
+            </Box>
+          </CardContent>
 
-          <Grid className={classes.detail}>
-            <div>{info.introduction}</div>
-          </Grid>
-        </CardContent>
-
-        <CardActions className={classes.actions} disableSpacing>
-          <Box>
-            {sessionStorage.getItem('usergroup') === 'individual' ? (
-              <IconButton onClick={handleLike} aria-label='add to favorites'>
-                {islike ? (
-                  <FavoriteIcon color='secondary' fontSize='medium' />
-                ) : (
-                  <FavoriteIcon color='disabled' fontSize='medium' />
-                )}
+          <CardActions className={classes.actions} disableSpacing>
+            <Box>
+              {sessionStorage.getItem('usergroup') === 'individual' ? (
+                <IconButton onClick={handleLike} aria-label='add to favorites'>
+                  {islike ? (
+                    <FavoriteIcon color='secondary' fontSize='default' />
+                  ) : (
+                    <FavoriteIcon color='disabled' fontSize='default' />
+                  )}
+                </IconButton>
+              ) : null}
+              <IconButton aria-label='share' onClick={handleShare}>
+                <Tooltip title='Share' placement='right'>
+                  <ShareIcon />
+                </Tooltip>
               </IconButton>
-            ) : null}
-            <IconButton aria-label='share' onClick={handleShare}>
-              <Tooltip title="Share" placement="right">
-                <ShareIcon />
-              </Tooltip>
-            </IconButton>
-          </Box>
-          <Button
-            onClick={checkDetail}
-            size='small'
-            color='primary'
-            className={classes.view}
-          >
-            Discover More
-          </Button>
-        </CardActions>
-      </Box>
-    </Card>
+            </Box>
+            <Button
+              onClick={checkDetail}
+              size='small'
+              color='primary'
+              className={classes.view}
+            >
+              Discover More
+            </Button>
+          </CardActions>
+        </Box>
+      </Card>
+    </Box>
   ) : null;
 }
 

@@ -180,6 +180,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
   const resetForm = () => {
     reset();
+    setVId(preloadValues.video ? matchYoutubeUrl(preloadValues.video) : '')
     setImg({
       alt: 'Upload an image',
       src: preloadImg,
@@ -190,8 +191,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
 
   const onSubmit = async (data) => {
-    // setLoading(true);
-    console.log(data);
+    setLoading(true);
     setData(data);
     if (data.picture){
       handleUpload();
@@ -202,17 +202,17 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
   useEffect(() => {
     const buildBody = () => {
-      const sl = data.serviceList.map((x) => x.service);
+      const sl = data.serviceList ? data.serviceList.map((x) => x.service) : ''
       const uploadBody = {
         organizationName: data.OrgName,
         organizationType: data.OrganizationType,
         introduction: data.OrganizationIntroduction,
         contact: data.Contact,
-        details: data.OrganizationDetail,
-        serviceList: sl.join('@'),
+        details: data.OrganizationDetail || '',
+        serviceList: sl ? sl.join('@') : '',
         logo: url,  
-        video: data.video,
-        websiteLink: data.websiteLink,
+        video: data.video || '',
+        websiteLink: data.websiteLink || '',
       };
       return uploadBody;
     };
@@ -223,7 +223,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
         console.log('update success');
         setLoading(false);
         setOpen(true);
-        reset();
       } else{
         setLoading(false);
         setErrorMsg('There is something wrong when uploading, please try again')
@@ -231,11 +230,10 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     }
     if(url){
       const uploadBody = buildBody();
-      console.log(uploadBody)
       sendData(uploadBody)
     }
 
-  }, [url]);
+  }, [url]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     reset();
@@ -327,7 +325,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                         Financial and Legal
                       </MenuItem>
                       <MenuItem value='Mental Health'>Mental Health</MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
+                      <MenuItem value='Seniors'>Seniors</MenuItem>
                       <MenuItem value='Youth'>Youth</MenuItem>
                     </Select>
                   );
@@ -418,7 +416,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
               />
             </section>
             <section className={classes.formStyle}>
-              <label>Services List (No comma allow):</label>
+              <label>Services List:</label>
               <section className={classes.formStyle}>
                 {controlledFields.map((item, index) => {
                   return (
@@ -512,6 +510,8 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                       const id = matchYoutubeUrl(e.target.value);
                       if (id) {
                         setVId(id);
+                      } else{
+                        setVId('')
                       }
                     }}
                     inputRef={field.ref}
@@ -526,13 +526,16 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                 rules={{
                   validate: {
                     validURL: (value) => {
-                      const id = matchYoutubeUrl(value);
-                      console.log(id);
-                      if (id || value === '') {
-                        setVId(id);
-                        return true;
+                      if (value){
+                        const id = matchYoutubeUrl(value);
+                        if (id){
+                          setVId(id);
+                          return true
+                        } else{
+                          return false
+                        }
                       } else {
-                        return false;
+                        return true
                       }
                     },
                   },

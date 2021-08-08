@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import EventCard from '../EventCard';
-import HomePageButton from '../HomePageButton';
+import HomePageButton from './HomePageButton';
 import { getPopularEventId } from '../api';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   item: {
     width: '100%',
+
   },
   eventBox: {
     display: 'flex',
@@ -40,13 +41,16 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: 'center',
     },
   },
+  eventItem : {
+    display:'flex',
+    justifyContent: 'center'
+  }
 }));
 
 const CardBoard = () => {
   const history = useHistory();
   const classes = useStyles();
   const [event_list, setEventlist] = useState([]);
-  const usergroup = sessionStorage.getItem('usergroup');
   const fetchOrigin = async () => {
     const res = await getPopularEventId();
     if (res[0] === 200) {
@@ -72,13 +76,13 @@ const CardBoard = () => {
         <Grid item sm={10} md={9} xl={8} className={classes.item}>
           <Box className={classes.title} mt={1}>
             <Typography variant='h4' className={classes.text}>
-              What's on
+              Popular events
             </Typography>
-            <HomePageButton text='Find Event' onClick={toEventSearch}/>
+            <HomePageButton text='More Events' onClick={toEventSearch}/>
           </Box>
           <Grid container className={classes.eventBox}>
             {event_list.map((eventId) => (
-              <Grid>
+              <Grid item xs={12} md={6} lg={4}key={eventId} className={classes.eventItem}>
               <EventCard
                 key={eventId}
                 eventId={eventId}
