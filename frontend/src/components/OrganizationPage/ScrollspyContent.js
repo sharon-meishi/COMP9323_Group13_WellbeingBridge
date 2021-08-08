@@ -85,7 +85,6 @@ const useStyles = makeStyles((theme) => ({
   },
   eventcard: {
     display: 'flex',
-    justifyContent: 'space-around',
     width: '100%',
     flexWrap: 'wrap',
     [theme.breakpoints.down('md')]: {
@@ -179,7 +178,7 @@ function ScrollspyContent({ oId }) {
         <Grid container className={classes.root}>
           <Scrollspy
             className={classes.scrollspy}
-            items={['Name','Details', 'Services', 'Video', 'Contact', 'Events']}
+            items={['Name','Details', 'Services', 'Video', 'Contact', 'Reviews', 'Events']}
             currentClassName={classes.isCurrent}
           >
             <Link className={classes.item} href='#Name' color='inherit'>
@@ -196,6 +195,9 @@ function ScrollspyContent({ oId }) {
             </Link>
             <Link className={classes.item} href='#Contact' color='inherit'>
               Contact
+            </Link>
+            <Link className={classes.item} href='#Reviews' color='inherit'>
+            Reviews
             </Link>
             <Link className={classes.item} href='#Events' color='inherit'>
               Events
@@ -347,7 +349,7 @@ function ScrollspyContent({ oId }) {
 
             <Grid container id='Events' className={classes.eventBox}>
               <h2>Their Events: </h2>
-              <Grid container className={classes.eventcard}>
+              <Grid container className={classes.eventcard} spacing={2}>
                 {data.otherEvents.length === 0 ? (
                   <div className={classes.introduction}>
                     No event at the moment, please wait:)
@@ -359,7 +361,7 @@ function ScrollspyContent({ oId }) {
                         item
                         xs={11}
                         md={6}
-                        lg={4}
+                        xl={4}
                         className={classes.eventItem}
                         key={item}
                       >

@@ -1,7 +1,7 @@
 import json
 from flask import request
 from flask_restx import Resource
-
+from pymysql.converters import escape_string
 from tool import *
 from models.request_model import *
 from flask_app import api
@@ -60,11 +60,11 @@ class OrganizationRegister(Resource):
     @auth.expect(organization_model)
     def post(self):
         data = json.loads(request.get_data())
-        organization_name = data['organizationName']
+        organization_name = escape_string(data['organizationName'])
         email = data['email']
         password = data['password']
         organization_type = data['organizationType']
-        introduction = data['introduction']
+        introduction = escape_string(data['introduction'])
         contact = data['contact']
         if email == "" or password == "" or organization_name == "" or organization_type == "" or contact == "":
             output = {
