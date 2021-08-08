@@ -429,13 +429,13 @@ function EventDetailsPage(props) {
               <div variant='body1'>{detail.details}</div>
             </Grid>
             <Grid className={classes.sectionStyle}>
-              <Header as='h3'> Comments:</Header>
+              <Header as='h3'>  Q&A:</Header>
               <Comment.Group size='large' style={{ maxWidth: '100%' }}>
                 {context.isLoginState &&
                 sessionStorage.getItem('usergroup') === 'individual' ? (
                   <Form onSubmit={submitNewComment}>
                     <Form.TextArea
-                      placeholder='Please leave your comment here'
+                      placeholder='Please leave your questions here'
                       name='comment'
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
@@ -445,7 +445,7 @@ function EventDetailsPage(props) {
                       <Form.Button
                         type='submit'
                         size='tiny'
-                        content='Add Comment'
+                        content='Add Question'
                         labelPosition='left'
                         icon='edit'
                         primary
@@ -454,7 +454,7 @@ function EventDetailsPage(props) {
                   </Form>
                 ) : (
                   <Box fontSize='16px'>
-                    Please Login as an individual user to post comment
+                    Please Login as an individual user to post question
                   </Box>
                 )}
                 {detail.comments && orgDetail
