@@ -227,3 +227,85 @@ class Organization_profile(Resource):
                 "message": "Success"
             }
             return output, 200
+
+
+@api_org.route("/<int:oid>/review", doc={"description": "give a review to an orgnization"})
+@api_org.doc(parser=token_parser)
+class review(Resource):
+    @api_org.expect(review_model)
+    def post(self, oid):
+        data = api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+        result = sql_command(sql)[0]
+        userid = result[0]
+        username = result[1]
+        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sql = f"INSERT INTO Review VALUES (0,{userid},'{username}',{data['rating']},{oid},'{data['review']}','{time}');"
+        sql_command(sql)
+        output = {
+            "message": "success"
+        }
+        return output, 200
+
+
+@api_org.route("/<int:oid>/review/<int:reviewid>", doc={"description": "review function"})
+@api_org.doc(parser=token_parser)
+class review_function(Resource):
+    @api_org.expect(review_model)
+    def put(self, oid, reviewid):
+        data = api.payload
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+        result = sql_command(sql)[0]
+        userid = result[0]
+        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        review_sql = f"SELECT Userid FROM Review WHERE id={reviewid};"
+        review_result = sql_command(review_sql)[0]
+        if userid!=review_result[0]:
+            output={
+                "message":"You cannot change others' reviews!"
+            }
+            return output,403
+        change_sql=f"UPDATE REVIEW SET review='{data['review']}',rating={data['rating']},time='{time}' WHERE id={reviewid};"
+        sql_command(change_sql)
+        output={
+            "message":"success"
+        }
+        return output,200
+    def delete(self,oid,reviewid):
+        token = token_parser.parse_args()['Authorization']
+        if token is None:
+            output = {
+                "message": "You must login first!"
+            }
+            return output, 403
+        email = decode_token(token)['email']
+        sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
+        result = sql_command(sql)[0]
+        userid = result[0]
+        review_sql = f"SELECT Userid FROM Review WHERE id={reviewid};"
+        review_result = sql_command(review_sql)[0]
+        if userid!=review_result[0]:
+            output={
+                "message":"You cannot delete others's review!"
+            }
+            return output,403
+        sql=f"DELETE FROM REVIEW WHERE id={reviewid};"
+        sql_command(sql)
+        output={
+            "message":"success"
+        }
+        return output,200
