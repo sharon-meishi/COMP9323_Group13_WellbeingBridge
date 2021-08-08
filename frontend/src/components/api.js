@@ -3,7 +3,7 @@ import axios from 'axios';
 const baseUrl = 'http://127.0.0.1:8000';
 
 export const loginRequest = async (data) => {
-  const url = baseUrl + '/login';
+  const url = baseUrl + '/auth/login';
   const loginBody = {
     email: data.email,
     password: data.password,
@@ -27,7 +27,7 @@ export const loginRequest = async (data) => {
 };
 
 export const registerRequest = async (data) => {
-  const url = baseUrl + '/signup/user';
+  const url = baseUrl + '/auth/signup/user';
   const signupBody = {
     nickname: data.nickname,
     email: data.email,
@@ -51,7 +51,7 @@ export const registerRequest = async (data) => {
 };
 
 export const organizationApplyRequest = async (data) => {
-  const url = baseUrl + '/signup/organization';
+  const url = baseUrl + '/auth/signup/organization';
   const applyBody = {
     organizationName: data.OrganizationName,
     email: data.Email,
