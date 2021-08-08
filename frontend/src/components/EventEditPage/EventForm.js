@@ -419,7 +419,6 @@ function EventForm({
                         <MenuItem value='Mental Health'>
                         Mental Health
                         </MenuItem>
-                        <MenuItem value='Family'>Family</MenuItem>
                         <MenuItem value='Community organised'>Community organised</MenuItem>
                         <MenuItem value='Seniors'>Seniors</MenuItem>
                         <MenuItem value='Young People'>Young People</MenuItem>

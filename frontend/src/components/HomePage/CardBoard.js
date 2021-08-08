@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     padding:'16px 0',
     width: '100%',
-    justifyContent: 'space-between',
     flexWrap: 'wrap',
     [theme.breakpoints.down('md')]: {
       justifyContent: 'center',
@@ -80,7 +79,7 @@ const CardBoard = () => {
             </Typography>
             <HomePageButton text='More Events' onClick={toEventSearch}/>
           </Box>
-          <Grid container className={classes.eventBox}>
+          <Grid container className={classes.eventBox} spacing={2}>
             {event_list.map((eventId) => (
               <Grid item xs={12} md={6} lg={4}key={eventId} className={classes.eventItem}>
               <EventCard

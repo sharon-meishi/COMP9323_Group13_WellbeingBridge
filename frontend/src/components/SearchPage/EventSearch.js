@@ -80,7 +80,6 @@ const categoryOptions = [
   { label: 'Sports and fitness', value: 'Sports and fitness' },
   { label: 'Multicultural', value: 'Multicultural' },
   { label: 'Mental Health', value: 'Mental Health' },
-  { label: 'Family', value: 'Family' },
   { label: 'Community organised', value: 'Community organised' },
   { label: 'Kids', value: 'Kids' },
   { label: 'Seniors', value: 'Seniors' },
