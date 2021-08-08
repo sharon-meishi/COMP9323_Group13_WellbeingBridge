@@ -159,7 +159,7 @@ function EventCard(props) {
       };
       fetchOrgData();
     }
-  }, [info]);
+  }, [info,islike]);
 
   const checkDetail = () => {
     history.push(`/event/${props.eventId}`);
