@@ -75,6 +75,7 @@ export default function OrgCard({ Id }) {
     };
     history.push(path);
   };
+
   return (
     <Card className={classes.root}>
       {/* <CardActionArea> */}
@@ -83,6 +84,7 @@ export default function OrgCard({ Id }) {
         className={classes.media}
         image={cardLogo}
         title='Organization Logo'
+        onClick={handleLink}
       />
       <CardContent>
         <Box display='flex' alignItems='center'>

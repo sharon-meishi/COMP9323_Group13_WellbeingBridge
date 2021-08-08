@@ -138,8 +138,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function EventDetailsPage({ match }) {
-  const eventId = match.params.eventId;
+function EventDetailsPage(props) {
+  const eventId = props.match.params.eventId;
   const classes = useStyles();
   const history = useHistory();
   const context = useContext(AppContext);
@@ -164,6 +164,7 @@ function EventDetailsPage({ match }) {
 
   useEffect(() => {
     const getEvent = async () => {
+      console.log(eventId);
       const res = await getEventDetails(eventId);
       if (res[0] === 200) {
         setDetail(res[1]);
@@ -175,15 +176,22 @@ function EventDetailsPage({ match }) {
           setEditable(true);
         }
         if (res[1].favourite) {
+          console.log(res[1].favourite);
           setIslike(true);
+        }else{
+          setIslike(false);
         }
         if (res[1].booked) {
+          console.log(res[1].booked);
           setIsbook(true);
+        }else{
+          setIsbook(false);
         }
       }
     };
     getEvent();
     setUpdate(false);
+    console.log(props.location)
   }, [eventId, update, usergroup]);
 
   useEffect(() => {
@@ -421,13 +429,13 @@ function EventDetailsPage({ match }) {
               <div variant='body1'>{detail.details}</div>
             </Grid>
             <Grid className={classes.sectionStyle}>
-              <Header as='h3'> Comments:</Header>
+              <Header as='h3'>  Q&A:</Header>
               <Comment.Group size='large' style={{ maxWidth: '100%' }}>
                 {context.isLoginState &&
                 sessionStorage.getItem('usergroup') === 'individual' ? (
                   <Form onSubmit={submitNewComment}>
                     <Form.TextArea
-                      placeholder='Please leave your comment here'
+                      placeholder='Please leave your questions here'
                       name='comment'
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
@@ -437,7 +445,7 @@ function EventDetailsPage({ match }) {
                       <Form.Button
                         type='submit'
                         size='tiny'
-                        content='Add Comment'
+                        content='Add Question'
                         labelPosition='left'
                         icon='edit'
                         primary
@@ -446,7 +454,7 @@ function EventDetailsPage({ match }) {
                   </Form>
                 ) : (
                   <Box fontSize='16px'>
-                    Please Login as an individual user to post comment
+                    Please Login as an individual user to post question
                   </Box>
                 )}
                 {detail.comments && orgDetail

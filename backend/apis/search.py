@@ -91,17 +91,21 @@ class search_event(Resource):
         else:
             sql_eventsearch += ";"
 
-        print(sql_eventsearch)
 
         output_search = sql_command(sql_eventsearch)
         found_events = []
         if lat is not None and lng is not None:
             orig_coords = (float(lat), float(lng))
             for event_id, e_lat, e_lng in output_search:
-                evt_coords = (float(e_lat), float(e_lng))
-                if distance.geodesic(orig_coords, evt_coords).km <= range:
+                if(e_lat == "" and e_lng == ""):
                     found_events.append(event_id)
+                else:
+                    evt_coords = (float(e_lat), float(e_lng))
+                    if distance.geodesic(orig_coords, evt_coords).km <= range:
+                        found_events.append(event_id)
         else:
             found_events = [output[0] for output in output_search]
+        
+        found_events.reverse()
 
         return found_events, 200

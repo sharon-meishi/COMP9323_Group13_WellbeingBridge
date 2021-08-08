@@ -66,6 +66,7 @@ function EventMap({ eventList, center }) {
     },
     zoom: 12,
   };
+  console.log(eventList)
   return (
     <div style={{ height: '70vh', width: '100%' }}>
       <GoogleMapReact

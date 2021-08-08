@@ -141,6 +141,7 @@ function OrgEventCard({
           className={classes.media}
           image={thumbnail}
           title='Event Image'
+          onClick={checkDetail}
         />
         <Box
           display='flex'
