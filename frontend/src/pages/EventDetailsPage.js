@@ -138,8 +138,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function EventDetailsPage({ match }) {
-  const eventId = match.params.eventId;
+function EventDetailsPage(props) {
+  const eventId = props.match.params.eventId;
   const classes = useStyles();
   const history = useHistory();
   const context = useContext(AppContext);
@@ -164,6 +164,7 @@ function EventDetailsPage({ match }) {
 
   useEffect(() => {
     const getEvent = async () => {
+      console.log(eventId);
       const res = await getEventDetails(eventId);
       if (res[0] === 200) {
         setDetail(res[1]);
@@ -175,15 +176,22 @@ function EventDetailsPage({ match }) {
           setEditable(true);
         }
         if (res[1].favourite) {
+          console.log(res[1].favourite);
           setIslike(true);
+        }else{
+          setIslike(false);
         }
         if (res[1].booked) {
+          console.log(res[1].booked);
           setIsbook(true);
+        }else{
+          setIsbook(false);
         }
       }
     };
     getEvent();
     setUpdate(false);
+    console.log(props.location)
   }, [eventId, update, usergroup]);
 
   useEffect(() => {

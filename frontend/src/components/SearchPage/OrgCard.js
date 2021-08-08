@@ -75,6 +75,7 @@ export default function OrgCard({ Id }) {
     };
     history.push(path);
   };
+
   return (
     <Card className={classes.root}>
       {/* <CardActionArea> */}
