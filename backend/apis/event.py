@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Resource
 import json
+from pymysql.converters import escape_string
 
 from models.request_model import *
 from flask_app import api
@@ -235,13 +236,14 @@ class PublishEvent(Resource):
             org_email = user_info['email']
             org_sql = f"SELECT OrganizationId,OrganizationName FROM Organization WHERE Email = '{org_email}';"
             org_result = sql_command(org_sql)[0]
-            sql = "INSERT INTO Event VALUES (0,'{}', {}, '{}', '{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');". \
+            introduction=escape_string(data['introduction'])
+            sql = '''INSERT INTO Event VALUES (0,"{}", {}, "{}", "{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}");'''. \
                 format(data['eventName'], org_result[0], org_result[1], data['thumbnail'], data['format'],
                        data['category'],
                        data['location']['postcode'], data['location']['address'],
                        data['location']['lat'], data['location']['lng'], data['startdate'], data['enddate'],
                        data['time'],
-                       data['introduction'], data['details'])
+                       introduction, data['details'])
             sql_command(sql)
             event_sql = f"SELECT EventId FROM Event WHERE EventName='{data['eventName']}' and OrganizationId={org_result[0]};"
             eventid = sql_command(event_sql)[0][0]
