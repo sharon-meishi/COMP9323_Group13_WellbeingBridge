@@ -141,7 +141,7 @@ export default function NavBar({ search }) {
         <div className={classes.leftBox}>
           <LogoButton />
           <Box ml={2}>
-            {search ? null : <Searchbar defaultValue='organization' />}
+            {search ? null : <Searchbar defaultValue='event' />}
           </Box>
         </div>
         <ThemeProvider theme={theme}>

@@ -32,7 +32,8 @@ def create_database():
     insert_user = '''
     INSERT INTO `User` VALUES 
     (0, "Cecilia", "cecilia@gmail.com", "abcd", NULL),
-    (0, "Nick", "nick@gmail.com","abcd",NULL);
+    (0, "Nick", "nick@gmail.com","abcd",NULL),
+    (0, "Chris", "chris@gmail.com","abcd",NULL);
     '''
 
     organization_table = '''CREATE TABLE IF NOT EXISTS `Organization` (
@@ -56,7 +57,7 @@ def create_database():
     INSERT INTO Organization 
     (OrganizationId,Email,Password,OrganizationName,OrganizationType,
     Logo,Contact,Introduction,Details,VideoUrl,ServiceList,WebsiteLink) VALUES 
-    (0, "wellbeing@org.com", "abcd", "HeadSpace", "Youth",
+    (0, "headspace@org.com", "abcd", "HeadSpace", "Youth",
     "https://sydneynorthhealthnetwork.org.au/wp-content/uploads/2016/04/Headspace-logo.png",
     "headspace@newhorizons.net.au",
     "The Centre is open to assist young people with health advice and support and information, around a range of matters including: caring for others, stress, relationships, employment and depression",
@@ -65,7 +66,7 @@ def create_database():
     'mental health counselling@education support@employment support@alcohol and other drug services', 
     "https://headspace.org.au"), 
 
-    (0, 'test@org.com', 'abcd', "My Aged Care", "Seniors", 
+    (0, 'myagedcare@org.com', 'abcd', "My Aged Care", "Seniors", 
     "https://firebasestorage.googleapis.com/v0/b/comp9323-wellbeingbridge.appspot.com/o/images%2F2-2021%2F8%2F8%20%E4%B8%8A%E5%8D%8812%3A51%3A27-logo-myagedcare.jpeg?alt=media&token=aa2eb7f9-1704-4711-ba38-633af78623d1",
      "1800-200-422", "My Aged Care is the Australian Government's starting point on your aged care journey. Find and access the government-funded services you need.", 
      "My Aged Care will offer: prompt, reliable and confidential services; polite, helpful and knowledgeable staff; clear information, available in other languages if you speak another language; support to access information if you have hearing difficulties or a vision impairment; help to find government funded aged care services; prompt resolution of any complaint or concern you have with My Aged Care.", 
@@ -73,7 +74,7 @@ def create_database():
     'Information on the different types of aged care services available@An assessment of needs to identify eligibility and the right type of care@Referrals and support to find service providers that can meet your needs@Information on what you might need to pay towards the cost of your care', 
     "https://www.myagedcare.gov.au"), 
 
-    (0, '9323@org.com', 'abcd', "House to Grow", "Education", 
+    (0, 'housetogrow@org.com', 'abcd', "House to Grow", "Education", 
     "https://brizy.b-cdn.net/media/iW=70&iH=80&oX=0&oY=0&cW=70&cH=80/d1073b4eea3ad956e7750133d6091c22.png", 
     "info@housetogrow.org", "Empowering communities through education for life, holistic health and wellbeing ", 
     "House to Grow is a not-for-profit organisation that empowers vulnerable children in unhealthy environments and women affected by domestic violence through personal development, education for life and holistic health. We try not to limit who can come to us, we encourage and support any individual that seeks personal development, education for life and holistic health. We also deliver educational programs to organisations, community groups and people in need. ", 
@@ -115,13 +116,21 @@ def create_database():
     "Aimed at kids between 5 to 12, the classes will be gentle exercise focus, incorporating the local landscape and body weight exercises during the 60 minute session. ",
     "Kids must attend with parents. All you need is your yoga mat, a workout towel, a water bottle and a sense of fun!"),
 
-    (0,"Online Hip Hop Dance Fitness - Ages 5 to 12 years",1,"HeadSpace" ,
+    (0,"Kids Online Hip Hop Dance - Ages 5 to 12 years",1,"HeadSpace" ,
     "https://firebasestorage.googleapis.com/v0/b/comp9323-wellbeingbridge.appspot.com/o/images%2F1-2021%2F8%2F8%20%E4%B8%8A%E5%8D%881%3A48%3A44-youth%20hip%20pop.jpeg?alt=media&token=2a032dc8-0341-45ca-be87-11c630cd223b",
     "Online Event","Sports and fitness",
     "","","","",
     "16/08/2021","19/08/2021","5:00 PM to 6:00 PM",
     "This is a great opportunity to learn a range of skills from basic movement to more technical moves and develop a sense of movement to the latest rap, r&b and hip hop songs.",
     "Enjoy and discover conventional hip hop dancing as well as breaking, popping, locking, gliding, ticking, vibrating and krumping. Beginners welcome, no experience necessary."),
+
+    (0,"Family Mental Health Check-Up",1,"HeadSpace" ,
+    "https://firebasestorage.googleapis.com/v0/b/comp9323-wellbeingbridge.appspot.com/o/images%2F2-2021%2F8%2F7%20%E4%B8%8B%E5%8D%886%3A50%3A11-raising%20kids.jpeg?alt=media&token=4418d682-d1e3-434f-8c14-198583d125c7",
+    "Online Event","Mental Health",
+    "","","","",
+    "01/08/2021","10/08/2021","1:30 PM to 3:30 PM",
+    "With the rise of stress and uncertainty across our communities, the mental health and resiliency of our children, teens and families has never been so important.",
+    "How can families focus on wellbeing and resiliency at home? And when do they need to reach out for help? Learn to monitor and strengthen the mental health of your family with some simple and effective strategies."),
 
     
     (0,"Tai Chi for seniors",2,"My Aged Care" ,
@@ -154,7 +163,16 @@ def create_database():
     "CAMPSIE, NSW 2194","Campsie Library and Knowledge Centre, Amy Street, Campsie NSW, Australia","-33.912557","151.102509",
     "01/08/2021","31/08/2021","4:00 PM to 6:00 PM",
     "Get one on one help in both subjects. We will cover strategies to ace the exams.",
-    "Study help group");
+    "Study help group"),
+
+    (0,"Youth Mental Health First Aid Course",3,"House to Grow" ,
+    "https://firebasestorage.googleapis.com/v0/b/comp9323-wellbeingbridge.appspot.com/o/images%2F3-2021%2F8%2F8%20%E4%B8%8B%E5%8D%8811%3A37%3A32-youth%20mental%20health%20first%20aid.jpeg?alt=media&token=2456d126-3dde-4a0b-b7bc-8144fb84bbf0",
+    "Class","Mental Health",
+    "SYDNEY, NSW 2000","532-540 George Street, Sydney NSW, Australia","-33.873333","151.207383",
+    "18/8/2021","31/08/2021","9:30 AM to 5:30 PM",
+    "Check in with yourself, speak about things you've been struggling with in a space where you'll be understood and supported, and hopefully come away with some new self-care tools.",
+    "GAIN THE CONFIDENCE AND SKILLS TO: Help an adolescent experiencing mental health problems; Recognise the signs and symptoms; Find effective help; Respond to early signs");
+
     
     '''
 
@@ -172,8 +190,12 @@ def create_database():
     (0, 1, 1),
     (0, 2, 1),
     (0, 3, 1),
-    (0, 2, 2),
-    (0, 3, 2);
+    (0, 3, 2),
+    (0, 4, 2),
+    (0, 6, 2),
+    (0, 3, 3),
+    (0, 6, 3),
+    (0, 7, 3);
     '''
 
     comment_table = '''
@@ -192,8 +214,9 @@ def create_database():
 
     insert_comment = '''
     INSERT INTO `Comment` VALUES 
-    (0, 1, 'Cecilia', 1, 'Is there a limit on the number of people participating?', '2021-07-08 21:51:26','Yes, about 50 people:)',1),
-    (0, 2, 'Nick', 1, 'I would come with my kids!', '2021-07-08 21:51:30',NULL,NULL);
+    (0, 2, "Nick", 6, "Can I bring friends? Or they also need to book?", '2021-07-06 15:25:26',"They don\'t need to! You can just bring them up!",3),
+    (0, 3, 'Chris', 6, 'Interesting event!', '2021-07-08 21:51:26',NULL,NULL),
+    (0, 1, 'Cecilia', 1, 'I would come with my kids!', '2021-07-09 21:51:30',NULL,NULL);
     '''
 
     review_table='''
@@ -213,7 +236,7 @@ def create_database():
     INSERT INTO `Review` VALUES 
     (0, 1, 'Cecilia', 5, 1, 'What a nice organization', '2021-08-03 21:51:26'),
     (0, 1, 'Cecilia', 3, 2, 'There is still room for improvement', '2021-08-04 21:51:26'),
-    (0, 2, 'Nick', 4, 1, 'They host fantastic events!', '2021-08-05 21:51:30');
+    (0, 2, 'Nick', 4, 3, 'They host fantastic events!', '2021-08-05 21:51:30');
     '''
     
     c.execute(user_table)

@@ -66,6 +66,7 @@ export default function OrgCard({ Id }) {
   const handleLink = () => {
     history.push(`/organization/${Id}`);
   };
+  
   const toOrgType = () => {
     const data = { orgType: cardInfo.OrganizationType };
     const queryPath = new URLSearchParams(data).toString();

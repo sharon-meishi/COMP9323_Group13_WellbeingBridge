@@ -78,47 +78,6 @@ function EventMap({ eventList, center }) {
         <Marker lat={center.lat} lng={center.lng} text='You' />
         {eventList.map((each, idx) =>
           each.location.Lat && each.location.Lng ? (
-            // <Tooltip
-            //   key={each.eventId}
-            //   title={
-            //     <Box>
-            //       <Box mb={1} style={{ fontSize: '18px' }}>
-            //         {each.name}
-            //       </Box>
-            //       <Link
-            //         style={{ color: 'lightblue', cursor: 'pointer' }}
-            //         onClick={() =>
-            //           openGoogleMap(
-            //             parseFloat(each.location.Lat),
-            //             parseFloat(each.location.Lng)
-            //           )
-            //         }
-            //       >
-            //         Open in google map
-            //       </Link>
-            //     </Box>
-            //   }
-            //   lat={parseFloat(each.location.Lat)}
-            //   lng={parseFloat(each.location.Lng)}
-            //   arrow
-            //   placement='top-start'
-            //   style={{ margin: '-20px 0 0 -20px' }}
-            // >
-            //   <Link
-            //     href={`#${idx + 1}`}
-            //     underline='none'
-            //     onClick={() => handleMarkerClick(idx + 1)}
-            //   >
-            //     <IconButton
-            //       color='primary'
-            //       size='large'
-            //       className={classes.button}
-            //     >
-            //       {idx + 1}
-            //       <RoomIcon fontSize='large' />
-            //     </IconButton>
-            //   </Link>
-            // </Tooltip>
             <Popup
               key={each.eventId}
               on='click'

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Scrollspy from 'react-scrollspy';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Comment, Form } from 'semantic-ui-react';
 import Link from '@material-ui/core/Link';
+import Chip from '@material-ui/core/Chip';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Rating from '@material-ui/lab/Rating';
@@ -130,6 +132,7 @@ const labels = {
 
 function ScrollspyContent({ oId }) {
   const classes = useStyles();
+  const history = useHistory();
   const BottomSyle = {
     borderBottom: '1px solid #DCDCDC',
     marginBottom: '30px',
@@ -159,6 +162,16 @@ function ScrollspyContent({ oId }) {
     return false;
   };
 
+  const toOrgType = () => {
+    const urldata = { orgType: data.organizationType };
+    const queryPath = new URLSearchParams(urldata).toString();
+    const path = {
+      pathname: '/organization/search',
+      search: `?${queryPath}`,
+    };
+    history.push(path);
+  };
+
   useEffect(() => {
     const getOrganization = async () => {
       const res = await getOrganizationDetails(oId);
@@ -178,12 +191,20 @@ function ScrollspyContent({ oId }) {
         <Grid container className={classes.root}>
           <Scrollspy
             className={classes.scrollspy}
-            items={['Name','Details', 'Services', 'Video', 'Contact', 'Reviews', 'Events']}
+            items={[
+              'Name',
+              'Details',
+              'Services',
+              'Video',
+              'Contact',
+              'Reviews',
+              'Events',
+            ]}
             currentClassName={classes.isCurrent}
           >
             <Link className={classes.item} href='#Name' color='inherit'>
               Name
-            </Link>            
+            </Link>
             <Link className={classes.item} href='#Details' color='inherit'>
               Details
             </Link>
@@ -197,7 +218,7 @@ function ScrollspyContent({ oId }) {
               Contact
             </Link>
             <Link className={classes.item} href='#Reviews' color='inherit'>
-            Reviews
+              Reviews
             </Link>
             <Link className={classes.item} href='#Events' color='inherit'>
               Events
@@ -207,16 +228,22 @@ function ScrollspyContent({ oId }) {
             <section id='Name' style={BottomSyle}>
               <div className={classes.box}>
                 <Box display='flex' flexDirection='column' flexWrap='wrap'>
-                  <Box display='flex' alignItems='baseline' >
+                  <Box display='flex' alignItems='baseline'>
                     <h2>{data.organizationName}</h2>
+                    <Box ml={1}>
+                      {' '}
+                      <Chip
+                        label={`#${data.organizationType}`}
+                        className={classes.label}
+                        clickable
+                        color='primary'
+                        onClick={toOrgType}
+                      />
+                    </Box>
                   </Box>
 
                   <Box display='flex' alignItems='center' flexWrap='wrap'>
-                    <Rating
-                      value={data.rating}
-                      readOnly
-                      precision={0.5}
-                    />
+                    <Rating value={data.rating} readOnly precision={0.5} />
                     <Box ml={1}>{data.rating || ''}</Box>
                     <Link className={classes.linkStyle} href='#Reviews'>
                       {data.rating === 0
@@ -233,6 +260,7 @@ function ScrollspyContent({ oId }) {
                   />
                 </div>
               </div>
+              <div></div>
               <div className={classes.introduction}>{data.introduction}</div>
             </section>
 
@@ -273,13 +301,28 @@ function ScrollspyContent({ oId }) {
               <h2>Other Information:</h2>
               <div className={classes.service}>
                 <span className={classes.boldStyle}>Contract:</span>{' '}
-                <Link style={{cursor: 'pointer'}} href={`mailto:${data.contact}`}>{data.contact}</Link>
+                {data.contact.includes('@') ? (
+                  <Link
+                    style={{ cursor: 'pointer' }}
+                    href={`mailto:${data.contact}`}
+                  >
+                    {data.contact}
+                  </Link>
+                ) : (
+                  data.contact
+                )}
               </div>
 
               {data.websiteLink ? (
                 <div className={classes.service}>
                   <span className={classes.boldStyle}>Website Link:</span>{' '}
-                  <Link href={data.websiteLink} style={{cursor: 'pointer'}} underline='hover'>{data.websiteLink}</Link>
+                  <Link
+                    href={data.websiteLink}
+                    style={{ cursor: 'pointer' }}
+                    underline='hover'
+                  >
+                    {data.websiteLink}
+                  </Link>
                 </div>
               ) : null}
             </section>

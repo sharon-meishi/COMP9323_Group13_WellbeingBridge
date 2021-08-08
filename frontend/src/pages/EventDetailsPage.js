@@ -11,6 +11,7 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
+import Rating from '@material-ui/lab/Rating';
 import EditIcon from '@material-ui/icons/Edit';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from '@material-ui/core/IconButton';
@@ -178,20 +179,20 @@ function EventDetailsPage(props) {
         if (res[1].favourite) {
           console.log(res[1].favourite);
           setIslike(true);
-        }else{
+        } else {
           setIslike(false);
         }
         if (res[1].booked) {
           console.log(res[1].booked);
           setIsbook(true);
-        }else{
+        } else {
           setIsbook(false);
         }
       }
     };
     getEvent();
     setUpdate(false);
-    console.log(props.location)
+    console.log(props.location);
   }, [eventId, update, usergroup]);
 
   useEffect(() => {
@@ -374,7 +375,11 @@ function EventDetailsPage(props) {
                 </CardActions>
               )}
             </Grid>
-            <Box display='flex' justifyContent='space-between' alignItems='center'>
+            <Box
+              display='flex'
+              justifyContent='space-between'
+              alignItems='center'
+            >
               <Box>
                 <Chip
                   label={`#${detail.format}`}
@@ -390,7 +395,7 @@ function EventDetailsPage(props) {
                   onClick={searchCategory}
                 />
               </Box>
-              <Box alignSelf='flex-end'>
+              <Box alignSelf='flex-end' display='flex'>
                 <Box fontSize='18px'>
                   By
                   <Link
@@ -402,6 +407,10 @@ function EventDetailsPage(props) {
                     {detail.OrganizationName}
                   </Link>
                 </Box>
+                <Box>
+                <Rating key={`rating${orgDetail.rating}`} value={orgDetail.rating} readOnly precision={0.5} />
+                </Box>
+
               </Box>
             </Box>
             <Grid className={classes.info}>
@@ -429,7 +438,7 @@ function EventDetailsPage(props) {
               <div variant='body1'>{detail.details}</div>
             </Grid>
             <Grid className={classes.sectionStyle}>
-              <Header as='h3'>  Q&A:</Header>
+              <Header as='h3'> Q&A:</Header>
               <Comment.Group size='large' style={{ maxWidth: '100%' }}>
                 {context.isLoginState &&
                 sessionStorage.getItem('usergroup') === 'individual' ? (
