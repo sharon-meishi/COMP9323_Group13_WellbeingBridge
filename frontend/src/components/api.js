@@ -78,7 +78,7 @@ export const organizationApplyRequest = async (data) => {
 };
 
 export const createEventRequest = async (uploadBody) => {
-  const url = baseUrl + '/event';
+  const url = baseUrl + '/event/';
   const headers = {
     Authorization: `${sessionStorage.getItem('token')}`,
     'content-Type': 'application/json',
