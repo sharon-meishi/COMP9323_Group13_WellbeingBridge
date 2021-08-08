@@ -65,8 +65,8 @@ def send_email(message, link, receiver, receiver_address):
     <html>
       <body>
         <p>Hi, %s<br><br>
-           %s<br>
-           <a href="%s">Click here to view</a><br><br>
+           %s<br><br>
+           <a href="%s">View more</a><br><br>
            Warmly,<br>
            WellbeingBridge<br>
         </p>

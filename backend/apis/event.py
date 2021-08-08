@@ -413,8 +413,8 @@ class EventComment(Resource):
             sql = f"SELECT OrganizationName,Email FROM Organization WHERE OrganizationId=(SELECT OrganizationId FROM Event WHERE Event.EventId={eventid});"
             org_info = sql_command(sql)[0]
             send_email(
-                f"A new question has been asked on your event<br>{data['comment']}",
-                f"http://{request.headers.get('Host')}/event/{eventid}",
+                f"A new question has been asked on your event<br><br>{data['comment']}",
+                f"http://{request.headers.get('Host').split(':')[0]}:3000/event/{eventid}",
                 org_info[0],
                 org_info[1]
             )
@@ -480,6 +480,17 @@ class reply_comment(Resource):
 
         sql = f"UPDATE COMMENT SET answer='{escape_string(data['answer'])}',replyid={userid} WHERE id={commentid};"
         sql_command(sql)
+
+        # for email
+        sql = f"SELECT NickName,Email FROM User WHERE UserId=(SELECT userid FROM Comment WHERE id={commentid});"
+        user_info = sql_command(sql)[0]
+        send_email(
+            f"Your question has been answered<br><br>{data['answer']}",
+            f"http://{request.headers.get('Host').split(':')[0]}:3000/event/{eventid}",
+            user_info[0],
+            user_info[1]
+        )
+
         output = {
             "message": "success"
         }
