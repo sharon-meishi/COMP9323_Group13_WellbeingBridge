@@ -20,7 +20,8 @@ import BookingDialog from './BookingDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 290,
+    minWidth: 270,
+    maxWidth: 270,
     display: 'flex',
     flexDirection: 'column',
     margin: '1%',
@@ -156,7 +157,7 @@ function OrgEventCard({
               >
                 <Box
                   onClick={checkDetail}
-                  style={{ fontSize: '16px', fontWeight:'bold', cursor: 'pointer' }}
+                  style={{ fontSize: '15px', fontWeight:'bold', cursor: 'pointer' }}
                 >
                   {eventName}
                 </Box>

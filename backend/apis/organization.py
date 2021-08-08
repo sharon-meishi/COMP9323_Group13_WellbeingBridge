@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Resource
 import json
+from pymysql.converters import escape_string
 
 from models.request_model import *
 from flask_app import api
@@ -85,8 +86,8 @@ class org(Resource):
         new_dic = sorted(new_dic)
         for i in new_dic:
             popular_list_top3.append(i[0])
-            if len(popular_list_top3) >= 3:
-                break
+            # if len(popular_list_top3) >= 3:
+            #     break
         rating_sql = f'select avg(rating) from Review where organizationid={orgid};'
         rating_result = sql_command(rating_sql)[0]
         if rating_result[0] is None:
@@ -105,6 +106,7 @@ class org(Resource):
             temp['review']=review[4]
             temp['published']=str(review[5])
             reviews.append(temp)
+        reviews.reverse()
         output = {
             'oId': orgid,
             'organizationName': orgname,
@@ -143,10 +145,10 @@ class org(Resource):
         update_sql = f"UPDATE Organization SET OrganizationName='{data['organizationName']}', \
             OrganizationType='{data['organizationType']}',Logo='{data['logo']}',\
             Contact='{data['contact']}',\
-            Introduction='{data['introduction']}',\
-            Details='{data['details']}',\
+            Introduction='{escape_string(data['introduction'])}',\
+            Details='{escape_string(data['details'])}',\
             VideoUrl='{data['video']}',\
-            ServiceList='{data['serviceList']}',\
+            ServiceList='{escape_string(data['serviceList'])}',\
             WebsiteLink='{data['websiteLink']}' WHERE OrganizationId={orgid};"
         sql_command(update_sql)
         output = {

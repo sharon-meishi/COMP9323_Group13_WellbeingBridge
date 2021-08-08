@@ -416,7 +416,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
               />
             </section>
             <section className={classes.formStyle}>
-              <label>Services List (No comma allow):</label>
+              <label>Services List:</label>
               <section className={classes.formStyle}>
                 {controlledFields.map((item, index) => {
                   return (
