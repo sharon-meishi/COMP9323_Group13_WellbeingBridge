@@ -5,10 +5,10 @@ from geopy import distance
 from flask_app import api
 from tool import sql_command
 
-api_search = api.namespace('search', description='search function')
+api_search = api.namespace('search', description='Search function')
 
 
-@api_search.route("/search/organization", doc={"description": "get details of an organization"})
+@api_search.route("/organization", doc={"description": "get details of an organization"})
 @api_search.doc(params={'name': 'orgname', 'type': 'orgtype'})
 class search_org(Resource):
     def get(self):
@@ -19,7 +19,7 @@ class search_org(Resource):
         conds = []
         if name is not None:
             ns = name.split(",")
-            conds.append("( " + " OR ".join(["OrganizationName='{}'".format(n) for n in ns]) + " )")
+            conds.append("( " + " OR ".join(["LOWER(OrganizationName) LIKE '%{}%'".format(n.lower()) for n in ns]) + " )")
         if orgtype is not None:
             ots = orgtype.split(",")
             conds.append("( " + " OR ".join(["OrganizationType='{}'".format(ot) for ot in ots]) + " )")
@@ -35,9 +35,9 @@ class search_org(Resource):
         output = {"organizationId": org_list}
 
         return output, 200
+        
 
-
-@api_search.route("/search/event", doc={"description": "search event based on criterions."})
+@api_search.route("/event", doc={"description": "search event based on criterions."})
 @api_search.doc(params={"keyword": "search keywords", "format": "event format", "category": "event category",
                  "startdate": "date of start", "enddate": "date of end", "lat": "latitude", "lng": "longitude",
                  "range": "default range = 5km"})

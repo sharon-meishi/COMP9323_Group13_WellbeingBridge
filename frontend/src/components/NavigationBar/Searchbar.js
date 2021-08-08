@@ -19,7 +19,12 @@ function Searchbar({ defaultValue }) {
       pathname: `/${select}/search`,
       search: `?${queryPath}`,
     };
-    history.push(path);
+    if(keyword){
+      history.push(path);
+    }else{
+      history.push(`/${select}/search`)
+    }
+    
   };
 
   return (

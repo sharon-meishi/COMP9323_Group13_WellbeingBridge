@@ -5,7 +5,7 @@ from tool import sql_command
 
 api_popular = api.namespace('popular', description='Operations about Homepage popular recommendation')
 
-@api_popular.route('/popular/events')
+@api_popular.route('/events')
 class GetPopularEvent(Resource):
     def get(self):
         query_string = '''SELECT EventId FROM Booking GROUP BY EventId ORDER BY COUNT(BookingId) DESC LIMIT 9'''
