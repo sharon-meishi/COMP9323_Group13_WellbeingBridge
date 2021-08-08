@@ -1,0 +1,8 @@
+# for mac
+.DS_Store
+
+# for idea
+.idea/
+
+# env
+venv/
