@@ -10,5 +10,5 @@ api = Api(
     app,
     version='1.0',
     title='WellbeingBridge',
-    description='Apis for WellbeingBridge backend server from COMP9323-Group 12'
+    description='Apis for WellbeingBridge backend server from COMP9323-Group 13'
 )
