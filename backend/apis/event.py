@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Resource
 import json
+import threading
 from pymysql.converters import escape_string
 
 from models.request_model import *
@@ -413,7 +414,7 @@ class EventComment(Resource):
             sql = f"SELECT OrganizationName,Email FROM Organization WHERE OrganizationId=(SELECT OrganizationId FROM Event WHERE Event.EventId={eventid});"
             org_info = sql_command(sql)[0]
             send_email(
-                f"A new question has been asked on your event<br><br>{data['comment']}",
+                f"A new question has been asked on your event<br><br>{username}: {data['comment']}",
                 f"http://{request.headers.get('Host').split(':')[0]}:3000/event/{eventid}",
                 org_info[0],
                 org_info[1]
@@ -485,7 +486,7 @@ class reply_comment(Resource):
         sql = f"SELECT NickName,Email FROM User WHERE UserId=(SELECT userid FROM Comment WHERE id={commentid});"
         user_info = sql_command(sql)[0]
         send_email(
-            f"Your question has been answered<br><br>{data['answer']}",
+            f"Your question has been answered<br><br>{result[1]}: {data['answer']}",
             f"http://{request.headers.get('Host').split(':')[0]}:3000/event/{eventid}",
             user_info[0],
             user_info[1]
