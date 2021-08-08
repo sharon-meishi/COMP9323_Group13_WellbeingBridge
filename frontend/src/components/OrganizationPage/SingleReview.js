@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Comment, Button } from 'semantic-ui-react';
+import { Form, Comment } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Rating from '@material-ui/lab/Rating';
@@ -96,7 +96,6 @@ function SingleReview({ content, oId, setUpdate }) {
                     }
                   }}
                   onChangeActive={(event, newHover) => {
-                    console.log(newHover);
                     setRatingHover(newHover);
                   }}
                 />
@@ -136,9 +135,9 @@ function SingleReview({ content, oId, setUpdate }) {
         <Comment.Actions>
           {isAuthor ? (
             <>
-              <Comment.Action onClick={toggleEdit}>
+              {/* <Comment.Action onClick={toggleEdit}>
                 {editMode ? 'Cancel Edit' : 'Edit'}
-              </Comment.Action>
+              </Comment.Action> */}
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}

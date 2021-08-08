@@ -49,18 +49,19 @@ export default function OrgCard({ Id }) {
   const classes = useStyles();
   const [cardInfo, setCardInfo] = React.useState({});
   const [cardLogo, setCardLogo] = React.useState(cardimg);
-  const getInfo = async () => {
-    const res = await getOrgSummary(Id);
-    if (res[0] === 200) {
-      setCardInfo(res[1]);
-      if (res[1].Logo) {
-        setCardLogo(res[1].Logo);
-      }
-    }
-  };
+
   React.useEffect(() => {
+    const getInfo = async () => {
+      const res = await getOrgSummary(Id);
+      if (res[0] === 200) {
+        setCardInfo(res[1]);
+        if (res[1].Logo) {
+          setCardLogo(res[1].Logo);
+        }
+      }
+    };
     getInfo();
-  }, []);
+  }, [Id]);
 
   const handleLink = () => {
     history.push(`/organization/${Id}`);
@@ -96,8 +97,8 @@ export default function OrgCard({ Id }) {
           </Typography>
           <Box ml={1}>
             <Rating
+            key={cardInfo.oId}
               value={cardInfo.rating}
-              name='read-only'
               readOnly
               precision={0.5}
             />

@@ -115,8 +115,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     defaultValues: preloadValues,
   });
 
-  console.log(preloadValues)
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'serviceList',
@@ -182,6 +180,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
   const resetForm = () => {
     reset();
+    setVId(preloadValues.video ? matchYoutubeUrl(preloadValues.video) : '')
     setImg({
       alt: 'Upload an image',
       src: preloadImg,
@@ -193,7 +192,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log(data);
     setData(data);
     if (data.picture){
       handleUpload();
@@ -235,7 +233,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
       sendData(uploadBody)
     }
 
-  }, [url]);
+  }, [url]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     reset();
@@ -327,7 +325,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                         Financial and Legal
                       </MenuItem>
                       <MenuItem value='Mental Health'>Mental Health</MenuItem>
-                      <MenuItem value='Senior'>Senior</MenuItem>
+                      <MenuItem value='Seniors'>Seniors</MenuItem>
                       <MenuItem value='Youth'>Youth</MenuItem>
                     </Select>
                   );
@@ -512,6 +510,8 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                       const id = matchYoutubeUrl(e.target.value);
                       if (id) {
                         setVId(id);
+                      } else{
+                        setVId('')
                       }
                     }}
                     inputRef={field.ref}

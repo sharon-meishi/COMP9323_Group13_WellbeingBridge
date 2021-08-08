@@ -92,7 +92,7 @@ function RegisterModal({ open, setOpenLogin, setOpenRegister }) {
       setErrorMsg('');
       sessionStorage.setItem('token', res[1].token);
       sessionStorage.setItem('name', data.nickname);
-      sessionStorage.setItem('id', res[1].userId);
+      sessionStorage.setItem('id', res[1].userid);
       sessionStorage.setItem('usergroup', 'individual');
       context.setIsLoginState(true);
     } else {

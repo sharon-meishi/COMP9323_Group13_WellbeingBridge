@@ -59,6 +59,10 @@ const useStyles = makeStyles((theme) => ({
     height: '70vh',
     overflow: 'scroll',
     alignItems: 'flex-start',
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center'
+    },
+    
   },
   onlyEvents: {
     display: 'flex',
@@ -76,20 +80,17 @@ function EventSearchResult({ result, address, center }) {
   const classes = useStyles();
   const context = useContext(AppContext);
   const [eventList, setEventList] = useState([]);
-  const [notOnlineList, setnotOnlineList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await Promise.all(
         result.map((id) => getEventSummary(id, true))
       );
-      const notOnline = data.filter((event) => event.format !== 'Online Event');
-      setnotOnlineList(notOnline);
       setEventList(data);
     };
     fetchData();
     context.setSelected(null);
-  }, [result]);
+  }, [result]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChange = (e, data) => {
     if (data.value === 'newest'){
@@ -118,8 +119,8 @@ function EventSearchResult({ result, address, center }) {
         <Grid container className={classes.container}>
           <Grid item xs={7} className={classes.mapStyle}>
             <EventMap
-              key={notOnlineList}
-              eventList={notOnlineList}
+              key={eventList}
+              eventList={eventList}
               center={center}
             />
           </Grid>
@@ -129,16 +130,16 @@ function EventSearchResult({ result, address, center }) {
               <span style={{ textDecoration: 'underline' }}>{address}</span>:
             </Box>
             <Grid container item className={classes.eventBox}>
-              {result.map((eventId, idx) => (
+              {eventList.map((event, idx) => (
                 <Grid
                   item
                   xs={11}
                   md={8}
                   lg={6}
                   className={classes.item}
-                  key={eventId}
+                  key={event.eventId}
                 >
-                  <EventCard eventId={eventId} order={idx + 1}></EventCard>
+                  <EventCard eventInfo={event} eventId={event.eventId} order={idx + 1}></EventCard>
                 </Grid>
               ))}
             </Grid>

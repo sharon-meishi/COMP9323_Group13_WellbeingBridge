@@ -219,7 +219,6 @@ function EventForm({
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log(data);
     setData(data);
     if (data.picture) {
       handleUpload();
@@ -271,8 +270,11 @@ function EventForm({
         Data = await createEventRequest(uploadBody);
       }
       if (Data[0] === 200) {
-        console.log(Data[1].eventid);
-        setEId(Data[1].eventid);
+        if(eventId){
+          setEId(eventId);
+        }else {
+          setEId(Data[1].eventid)
+        }
         console.log('create/update success');
         setLoading(false);
         setOpen(true);
@@ -281,12 +283,14 @@ function EventForm({
       }
     };
 
-    if (url) {
+    if (url && lat && lng) {
       const uploadBody = buildBody();
-      console.log(uploadBody);
+      sendData(uploadBody);
+    } else if (eventFormat === 'Online Event' && url){
+      const uploadBody = buildBody();
       sendData(uploadBody);
     }
-  }, [url]);
+  }, [url, lat, lng]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     reset();
@@ -385,9 +389,6 @@ function EventForm({
                         <MenuItem value='Race'>Race</MenuItem>
                         <MenuItem value='Seminar'>Seminar</MenuItem>
                         <MenuItem value='Tour'>Tour</MenuItem>
-                        <MenuItem value='Other Activity'>
-                          Other Activity
-                        </MenuItem>
                       </Select>
                     );
                   }}
@@ -411,18 +412,17 @@ function EventForm({
                         variant='outlined'
                         className={classes.selectStyle}
                       >
-                        <MenuItem value='Health and fitness'>
-                          Health and fitness
+                        <MenuItem value='Sports and fitness'>
+                        Sports and fitness
                         </MenuItem>
                         <MenuItem value='Multicultural'>Multicultural</MenuItem>
-                        <MenuItem value='Sports and recreation'>
-                          Sports and recreation
+                        <MenuItem value='Mental Health'>
+                        Mental Health
                         </MenuItem>
-                        <MenuItem value='Festival'>Family</MenuItem>
-                        <MenuItem value='Kids'>Community organised</MenuItem>
+                        <MenuItem value='Family'>Family</MenuItem>
+                        <MenuItem value='Community organised'>Community organised</MenuItem>
                         <MenuItem value='Seniors'>Seniors</MenuItem>
                         <MenuItem value='Young People'>Young People</MenuItem>
-                        <MenuItem value='Other'>Other</MenuItem>
                       </Select>
                     );
                   }}
@@ -647,7 +647,7 @@ function EventForm({
                         inputRef={field.ref}
                         className={classes.pickerStyle}
                         onChangeRaw={(event) => {
-                          console.log(event.target.value);
+                          // console.log(event.target.value);
                         }}
                       />
                     )}
@@ -690,6 +690,7 @@ function EventForm({
                       validate: (value) => {
                         const { StartTime } = getValues();
                         const diff = StartTime - value;
+                        console.log(StartTime, value)
                         return (
                           diff <= 0 ||
                           'End time should not be earlier than start time'
