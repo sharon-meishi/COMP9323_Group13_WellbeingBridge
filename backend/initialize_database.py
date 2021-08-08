@@ -117,7 +117,7 @@ def create_database():
 
     (0,"Online Hip Hop Dance Fitness - Ages 5 to 12 years",1,"HeadSpace" ,
     "https://firebasestorage.googleapis.com/v0/b/comp9323-wellbeingbridge.appspot.com/o/images%2F1-2021%2F8%2F8%20%E4%B8%8A%E5%8D%881%3A48%3A44-youth%20hip%20pop.jpeg?alt=media&token=2a032dc8-0341-45ca-be87-11c630cd223b",
-    "Class","Sports and fitness",
+    "Online Event","Sports and fitness",
     "","","","",
     "16/08/2021","19/08/2021","5:00 PM to 6:00 PM",
     "This is a great opportunity to learn a range of skills from basic movement to more technical moves and develop a sense of movement to the latest rap, r&b and hip hop songs.",

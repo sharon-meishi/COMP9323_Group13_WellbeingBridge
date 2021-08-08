@@ -1058,8 +1058,6 @@ class search_event(Resource):
         else:
             sql_eventsearch += ";"
 
-        print(sql_eventsearch)
-
         output_search = sql_command(sql_eventsearch)
         found_events = []
         if lat is not None and lng is not None:
@@ -1233,10 +1231,6 @@ class review_function(Resource):
             "message":"success"
         }
         return output,200
-
-
-
-
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=8000, debug=True)
