@@ -379,7 +379,7 @@ class GetEventbyId(Resource):
 
 @api_event.route("/<int:eventid>/comment", doc={"description": "make a comment on a specific event"})
 @api_event.doc(parser=token_parser)
-class Organization_profile(Resource):
+class EventComment(Resource):
     @api_event.expect(comment_model)
     def post(self, eventid):
         data = api.payload
@@ -408,10 +408,15 @@ class Organization_profile(Resource):
             time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             sql = f"INSERT INTO Comment VALUES (0,{userid},'{username}',{eventid},'{escape_string(data['comment'])}','{time}',NULL,NULL);"
             sql_command(sql)
+
+            # for email
+            sql = f"SELECT OrganizationName,Email FROM Organization WHERE OrganizationId=(SELECT OrganizationId FROM Event WHERE Event.EventId={eventid});"
+            org_info = sql_command(sql)[0]
+            send_email(data['comment'], username, org_info[0], org_info[1])
             output = {
                 "message": "success"
             }
-            return 200
+            return output, 200
         else:
             output = {
                 "message": "Not found this event"

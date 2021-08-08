@@ -1,14 +1,20 @@
 import pymysql
 import jwt
 from datetime import datetime, timedelta
+import smtplib
+from email.header import Header
+from email.mime.text import MIMEText
+from email.utils import formataddr
+
+from config import *
 
 def sql_command(command):
     db = pymysql.connect(
-        host='localhost',
+        host=DB_URL,
         port=3306,
-        user='root',
-        password='unsw1234',
-        database='wellbeing',
+        user=DB_ACCOUNT,
+        password=DB_PASSWORD,
+        database=DB_NAME,
         charset='utf8'
     )
     c = db.cursor()
@@ -51,3 +57,38 @@ def value_check(org_info, i):
     if org_info[i] != None:
         result = org_info[i].replace("\n", '')
     return result
+
+
+def send_email(message, commenter, receiver, receiver_address):
+    # define the format of mail message
+    template = '''
+    Hi %s,
+
+    Follow is new comment on your event
+
+
+    %s: %s
+
+
+    Warmly,
+    WellBeingBridge
+    
+    ''' % (receiver, commenter, message)
+
+    # init message format
+    message = MIMEText(template, 'plain', 'utf-8')
+    message['From'] = formataddr(['WellbeingBridge', EMAIL_ADDRESS])
+    message['To'] = formataddr([receiver, receiver_address])
+    message['Subject'] = Header('New comment on WellbeingBridge', 'utf-8')
+
+    # send mail to given receiver mail
+    try:
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_ADDRESS, receiver_address, message.as_string())
+
+    except Exception as e:
+        print(e)
+        return False
+
+    return True
