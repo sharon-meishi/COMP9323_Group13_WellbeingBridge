@@ -59,27 +59,26 @@ def value_check(org_info, i):
     return result
 
 
-def send_email(message, commenter, receiver, receiver_address):
+def send_email(message, link, receiver, receiver_address):
     # define the format of mail message
     template = '''
-    Hi %s,
-
-    Follow is new comment on your event
-
-
-    %s: %s
-
-
-    Warmly,
-    WellBeingBridge
-    
-    ''' % (receiver, commenter, message)
+    <html>
+      <body>
+        <p>Hi, %s<br><br>
+           %s<br>
+           <a href="%s">Click here to view</a><br><br>
+           Warmly,<br>
+           WellbeingBridge<br>
+        </p>
+      </body>
+    </html>
+    ''' % (receiver, message, link)
 
     # init message format
-    message = MIMEText(template, 'plain', 'utf-8')
+    message = MIMEText(template, 'html', 'utf-8')
     message['From'] = formataddr(['WellbeingBridge', EMAIL_ADDRESS])
     message['To'] = formataddr([receiver, receiver_address])
-    message['Subject'] = Header('New comment on WellbeingBridge', 'utf-8')
+    message['Subject'] = Header('New message from WellbeingBridge', 'utf-8')
 
     # send mail to given receiver mail
     try:
