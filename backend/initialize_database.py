@@ -74,7 +74,7 @@ def create_database():
     'Information on the different types of aged care services available@An assessment of needs to identify eligibility and the right type of care@Referrals and support to find service providers that can meet your needs@Information on what you might need to pay towards the cost of your care', 
     "https://www.myagedcare.gov.au"), 
 
-    (0, 'housetogrow@org.com', 'abcd', "House to Grow", "Education", 
+    (0, 'cmsbolozu@gmail.com', 'abcd', "House to Grow", "Education", 
     "https://brizy.b-cdn.net/media/iW=70&iH=80&oX=0&oY=0&cW=70&cH=80/d1073b4eea3ad956e7750133d6091c22.png", 
     "info@housetogrow.org", "Empowering communities through education for life, holistic health and wellbeing ", 
     "House to Grow is a not-for-profit organisation that empowers vulnerable children in unhealthy environments and women affected by domestic violence through personal development, education for life and holistic health. We try not to limit who can come to us, we encourage and support any individual that seeks personal development, education for life and holistic health. We also deliver educational programs to organisations, community groups and people in need. ", 
@@ -188,14 +188,14 @@ def create_database():
     insert_booking = '''
     INSERT INTO `Booking` VALUES 
     (0, 1, 1),
-    (0, 2, 1),
     (0, 3, 1),
-    (0, 3, 2),
-    (0, 4, 2),
+    (0, 4, 1),
     (0, 6, 2),
-    (0, 3, 3),
+    (0, 7, 2),
+    (0, 8, 2),
     (0, 6, 3),
-    (0, 7, 3);
+    (0, 7, 3),
+    (0, 8, 3);
     '''
 
     comment_table = '''
@@ -214,8 +214,8 @@ def create_database():
 
     insert_comment = '''
     INSERT INTO `Comment` VALUES 
-    (0, 2, "Nick", 6, "Can I bring friends? Or they also need to book?", '2021-07-06 15:25:26',"They don\'t need to! You can just bring them up!",3),
-    (0, 3, 'Chris', 6, 'Interesting event!', '2021-07-08 21:51:26',NULL,NULL),
+    (0, 2, "Nick", 8, "Can I bring friends? Or they also need to book?", '2021-07-06 15:25:26',"They don\'t need to! You can just bring them up!",3),
+    (0, 3, 'Chris', 8, 'Interesting event!', '2021-07-08 21:51:26',NULL,NULL),
     (0, 1, 'Cecilia', 1, 'I would come with my kids!', '2021-07-09 21:51:30',NULL,NULL);
     '''
 

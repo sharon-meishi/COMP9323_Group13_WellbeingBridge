@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Comment, Button } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -75,6 +75,13 @@ function SingleComment({
       setUpdate(true);
     }
   };
+
+  useEffect(() => {
+    setEditAnswer(false);
+    setEditMode(false);
+    setComment(content.comment)
+    setAnswer(content.answer)
+  }, [content.comment])
 
   return (
     <Comment>
