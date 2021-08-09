@@ -39,7 +39,6 @@ function EventMap({ eventList, center }) {
   };
 
   const openGoogleMap = (lat, lng) => {
-    console.log(lat, lng);
     window.open('https://maps.google.com?q=' + lat + ',' + lng);
   };
 
@@ -64,7 +63,7 @@ function EventMap({ eventList, center }) {
     },
     zoom: 12,
   };
-  console.log(eventList)
+  
   return (
     <div style={{ height: '70vh', width: '100%' }}>
       <GoogleMapReact

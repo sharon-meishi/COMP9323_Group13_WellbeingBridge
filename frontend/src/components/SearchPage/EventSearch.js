@@ -113,12 +113,6 @@ function EventSearch() {
   const [keyword, setKeyword] = useState(
     searchParam.has('keyword') ? searchParam.get('keyword') : ''
   );
-  const [startdate, setstartdate] = useState(
-    searchParam.has('startdate') ? searchParam.get('startdate') : ''
-  );
-  const [enddate, setenddate] = useState(
-    searchParam.has('enddate') ? searchParam.get('enddate') : ''
-  );
   const [address, setAddress] = useState(
     searchParam.has('address') ? searchParam.get('address') : ''
   );
@@ -178,7 +172,6 @@ function EventSearch() {
   };
 
   const handleSearch = async (data) => {
-    console.log(data)
     const queryAddress = data.address ? data.address.label : '';
     const format = Format.map((each) => each.value);
     const category = Category.map((each) => each.value);
@@ -222,10 +215,6 @@ function EventSearch() {
     // reset state after query string have change
     setresultList([]);
     setKeyword(searchParam.has('keyword') ? searchParam.get('keyword') : '');
-    setstartdate(
-      searchParam.has('startdate') ? searchParam.get('startdate') : ''
-    );
-    setenddate(searchParam.has('enddate') ? searchParam.get('enddate') : '');
     setAddress(searchParam.has('address') ? searchParam.get('address') : '');
     setRange(searchParam.has('range') ? searchParam.get('range') : '5');
     setFormat(
@@ -332,13 +321,6 @@ function EventSearch() {
                       selected={field.value}
                       onChange={(e) => {
                         field.onChange(e);
-                        if (e) {
-                          setstartdate(
-                            dateFormat(e, 'dd/MM/yyyy', {
-                              awareOfUnicodeTokens: true,
-                            })
-                          );
-                        }
                       }}
                       className={classes.pickerStyle}
                     />
@@ -359,13 +341,6 @@ function EventSearch() {
                       selected={field.value}
                       onChange={(e) => {
                         field.onChange(e);
-                        if (e) {
-                          setenddate(
-                            dateFormat(e, 'dd/MM/yyyy', {
-                              awareOfUnicodeTokens: true,
-                            })
-                          );
-                        }
                       }}
                       className={classes.pickerStyle}
                     />
