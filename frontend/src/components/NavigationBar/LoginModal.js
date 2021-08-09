@@ -12,7 +12,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
-import LoginIcon from '../../Assets/LoginIcon.svg';
+import LoginIcon from '../../Assets/Others/LoginIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
 import { loginRequest } from '../Helper/api'
 

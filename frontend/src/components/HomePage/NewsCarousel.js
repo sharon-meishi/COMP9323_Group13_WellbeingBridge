@@ -1,7 +1,7 @@
 //NewsCarousel component: display news and links to other health services
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
-import bg1 from '../../Assets/new1.jpeg';
+import bg1 from '../../Assets/Others/new1.jpeg';
 import bg2 from '../../Assets/OrganizationType/mental_health.jpeg';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';

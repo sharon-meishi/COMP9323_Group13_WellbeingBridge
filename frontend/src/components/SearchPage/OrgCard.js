@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import Rating from '@material-ui/lab/Rating';
 import Typography from '@material-ui/core/Typography';
-import cardimg from '../../Assets/logo-placeholder.png';
+import cardimg from '../../Assets/Placeholder/logo-placeholder.png';
 import { getOrgSummary } from '../Helper/api';
 
 const useStyles = makeStyles({

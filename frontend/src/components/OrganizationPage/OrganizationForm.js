@@ -13,11 +13,11 @@ import TextField from '@material-ui/core/TextField';
 import Alert from '@material-ui/lab/Alert';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import logoPlaceholder from '../../Assets/logo-placeholder.png';
+import logoPlaceholder from '../../Assets/Placeholder/logo-placeholder.png';
 import YoutubeVideo from './YoutubeVideo';
 import LoadingBackdrop from '../LoadingBackdrop';
 import SuccessDialog from '../EventEditPage/SuccessDialog';
-import VideoPlacerholder from '../../Assets/video-placeholder.jpeg';
+import VideoPlacerholder from '../../Assets/Placeholder/video-placeholder.jpeg';
 import { updateOrgPage } from '../Helper/api';
 
 const useStyles = makeStyles(() => ({

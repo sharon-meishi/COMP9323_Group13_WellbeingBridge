@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
-import icon from '../../Assets/WellbeingBridgeLogo.png';
+import icon from '../../Assets/Others/WellbeingBridgeLogo.png';
 
 const useStyles = makeStyles((theme) => ({
   image: {

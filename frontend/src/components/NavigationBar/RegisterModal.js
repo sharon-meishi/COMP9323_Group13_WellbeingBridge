@@ -13,7 +13,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
-import RegisterIcon from '../../Assets/RegisterIcon.svg';
+import RegisterIcon from '../../Assets/Others/RegisterIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
 import { registerRequest } from '../Helper/api';
 
