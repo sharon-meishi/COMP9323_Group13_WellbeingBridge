@@ -1,6 +1,6 @@
 //Copy Link component: copy link button
 import React, { useState, useContext } from 'react';
-import { AppContext } from '../utils/store';
+import { AppContext } from '../../utils/store';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core/styles';

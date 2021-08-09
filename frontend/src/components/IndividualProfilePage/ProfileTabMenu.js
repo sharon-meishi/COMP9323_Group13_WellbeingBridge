@@ -10,7 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
-import EventCard from '../EventCard';
+import EventCard from '../Public/EventCard';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

@@ -11,7 +11,7 @@ import Grid from '@material-ui/core/Grid';
 import Rating from '@material-ui/lab/Rating';
 import logoPlaceholder from '../../Assets/Placeholder/logo-placeholder.png';
 import comingSoon from '../../Assets/Placeholder/video-coming-soon.gif';
-import EventCard from '../EventCard';
+import EventCard from '../Public/EventCard';
 import YoutubeVideo from './YoutubeVideo';
 import SingleReview from './SingleReview';
 import { getOrganizationDetails, postReview } from '../Helper/api';

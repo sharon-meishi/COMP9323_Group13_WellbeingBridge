@@ -6,7 +6,7 @@ import {
   Redirect,
   BrowserRouter as Router,
 } from 'react-router-dom';
-import Theme from './components/theme';
+import Theme from './components/Helper/theme';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { AppContext } from './utils/store';
 import HomePage from './pages/HomePage';

@@ -16,7 +16,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteModal from './DeleteModal';
-import ShareModal from '../ShareModal';
+import ShareModal from '../Public/ShareModal';
 import BookingDialog from './BookingDialog';
 
 const useStyles = makeStyles((theme) => ({

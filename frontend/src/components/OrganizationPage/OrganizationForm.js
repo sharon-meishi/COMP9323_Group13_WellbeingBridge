@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import { storage } from '../firebase';
+import { storage } from '../Helper/firebase';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -15,7 +15,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import logoPlaceholder from '../../Assets/Placeholder/logo-placeholder.png';
 import YoutubeVideo from './YoutubeVideo';
-import LoadingBackdrop from '../LoadingBackdrop';
+import LoadingBackdrop from '../Public/LoadingBackdrop';
 import SuccessDialog from '../EventEditPage/SuccessDialog';
 import VideoPlacerholder from '../../Assets/Placeholder/video-placeholder.jpeg';
 import { updateOrgPage } from '../Helper/api';

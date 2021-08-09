@@ -1,6 +1,6 @@
 // EventCard component: display event summary
 import React, { useState, useEffect, useContext } from 'react';
-import { AppContext } from '../utils/store';
+import { AppContext } from '../../utils/store';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -20,9 +20,9 @@ import Box from '@material-ui/core/Box';
 import Chip from '@material-ui/core/Chip';
 import { red } from '@material-ui/core/colors';
 import ShareModal from './ShareModal';
-import LoginModal from './NavigationBar/LoginModal';
-import RegisterModal from './NavigationBar/RegisterModal';
-import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './Helper/api';
+import LoginModal from '../NavigationBar/LoginModal';
+import RegisterModal from '../NavigationBar/RegisterModal';
+import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from '../Helper/api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
