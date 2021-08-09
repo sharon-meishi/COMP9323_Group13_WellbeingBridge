@@ -83,11 +83,9 @@ function OrganizationApplyPage() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const onSubmit = async (data) => {
-    console.log(data);
     const res = await organizationApplyRequest(data);
     if (res[0] === 200) {
       reset();
-      console.log('apply success');
       setErrorMsg('');
       sessionStorage.setItem('token', res[1].token);
       sessionStorage.setItem('id', res[1].organizationid);

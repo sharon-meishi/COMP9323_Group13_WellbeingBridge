@@ -136,7 +136,6 @@ export const getEventDetails = async (eventId) => {
   const url = baseUrl + `/event/${eventId}`;
   let headers = {};
   if (sessionStorage.getItem('token')) {
-    console.log(`token included:${sessionStorage.getItem('token')}`);
     headers = {
       accept: 'application/json',
       Authorization: `${sessionStorage.getItem('token')}`,
@@ -205,7 +204,6 @@ export const getPopularEventId = async () => {
 };
 
 export const likeEvent = async (data) => {
-  console.log(data);
   const url = baseUrl + `/event/${data}/favourite`;
   try {
     const res = await axios.put(
@@ -232,7 +230,6 @@ export const likeEvent = async (data) => {
 };
 
 export const unlikeEvent = async (data) => {
-  console.log(data);
   const url = baseUrl + `/event/${data}/unfavourite`;
   try {
     const res = await axios.put(
@@ -254,7 +251,6 @@ export const unlikeEvent = async (data) => {
 };
 
 export const bookEvent = async (data) => {
-  console.log(data);
   const url = baseUrl + `/event/${data}/book`;
   try {
     const res = await axios.put(
@@ -276,7 +272,6 @@ export const bookEvent = async (data) => {
 };
 
 export const unbookEvent = async (data) => {
-  console.log(data);
   const url = baseUrl + `/event/${data}/unbook`;
   try {
     const res = await axios.put(
@@ -298,7 +293,6 @@ export const unbookEvent = async (data) => {
 };
 export const getUserProfile = async () => {
   const url = baseUrl + '/user/profile';
-  console.log(sessionStorage.getItem('token'));
   const headers = {
     Authorization: `${sessionStorage.getItem('token')}`,
     'content-Type': 'application/json',
@@ -383,7 +377,6 @@ export const updateOrganizationProfile = async (oId, updateBody) => {
 
 export const getOrganizationDetails = async (oId) => {
   const url = baseUrl + `/organization/${oId}`;
-  console.log(sessionStorage.getItem('token'));
   let headers = {};
   if (sessionStorage.getItem('token')) {
     headers = {
@@ -504,7 +497,6 @@ export const updateAnswer = async (eventId, commentId, answer) => {
 };
 
 export const deleteEvent = async (eventId) => {
-  console.log('delete')
   const url = baseUrl + `/event/${eventId}/summary`;
   const headers = {
     Authorization: `${sessionStorage.getItem('token')}`,
@@ -547,7 +539,6 @@ export const updateOrgPage = async (oId, uploadBody) => {
 };
 
 export const searchOrganization= async (keyword,typeList) => {
-  console.log(keyword, typeList)
   let url = baseUrl + '/search/organization';
   if (keyword && typeList.length !== 0){
     url = baseUrl + `/search/organization?name=${keyword}&type=${typeList}`;
@@ -556,7 +547,6 @@ export const searchOrganization= async (keyword,typeList) => {
   }else if(typeList.length !==0) {
     url = baseUrl + `/search/organization?type=${typeList}`;
   }
-  console.log(url)
   try {
     const res = await axios.get(url,{
       headers: {

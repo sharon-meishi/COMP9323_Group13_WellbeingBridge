@@ -35,7 +35,6 @@ function DeleteModal({
   const handleDelete = async () => {
     const res = await deleteEvent(eventId);
     if (res[0] === 200) {
-      console.log('delete success');
       const newEventList = eventList.filter(event => event.eventId !== eventId)
       setEventList(newEventList);
       setOpen(false);

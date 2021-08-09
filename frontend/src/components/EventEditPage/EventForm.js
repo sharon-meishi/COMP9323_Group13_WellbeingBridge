@@ -690,7 +690,6 @@ function EventForm({
                       validate: (value) => {
                         const { StartTime } = getValues();
                         const diff = StartTime - value;
-                        console.log(StartTime, value)
                         return (
                           diff <= 0 ||
                           'End time should not be earlier than start time'

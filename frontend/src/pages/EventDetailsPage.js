@@ -165,7 +165,6 @@ function EventDetailsPage(props) {
 
   useEffect(() => {
     const getEvent = async () => {
-      console.log(eventId);
       const res = await getEventDetails(eventId);
       if (res[0] === 200) {
         setDetail(res[1]);
@@ -177,13 +176,11 @@ function EventDetailsPage(props) {
           setEditable(true);
         }
         if (res[1].favourite) {
-          console.log(res[1].favourite);
           setIslike(true);
         } else {
           setIslike(false);
         }
         if (res[1].booked) {
-          console.log(res[1].booked);
           setIsbook(true);
         } else {
           setIsbook(false);

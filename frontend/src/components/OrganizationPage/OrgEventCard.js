@@ -117,7 +117,6 @@ function OrgEventCard({
   };
   const handleShare = () => {
     setShare(true);
-    console.log('handleShare');
   };
 
   return (

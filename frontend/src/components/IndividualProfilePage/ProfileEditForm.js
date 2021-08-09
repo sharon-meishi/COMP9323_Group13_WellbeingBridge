@@ -75,7 +75,6 @@ function ProfileEditForm({ currentName, oId, setOpen, setUpdate }) {
   };
 
   const onSubmit = async (data) => {
-    console.log(data)
     const updateProfile = async () => {
       let Data;
       if (oId) {

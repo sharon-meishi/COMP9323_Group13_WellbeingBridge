@@ -208,7 +208,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
   const sendData = async(uploadBody) =>{
     const Data = await updateOrgPage(oId, uploadBody);
     if (Data[0] === 200){
-      console.log('update success');
       setLoading(false);
       setOpen(true);
     } else{
