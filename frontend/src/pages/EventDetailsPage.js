@@ -124,6 +124,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
   },
   recommendation: {
+    width:'150%',
     display: 'flex',
     flexWrap: 'wrap',
     flexDirection: 'column',
@@ -490,7 +491,7 @@ function EventDetailsPage(props) {
             </Grid>
             <Grid container className={classes.recommendation}>
               <Header as='h3'> Recommendation:</Header>
-              <Grid container item width='100%' spacing={5}>
+              <Grid container item width='150%' spacing={4}>
                 {recomList.map((eventId) => (
                   <Grid item xs={11} md={6} lg={4} key={eventId}>
                     <EventCard eventId={eventId} />

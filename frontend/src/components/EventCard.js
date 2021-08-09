@@ -25,21 +25,18 @@ import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 300,
-    maxWidth: 300,
-    // margin: '20px 0 20px 0',
+    width:300,
     display: 'flex',
     flexDirection: 'column',
     padding: '1%',
     [theme.breakpoints.down('sm')]: {
       minWidth: 280,
     },
-    height: '100%',
-    // backgroundColor: '#EDFEFC'
+    height: 560,
   },
   media: {
     height: 0,
-    paddingTop: '85%', // 16:9
+    paddingTop: '85%', 
     '&:hover': {
       cursor: 'pointer',
     },
@@ -296,7 +293,6 @@ function EventCard(props) {
                   <div onClick={checkDetail} className={classes.title}>
                     {info.name}
                   </div>
-                  {/* <div color='textSecondary'>{`${info.bookedUser.length} has booked`}</div> */}
                 </Box>
 
                 <Box justifyContent='space-between' mt={1} mb={1}>
