@@ -63,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
   title: {
     display: 'flex',
     justifyContent: 'space-between',
-    // backgroundColor :'green',
   },
   actions: {
     display: 'flex',
@@ -75,7 +74,6 @@ const useStyles = makeStyles((theme) => ({
   isbook: {
     '&:hover': {
       backgroundColor: '#166b3d',
-      // boxShadow: 'none',
     },
     color: 'white',
     backgroundColor: 'green',
@@ -85,8 +83,6 @@ const useStyles = makeStyles((theme) => ({
   notbook: {
     color: 'green',
     borderColor: 'green',
-    // backgroundColor:'green',
-
     height: '35px',
     margin: '1.5% 10%',
   },
@@ -248,17 +244,11 @@ function EventDetailsPage(props) {
       const res = await unbookEvent(eventId);
       if (res[0] === 200) {
         setIsbook(false);
-        // console.log('set unbook success');
-      } else {
-        // console.log('set unbook error');
       }
     } else {
       const res = await bookEvent(eventId);
       if (res[0] === 200) {
         setIsbook(true);
-        console.log('set book success');
-      } else {
-        console.log('set book error');
       }
     }
   };

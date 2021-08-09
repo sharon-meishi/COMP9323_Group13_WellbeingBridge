@@ -29,7 +29,6 @@ function EventEditPage(props) {
         const time = Data[1].time.split('to');
         const startTime = parsedDate(time[0], 'h:mm aa ');
         const endTime = parsedDate(time[1], ' h:mm aa');
-
         const processedData = {
           EventName: Data[1].eventName,
           EventFormat: Data[1].format,

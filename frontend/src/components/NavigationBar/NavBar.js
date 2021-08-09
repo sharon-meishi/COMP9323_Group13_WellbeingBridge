@@ -1,3 +1,4 @@
+//Navbar component: fix navbar including search, login and regist function
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import ProfileMenu from './ProfileMenu';

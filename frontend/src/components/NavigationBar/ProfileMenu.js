@@ -1,3 +1,5 @@
+//Profile menu component: 
+  //different functions for individual users and organization users when clicking Avatar
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AppContext } from '../../utils/store';

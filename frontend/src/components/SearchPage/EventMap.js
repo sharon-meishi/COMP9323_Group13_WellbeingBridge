@@ -1,3 +1,4 @@
+//Event map component: diplay google map
 import React, { useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import { useHistory } from 'react-router-dom';
@@ -7,7 +8,6 @@ import RoomIcon from '@material-ui/icons/Room';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/core/styles';
 import { Popup } from 'semantic-ui-react';
 

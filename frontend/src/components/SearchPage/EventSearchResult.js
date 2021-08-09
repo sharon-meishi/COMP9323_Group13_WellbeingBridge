@@ -1,3 +1,4 @@
+//Event Search result component: display event search result
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import { makeStyles } from '@material-ui/core/styles';

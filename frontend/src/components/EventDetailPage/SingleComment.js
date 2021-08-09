@@ -1,3 +1,4 @@
+//SingleComment component: display one comment
 import React, { useState, useEffect } from 'react';
 import { Form, Comment, Button } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';
@@ -37,10 +38,6 @@ function SingleComment({
     parseInt(sessionStorage.getItem('id')) === content.userId;
   const toggleAnswer = () => {
     setEditAnswer(!editAnswer);
-  };
-
-  const toggleEdit = () => {
-    setEditMode(!editMode);
   };
 
   const toggleDelete = () => {
@@ -130,7 +127,6 @@ function SingleComment({
           ) : null}
           {isAuthor ? (
             <>
-              {/* <Comment.Action onClick={toggleEdit}>{editMode ? 'Cancel Edit' : 'Edit'}</Comment.Action> */}
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}

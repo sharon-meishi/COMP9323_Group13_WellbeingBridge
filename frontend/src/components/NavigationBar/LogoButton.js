@@ -1,3 +1,4 @@
+//Logo Button component: Logo on the top left, back to home page when clicking  
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';

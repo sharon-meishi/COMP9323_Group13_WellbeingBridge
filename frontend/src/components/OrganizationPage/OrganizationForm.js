@@ -1,3 +1,4 @@
+//Organization Form component: For organization users to edit there org introduction
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
@@ -187,8 +188,6 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     });
     setURL('');
   }
-
-
 
   const onSubmit = async (data) => {
     setLoading(true);

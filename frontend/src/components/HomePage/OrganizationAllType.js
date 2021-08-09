@@ -1,3 +1,4 @@
+//OrganizationAllType component: display all OrganizationAvatar and pass in the types
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';

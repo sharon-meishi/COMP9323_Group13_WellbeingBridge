@@ -1,3 +1,4 @@
+//EventForm component: For orgnization users to edit or create there events
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import placeholder from '../../Assets/placeholder.png';
