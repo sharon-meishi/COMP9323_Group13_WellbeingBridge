@@ -20,8 +20,8 @@ import BookingDialog from './BookingDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 270,
-    maxWidth: 270,
+    minWidth: 300,
+    maxWidth: 300,
     display: 'flex',
     flexDirection: 'column',
     margin: '1%',
