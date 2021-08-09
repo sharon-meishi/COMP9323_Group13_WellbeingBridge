@@ -8,10 +8,14 @@ from tool import *
 
 api_usr = api.namespace('user', description='Operations about user profile')
 
+# user api is for user's profile process
+
 # pre-define for parser
 token_parser = api.parser()
 token_parser.add_argument('Authorization', type=str, location='headers')
 
+# get user profile
+# edit user profile
 @api_usr.route("/profile", doc={"description": "get current user profile"})
 @api_usr.doc(parser=token_parser)
 class GetUserProfilebyId(Resource):

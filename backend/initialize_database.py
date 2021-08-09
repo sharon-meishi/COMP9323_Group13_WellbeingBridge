@@ -1,4 +1,4 @@
-# create tables in database
+# create tables in database and add some data
 import pymysql
 
 

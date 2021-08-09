@@ -11,11 +11,14 @@ from tool import *
 
 api_event = api.namespace('event', description='Operations about events')
 
+# event api is for event process, comment process, like process and book process
+
 # pre-define for parsers
 token_parser = api.parser()
 token_parser.add_argument('Authorization', type=str, location='headers')
 
-
+# get event summary, including basic information, whether current user like this event, users who have booked this event
+# delete event
 @api_event.route("/<int:eventid>/summary", doc={"description": "get the summary of event"})
 @api_event.doc(parser=token_parser)
 class event(Resource):
@@ -88,7 +91,7 @@ class event(Resource):
         except:
             return {"message": 'Wrong ID. Please try again.'}, 400
 
-
+# like event
 @api_event.route("/<int:eventid>/favourite", doc={"description": "like an event"})
 @api_event.doc(parser=token_parser)
 class favourite(Resource):
@@ -122,7 +125,7 @@ class favourite(Resource):
 
         return {'favourite_id': favourite_id}, 200
 
-
+# unlike event
 @api_event.route("/<int:eventid>/unfavourite", doc={"description": "unlike an event"})
 @api_event.doc(parser=token_parser)
 class unfavourite(Resource):
@@ -165,7 +168,7 @@ class unfavourite(Resource):
                 }
                 return output, 500
 
-
+# book event
 @api_event.route("/<int:eventid>/book", doc={"description": "Book an event"})
 @api_event.doc(parser=token_parser)
 class book(Resource):
@@ -189,7 +192,7 @@ class book(Resource):
             output = {"message": "new event is booked."}
         return output, 200
 
-
+# unbook event
 @api_event.route("/<int:eventid>/unbook", doc={"description": "Unook an event"})
 @api_event.doc(parser=token_parser)
 class unbook(Resource):
@@ -214,7 +217,7 @@ class unbook(Resource):
             output = {"message": "event is unbooked."}
         return output, 200
 
-
+# post a new event
 @api_event.route("/", doc={"description": "publish details of an event"})
 @api_event.doc(parser=token_parser)
 class PublishEvent(Resource):
@@ -254,7 +257,8 @@ class PublishEvent(Resource):
             }
         return output, 200
 
-
+# get event by eventid
+# update event information
 @api_event.route("/<int:eventid>", doc={"description": "get details of an event"})
 @api_event.doc(parser=token_parser)
 class GetEventbyId(Resource):
@@ -377,7 +381,7 @@ class GetEventbyId(Resource):
             }
         return output, 200
 
-
+# give comments on event
 @api_event.route("/<int:eventid>/comment", doc={"description": "make a comment on a specific event"})
 @api_event.doc(parser=token_parser)
 class EventComment(Resource):
@@ -430,21 +434,10 @@ class EventComment(Resource):
             }
             return output, 404
 
-
+# delete comment via commentid
 @api_event.route("/<int:eventid>/comment/<int:commentid>", doc={"description": "edit comments under one event"})
 @api_event.doc(parser=token_parser)
 class comment(Resource):
-    @api_event.expect(comment_model)
-    def put(self, eventid, commentid):
-        token = token_parser.parse_args()['Authorization']
-        data = api.payload
-        edit_comment_sql = f"UPDATE COMMENT SET comment='{escape_string(data['comment'])}' WHERE id={commentid}"
-        sql_command(edit_comment_sql)
-        output = {
-            "message": "Success"
-        }
-        return output, 200
-
     def delete(self, eventid, commentid):
         try:
             token = token_parser.parse_args()['Authorization']
@@ -454,7 +447,7 @@ class comment(Resource):
         except:
             return {"message": 'Wrong ID. Please try again.'}, 400
 
-
+# update comment information when someone reply this comment
 @api_event.route("/<int:eventid>/comment/<int:commentid>/answer",
            doc={"description": "reply to a comment on a specific event"})
 @api_event.doc(parser=token_parser)
