@@ -1,3 +1,4 @@
+//Single review component: display review from individual users
 import React, { useState } from 'react';
 import { Form, Comment } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';

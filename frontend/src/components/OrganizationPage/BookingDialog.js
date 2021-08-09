@@ -1,3 +1,4 @@
+// Booking dialog: show booked users info and send email function
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -25,7 +26,6 @@ const useStyles = makeStyles({
     fontSize:'22px'
   }
 })
-
 
 export default function BookingDialog(props) {
   const { onClose, open, info, eventName} = props;

@@ -1,9 +1,8 @@
+// DeleteReminder component: confirmation notice when deleting
 import React from 'react';
 import { Button, Modal } from 'semantic-ui-react';
 
 function DeleteReminder({open, setOpen, handleDelete}) {
-
-
   return (
     <Modal
       onClose={() => setOpen(false)}

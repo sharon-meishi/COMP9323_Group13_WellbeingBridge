@@ -1,3 +1,4 @@
+//Dashboard component: organization users main page display basic information
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';

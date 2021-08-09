@@ -1,3 +1,4 @@
+//Orgsearch component: organization search options
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Button, Input } from 'semantic-ui-react';

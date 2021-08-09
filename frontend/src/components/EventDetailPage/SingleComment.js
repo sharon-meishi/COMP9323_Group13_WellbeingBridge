@@ -1,3 +1,4 @@
+//SingleComment component: display one comment
 import React, { useState, useEffect } from 'react';
 import { Form, Comment, Button } from 'semantic-ui-react';
 import { makeStyles } from '@material-ui/core/styles';

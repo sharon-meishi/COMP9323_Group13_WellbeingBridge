@@ -1,3 +1,4 @@
+//Register component: register board for individual  users 
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import { useHistory } from 'react-router-dom';

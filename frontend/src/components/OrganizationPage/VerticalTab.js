@@ -1,3 +1,4 @@
+//VerticalTab component: left side bar on organization user main page
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';

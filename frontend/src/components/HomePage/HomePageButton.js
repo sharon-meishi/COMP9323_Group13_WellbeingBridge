@@ -1,3 +1,4 @@
+//HomePageButton component: Find organization and More event button layout
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';

@@ -1,3 +1,4 @@
+//Searchbar component: search more events or organizations
 import React, { useState } from 'react';
 import { Form, Button, Select, Input } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';

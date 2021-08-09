@@ -1,3 +1,4 @@
+//Event map component: diplay google map
 import React, { useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import GoogleMapReact from 'google-map-react';

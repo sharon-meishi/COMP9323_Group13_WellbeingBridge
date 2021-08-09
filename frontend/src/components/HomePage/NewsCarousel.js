@@ -1,3 +1,4 @@
+//NewsCarousel component: display news and links to other health services
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
 import bg1 from '../../Assets/new1.jpeg';
@@ -153,47 +154,6 @@ function NewsCarousel() {
               </ul>
             </Box>
           </Card>
-
-          {/* <Card
-            className={classes.carouselStyle}
-            style={{
-              backgroundImage: `url(${bg1})`,
-            }}
-          >
-            <Box className={classes.boxStyle}>
-              <h1>Get COVID-19 health information</h1>
-              <ul>
-                <li className={classes.liStyle}>
-                  <Link
-                    href='https://covid-vaccine.healthdirect.gov.au/eligibility'
-                    color='inherit'
-                    underline='always'
-                  >
-                    Book your COVID-19 vaccination
-                  </Link>
-                </li>
-                <li className={classes.liStyle}>
-                  <Link
-                    href='https://www.health.gov.au/news/health-alerts/novel-coronavirus-2019-ncov-health-alert/coronavirus-covid-19-current-situation-and-case-numbers'
-                    color='inherit'
-                    underline='always'
-                  >
-                    COVID-19 current situation and case numbers
-                  </Link>
-                </li>
-                <li className={classes.liStyle}>
-                  <Link
-                    href='https://www.health.gov.au/news/health-alerts/novel-coronavirus-2019-ncov-health-alert/how-to-protect-yourself-and-others-from-coronavirus-covid-19'
-                    color='inherit'
-                    underline='always'
-                  >
-                    How to protect yourself?
-                  </Link>
-                </li>
-              </ul>
-            </Box>
-          </Card> */}
-        
         </Carousel>
       </Grid>
     </Grid>

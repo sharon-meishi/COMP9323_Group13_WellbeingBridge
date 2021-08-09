@@ -1,3 +1,4 @@
+//Copy Link component: copy link button
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';

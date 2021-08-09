@@ -1,3 +1,4 @@
+//ProfileEditForm component: for individual users to edit their nick name and password
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import MuiAlert from '@material-ui/lab/Alert';

@@ -1,3 +1,4 @@
+// EventCard component: display event summary
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../utils/store';
 import { useHistory } from 'react-router-dom';
@@ -161,9 +162,11 @@ function EventCard(props) {
   const checkDetail = () => {
     history.push(`/event/${props.eventId}`);
   };
+
   const handleShare = () => {
     setShare(true);
   };
+
   const handleLike = async () => {
     if (!token) {
       setOpenLogin(true);
@@ -237,13 +240,6 @@ function EventCard(props) {
             title={
               <Box onClick={toOrgPage}>
                 {orgInfo.OrganizationName}
-                {/* <Rating
-                size="small" 
-                  value={orgInfo.rating}
-                  name='read-only'
-                  readOnly
-                  precision={0.5}
-                /> */}
               </Box>
             }
             subheader={`${info.bookedUser.length} people have booked`}

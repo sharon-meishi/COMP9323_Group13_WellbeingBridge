@@ -1,3 +1,4 @@
+//ShareModal component: create share link for users to copy
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -66,14 +67,6 @@ function ShareModal({
       >
         <DialogTitle className={classes.content} id='alert-dialog-title'>Share with friends</DialogTitle>
         <DialogContent className={classes.content}>
-          {/* <TextField
-          id="outlined-bare"
-          className={classes.textField}
-          
-          margin="normal"
-          variant="outlined"
-          inputProps={{ 'aria-label': 'bare' }}
-          /> */}
           <TextField
             id="outlined-adornment-password"
             defaultValue={urlLink}
@@ -96,14 +89,8 @@ function ShareModal({
             }}
           />
           <DialogActions>
-          {/* <Tooltip title="Copy">
-            <Button onClick={handleCopy} variant='outlined' color='primary'>
-              Copy Link
-            </Button>
-          </Tooltip> */}
         </DialogActions>
         </DialogContent>
-
       </Dialog>
     </div>
   );

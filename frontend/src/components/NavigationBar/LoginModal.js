@@ -1,3 +1,4 @@
+//Login component: login board for individual and organization users 
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../../utils/store';
 import { useHistory } from 'react-router-dom';

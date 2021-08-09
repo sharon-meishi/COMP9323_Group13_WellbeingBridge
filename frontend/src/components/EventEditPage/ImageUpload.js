@@ -1,3 +1,4 @@
+//ImageUpload component: upload an img for event
 import React, { useState } from "react";
 import { storage } from './firebase';
 

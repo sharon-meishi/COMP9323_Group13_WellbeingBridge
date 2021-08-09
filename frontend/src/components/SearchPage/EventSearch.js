@@ -1,3 +1,4 @@
+//EventSearch component: display event search options
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';

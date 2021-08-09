@@ -1,3 +1,4 @@
+//OrganizationAvatar component: display orgtype picture and orgtype name and link to orgtype search
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';

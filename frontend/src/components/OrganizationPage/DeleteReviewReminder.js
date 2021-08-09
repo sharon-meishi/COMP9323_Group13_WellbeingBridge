@@ -1,3 +1,5 @@
+//DeleteReviewReminder component: delete review confirmation notice
+
 import React from 'react';
 import { Button, Modal } from 'semantic-ui-react';
 
