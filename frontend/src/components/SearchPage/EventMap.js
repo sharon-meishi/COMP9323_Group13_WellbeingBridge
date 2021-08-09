@@ -1,13 +1,11 @@
 import React, { useContext } from 'react';
 import { AppContext } from '../../utils/store';
-import { useHistory } from 'react-router-dom';
 import GoogleMapReact from 'google-map-react';
 import markerCss from './marker.module.css';
 import RoomIcon from '@material-ui/icons/Room';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
-import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/core/styles';
 import { Popup } from 'semantic-ui-react';
 
@@ -34,7 +32,6 @@ const useStyles = makeStyles({
 function EventMap({ eventList, center }) {
   const classes = useStyles();
   const context = useContext(AppContext);
-  const history = useHistory();
 
   const handleMarkerClick = (id) => {
     context.setSelected(id);

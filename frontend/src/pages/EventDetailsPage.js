@@ -19,6 +19,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import CardActions from '@material-ui/core/CardActions';
 import Tooltip from '@material-ui/core/Tooltip';
 import EventCard from '../components/EventCard';
+import LoadingBackdrop from '../components/LoadingBackdrop';
 import BackToTop from '../components/BackToTop';
 import NavBar from '../components/NavigationBar/NavBar';
 import ShareModal from '../components/ShareModal';
@@ -155,6 +156,7 @@ function EventDetailsPage(props) {
   const [editable, setEditable] = useState(false);
   const [comment, setComment] = useState('');
   const [update, setUpdate] = useState(false);
+  const [loading, setLoading] = useState(false);
   const currentTime = new Date();
   const token = sessionStorage.getItem('token');
   const usergroup = sessionStorage.getItem('usergroup');
@@ -192,8 +194,7 @@ function EventDetailsPage(props) {
     };
     getEvent();
     setUpdate(false);
-    console.log(props.location);
-  }, [eventId, update, usergroup]);
+  }, [eventId, update, usergroup]); 
 
   useEffect(() => {
     const fetchOrgData = async () => {
@@ -263,8 +264,10 @@ function EventDetailsPage(props) {
   };
 
   const submitNewComment = async () => {
+    setLoading(true)
     const Data = await postComment(eventId, comment);
     if (Data[0] === 200) {
+      setLoading(false)
       setComment('');
       setUpdate(true);
     }
@@ -296,6 +299,7 @@ function EventDetailsPage(props) {
 
   return (
     <div>
+      <LoadingBackdrop open={loading}/>
       <BackToTop showBelow={250} />
       <NavBar />
       {openLogin ? (
@@ -477,6 +481,7 @@ function EventDetailsPage(props) {
                           oId={detail.OrganizationId}
                           orgName={detail.OrganizationName}
                           orgDetail={orgDetail}
+                          setLoading={setLoading}
                         />
                       );
                     })
@@ -487,8 +492,8 @@ function EventDetailsPage(props) {
               <Header as='h3'> Recommendation:</Header>
               <Grid container item width='100%' spacing={5}>
                 {recomList.map((eventId) => (
-                  <Grid item xs={11} md={6} lg={4}>
-                    <EventCard key={eventId} eventId={eventId} />
+                  <Grid item xs={11} md={6} lg={4} key={eventId}>
+                    <EventCard eventId={eventId} />
                   </Grid>
                 ))}
               </Grid>

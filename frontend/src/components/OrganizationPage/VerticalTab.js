@@ -34,7 +34,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Typography component={'div'}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -194,6 +194,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
         </Tabs>
         <TabPanel value={value} index={0} className={classes.tabpanel}>
           <Dashboard profileData={profileData} />
+         
         </TabPanel>
         <TabPanel value={value} index={1} className={classes.tabpanel}>
           <Box
@@ -249,7 +250,7 @@ export default function VerticalTabs({ profileData, setUpdate }) {
             width='100%'
             flexDirection='column'
           >
-            <Typography className={classes.titleStyle}>
+            <Typography className={classes.titleStyle} component={'div'}>
               Edit your account password
             </Typography>
             <ProfileEditForm

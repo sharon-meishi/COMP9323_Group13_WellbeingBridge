@@ -22,6 +22,7 @@ function SingleComment({
   content,
   eventId,
   setUpdate,
+  setLoading
 }) {
   const classes = useStyles();
   const [editMode, setEditMode] = useState(false);
@@ -37,10 +38,6 @@ function SingleComment({
     parseInt(sessionStorage.getItem('id')) === content.userId;
   const toggleAnswer = () => {
     setEditAnswer(!editAnswer);
-  };
-
-  const toggleEdit = () => {
-    setEditMode(!editMode);
   };
 
   const toggleDelete = () => {
@@ -69,8 +66,10 @@ function SingleComment({
   };
 
   const handleUpdateAnswer = async () => {
+    setLoading(true)
     const Data = await updateAnswer(eventId, content.commentId, answer);
     if (Data[0] === 200) {
+      setLoading(false)
       setEditAnswer(false);
       setUpdate(true);
     }
@@ -81,7 +80,7 @@ function SingleComment({
     setEditMode(false);
     setComment(content.comment)
     setAnswer(content.answer)
-  }, [content.comment])
+  }, [content.comment]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Comment>
@@ -130,7 +129,6 @@ function SingleComment({
           ) : null}
           {isAuthor ? (
             <>
-              {/* <Comment.Action onClick={toggleEdit}>{editMode ? 'Cancel Edit' : 'Edit'}</Comment.Action> */}
               <Comment.Action onClick={toggleDelete}>Delete</Comment.Action>
             </>
           ) : null}
