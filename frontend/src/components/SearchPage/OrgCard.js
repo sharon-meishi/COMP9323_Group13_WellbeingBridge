@@ -25,6 +25,7 @@ const useStyles = makeStyles({
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',
     backgroundPosition: 'center',
+    cursor:'pointer'
     // objectFit: 'contain',
     // overflow: 'hidden',
   },
