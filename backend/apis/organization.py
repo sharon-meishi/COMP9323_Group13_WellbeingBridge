@@ -9,11 +9,13 @@ from tool import *
 
 api_org = api.namespace('organization', description='Operations about organization information', ordered=True)
 
+# organization api is for organization details function, organization profile process and review process
+
 # pre-define for parser
 token_parser = api.parser()
 token_parser.add_argument('Authorization', type=str, location='headers')
 
-
+# get organization summary (basic information)
 @api_org.route("/<int:oid>/summary", doc={"description": "get the summary of an organization"})
 @api_org.doc(parser=token_parser)
 class Organization_profile(Resource):
@@ -36,7 +38,8 @@ class Organization_profile(Resource):
         }
         return output, 200
 
-
+# get organization details
+# update organization information
 @api_org.route("/<int:orgid>", doc={"description": "get details of an organization"})
 @api_org.doc(parser=token_parser)
 class org(Resource):
@@ -156,7 +159,8 @@ class org(Resource):
         }
         return output, 200
 
-
+# get the profile of organization
+# update the profile of organization
 @api_org.route("/profile/<int:oid>", doc={"description": "get the profile information of an organization user"})
 @api_org.doc(parser=token_parser)
 class Organization_profile(Resource):
@@ -230,7 +234,7 @@ class Organization_profile(Resource):
             }
             return output, 200
 
-
+# add review to one organization
 @api_org.route("/<int:oid>/review", doc={"description": "give a review to an orgnization"})
 @api_org.doc(parser=token_parser)
 class review(Resource):
@@ -256,37 +260,10 @@ class review(Resource):
         }
         return output, 200
 
-
+# delete review
 @api_org.route("/<int:oid>/review/<int:reviewid>", doc={"description": "review function"})
 @api_org.doc(parser=token_parser)
 class review_function(Resource):
-    @api_org.expect(review_model)
-    def put(self, oid, reviewid):
-        data = api.payload
-        token = token_parser.parse_args()['Authorization']
-        if token is None:
-            output = {
-                "message": "You must login first!"
-            }
-            return output, 403
-        email = decode_token(token)['email']
-        sql = f"SELECT Userid,NickName FROM User WHERE Email='{email}';"
-        result = sql_command(sql)[0]
-        userid = result[0]
-        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        review_sql = f"SELECT Userid FROM Review WHERE id={reviewid};"
-        review_result = sql_command(review_sql)[0]
-        if userid!=review_result[0]:
-            output={
-                "message":"You cannot change others' reviews!"
-            }
-            return output,403
-        change_sql=f"UPDATE REVIEW SET review='{data['review']}',rating={data['rating']},time='{time}' WHERE id={reviewid};"
-        sql_command(change_sql)
-        output={
-            "message":"success"
-        }
-        return output,200
     def delete(self,oid,reviewid):
         token = token_parser.parse_args()['Authorization']
         if token is None:

@@ -9,6 +9,7 @@ from flask_app import api
 # define namespace
 auth = api.namespace('auth', description='Authentication Service')
 
+# auth api is for user registration and login
 
 # route function
 # individual user's sign up
@@ -101,7 +102,7 @@ class OrganizationRegister(Resource):
                 }
                 return output, 200
 
-
+# user login
 @auth.route('/login')
 class Login(Resource):
     @auth.response(200, 'OK')

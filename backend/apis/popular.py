@@ -5,6 +5,9 @@ from tool import sql_command
 
 api_popular = api.namespace('popular', description='Operations about Homepage popular recommendation')
 
+# popular api is for getting popular event shown on homepage
+
+# get the top 9 events
 @api_popular.route('/events')
 class GetPopularEvent(Resource):
     def get(self):
