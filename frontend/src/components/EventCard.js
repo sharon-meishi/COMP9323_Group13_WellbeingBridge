@@ -322,7 +322,7 @@ function EventCard(props) {
 
           <CardActions className={classes.actions} disableSpacing>
             <Box>
-              {sessionStorage.getItem('usergroup') === 'individual' ? (
+              {sessionStorage.getItem('usergroup') !== 'organization' ? (
                 <IconButton onClick={handleLike} aria-label='add to favorites'>
                   {islike ? (
                     <FavoriteIcon color='secondary' fontSize='default' />

@@ -26,6 +26,7 @@ import ShareModal from '../components/ShareModal';
 import LoginModal from '../components/NavigationBar/LoginModal';
 import RegisterModal from '../components/NavigationBar/RegisterModal';
 import SingleComment from '../components/EventDetailPage/SingleComment';
+import BottomBar from '../components/Public/BottomBar'
 import {
   getEventDetails,
   likeEvent,
@@ -499,6 +500,7 @@ function EventDetailsPage(props) {
           </CardMedia>
         </Grid>
       </Card>
+      <BottomBar/>
     </div>
   );
 }

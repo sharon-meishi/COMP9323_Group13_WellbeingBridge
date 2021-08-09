@@ -12,6 +12,7 @@ import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
 import NavBar from '../components/NavigationBar/NavBar';
 import BackToTop from '../components/BackToTop';
+import BottomBar from '../components/Public/BottomBar'
 import { organizationApplyRequest } from '../components/api';
 
 function FetchAlert(props) {
@@ -334,6 +335,7 @@ function OrganizationApplyPage() {
           </form>
         </Grid>
       </Grid>
+      <BottomBar/>
     </>
   );
 }

@@ -13,6 +13,7 @@ import Divider from '@material-ui/core/Divider';
 import NavBar from '../components/NavigationBar/NavBar';
 import BackToTop from '../components/BackToTop';
 import ProfileEditForm from '../components/IndividualProfilePage/ProfileEditForm';
+import BottomBar from '../components/Public/BottomBar'
 import { getUserProfile } from '../components/api';
 
 function FetchAlert(props) {
@@ -141,6 +142,7 @@ function IndividualUserProfilePage() {
           </Grid>
         </>
       ) : null}
+      <BottomBar/>
     </>
   );
 }
