@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import parse from 'date-fns/parse';
 import Alert from '@material-ui/lab/Alert';
 import NavBar from '../components/NavigationBar/NavBar';
-import BackToTop from '../components/BackToTop';
+import BackToTop from '../components/Public/BackToTop';
 import EventForm from '../components/EventEditPage/EventForm';
-import { getEventDetails } from '../components/api';
+import { getEventDetails } from '../components/Helper/api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;

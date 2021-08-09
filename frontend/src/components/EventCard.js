@@ -22,7 +22,7 @@ import { red } from '@material-ui/core/colors';
 import ShareModal from './ShareModal';
 import LoginModal from './NavigationBar/LoginModal';
 import RegisterModal from './NavigationBar/RegisterModal';
-import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './api';
+import { getEventSummary, likeEvent, unlikeEvent, getOrgSummary } from './Helper/api';
 
 const useStyles = makeStyles((theme) => ({
   root: {

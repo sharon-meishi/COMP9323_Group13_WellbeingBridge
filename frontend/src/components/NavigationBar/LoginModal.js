@@ -14,7 +14,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
 import LoginIcon from '../../Assets/LoginIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
-import { loginRequest } from '../api'
+import { loginRequest } from '../Helper/api'
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;

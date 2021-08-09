@@ -14,7 +14,7 @@ import comingSoon from '../../Assets/video-coming-soon.gif';
 import EventCard from '../EventCard';
 import YoutubeVideo from './YoutubeVideo';
 import SingleReview from './SingleReview';
-import { getOrganizationDetails, postReview } from '../api';
+import { getOrganizationDetails, postReview } from '../Helper/api';
 
 const useStyles = makeStyles((theme) => ({
   scrollspy: {

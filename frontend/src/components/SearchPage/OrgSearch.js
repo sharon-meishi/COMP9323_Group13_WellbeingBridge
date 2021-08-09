@@ -7,7 +7,7 @@ import Box from '@material-ui/core/Box';
 import MultiSelect from 'react-multi-select-component';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
-import { searchOrganization } from '../api';
+import { searchOrganization } from '../Helper/api';
 import OrgCard from './OrgCard';
 
 const options = [

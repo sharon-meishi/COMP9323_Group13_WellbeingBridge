@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import DeleteReminder from './DeleteReminder';
-import { updateComment, deleteComment, updateAnswer } from '../api';
+import { updateComment, deleteComment, updateAnswer } from '../Helper/api';
 
 const useStyles = makeStyles(() => ({
   avatarStyle: {

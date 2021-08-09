@@ -18,7 +18,7 @@ import YoutubeVideo from './YoutubeVideo';
 import LoadingBackdrop from '../LoadingBackdrop';
 import SuccessDialog from '../EventEditPage/SuccessDialog';
 import VideoPlacerholder from '../../Assets/video-placeholder.jpeg';
-import { updateOrgPage } from '../api';
+import { updateOrgPage } from '../Helper/api';
 
 const useStyles = makeStyles(() => ({
   backgroundStyle: {

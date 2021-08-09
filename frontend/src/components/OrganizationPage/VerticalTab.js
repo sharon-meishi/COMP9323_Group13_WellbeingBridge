@@ -16,7 +16,7 @@ import Dashboard from './Dashboard';
 import OrganizationForm from './OrganizationForm';
 import ProfileEditForm from '../IndividualProfilePage/ProfileEditForm';
 import OrgEventCard from './OrgEventCard';
-import { getOrganizationDetails, getEventSummary } from '../api';
+import { getOrganizationDetails, getEventSummary } from '../Helper/api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;

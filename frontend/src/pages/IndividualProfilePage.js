@@ -11,10 +11,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Divider from '@material-ui/core/Divider';
 import NavBar from '../components/NavigationBar/NavBar';
-import BackToTop from '../components/BackToTop';
+import BackToTop from '../components/Public/BackToTop';
 import ProfileEditForm from '../components/IndividualProfilePage/ProfileEditForm';
 import BottomBar from '../components/Public/BottomBar'
-import { getUserProfile } from '../components/api';
+import { getUserProfile } from '../components/Helper/api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;

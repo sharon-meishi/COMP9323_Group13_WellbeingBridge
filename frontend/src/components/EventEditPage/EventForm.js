@@ -6,7 +6,7 @@ import PostalCodeAutoComplete from './PostalCodeAutoComplete';
 import LoadingBackdrop from '../LoadingBackdrop';
 import SuccessDialog from './SuccessDialog';
 import { storage } from '../firebase';
-import { createEventRequest, updateEventDetails } from '../api';
+import { createEventRequest, updateEventDetails } from '../Helper/api';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';

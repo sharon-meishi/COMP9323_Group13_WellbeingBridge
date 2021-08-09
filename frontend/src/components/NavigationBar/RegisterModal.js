@@ -15,7 +15,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Link from '@material-ui/core/link';
 import RegisterIcon from '../../Assets/RegisterIcon.svg';
 import MuiAlert from '@material-ui/lab/Alert';
-import { registerRequest } from '../api';
+import { registerRequest } from '../Helper/api';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;

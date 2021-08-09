@@ -16,7 +16,7 @@ import GooglePlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from 'react-google-places-autocomplete';
-import { searchEvent } from '../api';
+import { searchEvent } from '../Helper/api';
 
 const useStyles = makeStyles({
   search: {

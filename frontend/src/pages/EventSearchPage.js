@@ -1,6 +1,6 @@
 import React from 'react';
 import NavBar from '../components/NavigationBar/NavBar';
-import BackToTop from '../components/BackToTop';
+import BackToTop from '../components/Public/BackToTop';
 import EventSearch from '../components/SearchPage/EventSearch'
 import BottomBar from '../components/Public/BottomBar'
 

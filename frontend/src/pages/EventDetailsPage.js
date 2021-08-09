@@ -20,7 +20,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Tooltip from '@material-ui/core/Tooltip';
 import EventCard from '../components/EventCard';
 import LoadingBackdrop from '../components/LoadingBackdrop';
-import BackToTop from '../components/BackToTop';
+import BackToTop from '../components/Public/BackToTop';
 import NavBar from '../components/NavigationBar/NavBar';
 import ShareModal from '../components/ShareModal';
 import LoginModal from '../components/NavigationBar/LoginModal';
@@ -35,7 +35,7 @@ import {
   unbookEvent,
   postComment,
   getOrgSummary,
-} from '../components/api';
+} from '../components/Helper/api';
 
 const useStyles = makeStyles((theme) => ({
   card: {

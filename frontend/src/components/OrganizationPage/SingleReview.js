@@ -6,7 +6,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Rating from '@material-ui/lab/Rating';
 import Box from '@material-ui/core/Box';
 import DeleteReviewReminder from './DeleteReviewReminder';
-import { updateReview, deleteReview } from '../api';
+import { updateReview, deleteReview } from '../Helper/api';
 
 const labels = {
   1: 'Worst',

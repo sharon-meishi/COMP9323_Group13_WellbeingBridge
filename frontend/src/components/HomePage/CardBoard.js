@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import EventCard from '../EventCard';
 import HomePageButton from './HomePageButton';
-import { getPopularEventId } from '../api';
+import { getPopularEventId } from '../Helper/api';
 
 const useStyles = makeStyles((theme) => ({
   root: {

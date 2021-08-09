@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Alert from '@material-ui/lab/Alert';
 import NavBar from '../components/NavigationBar/NavBar';
-import BackToTop from '../components/BackToTop';
+import BackToTop from '../components/Public/BackToTop';
 import VerticalTab from '../components/OrganizationPage/VerticalTab';
-import { getOrganizationProfile } from '../components/api';
+import { getOrganizationProfile } from '../components/Helper/api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;

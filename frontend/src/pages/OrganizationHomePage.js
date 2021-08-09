@@ -1,5 +1,5 @@
 import React from 'react';
-import BackToTop from '../components/BackToTop';
+import BackToTop from '../components/Public/BackToTop';
 import NavBar from '../components/NavigationBar/NavBar';
 import ScrollspyContent from '../components/OrganizationPage/ScrollspyContent';
 import BottomBar from '../components/Public/BottomBar'

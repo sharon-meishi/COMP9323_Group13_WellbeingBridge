@@ -11,9 +11,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Alert from '@material-ui/lab/Alert';
 import NavBar from '../components/NavigationBar/NavBar';
-import BackToTop from '../components/BackToTop';
+import BackToTop from '../components/Public/BackToTop';
 import BottomBar from '../components/Public/BottomBar'
-import { organizationApplyRequest } from '../components/api';
+import { organizationApplyRequest } from '../components/Helper/api';
 
 function FetchAlert(props) {
   return <Alert elevation={6} variant='filled' {...props} />;

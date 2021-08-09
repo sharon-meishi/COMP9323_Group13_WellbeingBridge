@@ -12,7 +12,7 @@ import Box from '@material-ui/core/Box';
 import Rating from '@material-ui/lab/Rating';
 import Typography from '@material-ui/core/Typography';
 import cardimg from '../../Assets/logo-placeholder.png';
-import { getOrgSummary } from '../api';
+import { getOrgSummary } from '../Helper/api';
 
 const useStyles = makeStyles({
   root: {

@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import EventCard from '../EventCard';
 import EventMap from './EventMap';
-import { getEventSummary } from '../api';
+import { getEventSummary } from '../Helper/api';
 
 //three type of sort function
 const menuItem = [
