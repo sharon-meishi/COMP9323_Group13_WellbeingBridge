@@ -178,6 +178,7 @@ function EventSearch() {
   };
 
   const handleSearch = async (data) => {
+    console.log(data)
     const queryAddress = data.address ? data.address.label : '';
     const format = Format.map((each) => each.value);
     const category = Category.map((each) => each.value);
@@ -186,8 +187,18 @@ function EventSearch() {
       keyword === '' ? null : { keyword },
       format.length === 0 ? null : { format },
       category.length === 0 ? null : { category },
-      startdate === '' ? null : { startdate },
-      enddate === '' ? null : { enddate },
+      data.startdate === null
+        ? null
+        : {
+            startdate: dateFormat(data.startdate, 'dd/MM/yyyy', {
+              awareOfUnicodeTokens: true,
+            }),
+          },
+      data.enddate === null
+        ? null
+        : { enddate: dateFormat(data.enddate, 'dd/MM/yyyy', {
+          awareOfUnicodeTokens: true,
+        }), },
       queryAddress === '' ? null : { address: queryAddress },
       queryAddress === '' ? null : { range }
     );
@@ -237,13 +248,13 @@ function EventSearch() {
       'startdate',
       searchParam.has('startdate')
         ? parsedDate(searchParam.get('startdate'), 'dd/MM/yyyy')
-        : ''
+        : null
     );
     setValue(
       'enddate',
       searchParam.has('enddate')
         ? parsedDate(searchParam.get('enddate'), 'dd/MM/yyyy')
-        : ''
+        : null
     );
     setValue('address', {
       label: searchParam.has('address') ? searchParam.get('address') : '',
