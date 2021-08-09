@@ -37,9 +37,6 @@ function SingleReview({ content, oId, setUpdate }) {
     sessionStorage.getItem('usergroup') === 'individual' &&
     parseInt(sessionStorage.getItem('id')) === content.userId;
 
-  const toggleEdit = () => {
-    setEditMode(!editMode);
-  };
 
   const toggleDelete = () => {
     setOpen(true);

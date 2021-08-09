@@ -7,7 +7,9 @@ from tool import sql_command
 
 api_search = api.namespace('search', description='Search function')
 
+# search api is for searching organization or event
 
+# organization search
 @api_search.route("/organization", doc={"description": "get details of an organization"})
 @api_search.doc(params={'name': 'orgname', 'type': 'orgtype'})
 class search_org(Resource):
@@ -36,7 +38,7 @@ class search_org(Resource):
 
         return output, 200
         
-
+# event search
 @api_search.route("/event", doc={"description": "search event based on criterions."})
 @api_search.doc(params={"keyword": "search keywords", "format": "event format", "category": "event category",
                  "startdate": "date of start", "enddate": "date of end", "lat": "latitude", "lng": "longitude",

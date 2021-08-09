@@ -1,7 +1,6 @@
 //Event map component: diplay google map
 import React, { useContext } from 'react';
 import { AppContext } from '../../utils/store';
-import { useHistory } from 'react-router-dom';
 import GoogleMapReact from 'google-map-react';
 import markerCss from './marker.module.css';
 import RoomIcon from '@material-ui/icons/Room';
@@ -34,7 +33,6 @@ const useStyles = makeStyles({
 function EventMap({ eventList, center }) {
   const classes = useStyles();
   const context = useContext(AppContext);
-  const history = useHistory();
 
   const handleMarkerClick = (id) => {
     context.setSelected(id);

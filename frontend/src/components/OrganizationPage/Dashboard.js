@@ -75,15 +75,19 @@ function Dashboard({ profileData }) {
           flexWrap='wrap'
         >
           <Box display='flex' alignItems='baseline'>
-            <Typography variant='h2' className={classes.Hi}>
+            <Typography variant='h2' className={classes.Hi} component={'div'}>
               Hi,
             </Typography>
-            <Typography variant='h3' className={classes.nameStyle}>
+            <Typography
+              variant='h3'
+              className={classes.nameStyle}
+              component={'div'}
+            >
               {profileData.organizationName}:)
             </Typography>
           </Box>
           <Box display='flex' alignItems='center' flexWrap='wrap'>
-            <Typography variant='h6' className={classes.Hi}>
+            <Typography variant='h6' className={classes.Hi} component={'div'}>
               Your current rating:
             </Typography>
             <Box display='flex' alignItems='center'>
@@ -93,20 +97,24 @@ function Dashboard({ profileData }) {
                 readOnly
                 precision={0.5}
               />
-              <Typography variant='h6' className={classes.Hi}>
+              <Typography variant='h6' className={classes.Hi} component={'div'}>
                 {profileData.rating || ''}
               </Typography>
             </Box>
           </Box>
         </Box>
       </Box>
-      <Box mt={3} width='80%'  display='flex' flexDirection='column'>
+      <Box mt={3} width='80%' display='flex' flexDirection='column'>
         <Box display='flex' alignSelf='flex-end' fontSize='17px'>
-          <Box >Email:</Box>
+          <Box>Email:</Box>
           {profileData.email}
         </Box>
         <Box display='flex'>
-          <Typography variant='h5' className={classes.titleStyle}>
+          <Typography
+            variant='h5'
+            className={classes.titleStyle}
+            component={'div'}
+          >
             Welcome to your dashboard! Here is your organization page
           </Typography>
           <Button
@@ -119,15 +127,19 @@ function Dashboard({ profileData }) {
           </Button>
         </Box>
 
-        <Typography variant='h5' className={classes.titleStyle}>
+        <Typography
+          variant='h5'
+          className={classes.titleStyle}
+          component={'div'}
+        >
           And here are what you can do in dashboard:
         </Typography>
 
-        <ul className={classes.listItem}>
-          <li>Manage events you created</li>
-          <li>Edit your organization page</li>
-          <li>Change your account setting</li>
-        </ul>
+          <ul className={classes.listItem}>
+            <li>Manage events you created</li>
+            <li>Edit your organization page</li>
+            <li>Change your account setting</li>
+          </ul>
       </Box>
     </Box>
   );

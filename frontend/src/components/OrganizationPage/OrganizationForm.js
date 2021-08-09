@@ -189,49 +189,56 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
     setURL('');
   }
 
+  const buildBody = (data) => {
+    const sl = data.serviceList ? data.serviceList.map((x) => x.service) : ''
+    const uploadBody = {
+      organizationName: data.OrgName,
+      organizationType: data.OrganizationType,
+      introduction: data.OrganizationIntroduction,
+      contact: data.Contact,
+      details: data.OrganizationDetail || '',
+      serviceList: sl ? sl.join('@') : '',
+      logo: url,  
+      video: data.video || '',
+      websiteLink: data.websiteLink || '',
+    };
+    return uploadBody;
+  };
+
+  const sendData = async(uploadBody) =>{
+    const Data = await updateOrgPage(oId, uploadBody);
+    if (Data[0] === 200){
+      console.log('update success');
+      setLoading(false);
+      setOpen(true);
+    } else{
+      setLoading(false);
+      setErrorMsg('There is something wrong when uploading, please try again')
+    }
+  }
+
   const onSubmit = async (data) => {
     setLoading(true);
     setData(data);
     if (data.picture){
       handleUpload();
     } else {
-      setURL(preloadImg)
+      if(preloadImg){
+        setURL(preloadImg)
+      }
+      else{
+        const uploadBody = buildBody(data);
+        sendData(uploadBody)
+      }
     }
   };
 
-  useEffect(() => {
-    const buildBody = () => {
-      const sl = data.serviceList ? data.serviceList.map((x) => x.service) : ''
-      const uploadBody = {
-        organizationName: data.OrgName,
-        organizationType: data.OrganizationType,
-        introduction: data.OrganizationIntroduction,
-        contact: data.Contact,
-        details: data.OrganizationDetail || '',
-        serviceList: sl ? sl.join('@') : '',
-        logo: url,  
-        video: data.video || '',
-        websiteLink: data.websiteLink || '',
-      };
-      return uploadBody;
-    };
 
-    const sendData = async(uploadBody) =>{
-      const Data = await updateOrgPage(oId, uploadBody);
-      if (Data[0] === 200){
-        console.log('update success');
-        setLoading(false);
-        setOpen(true);
-      } else{
-        setLoading(false);
-        setErrorMsg('There is something wrong when uploading, please try again')
-      }
-    }
+  useEffect(() => {
     if(url){
-      const uploadBody = buildBody();
+      const uploadBody = buildBody(data);
       sendData(uploadBody)
     }
-
   }, [url]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -256,11 +263,11 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
         className={classes.GridStyle}
       >
         {errorMsg ? <FetchAlert severity='error'>{errorMsg}</FetchAlert> : null}
-        <Typography variant='h5' className={classes.titleStyle}>
+        <Typography variant='h5' className={classes.titleStyle} component={'div'}>
           Edit your organization page
         </Typography>
         <hr />
-        <Typography className={classes.subStyle}>
+        <Typography className={classes.subStyle} component={'div'}>
           You must complete all the fields in Basic Information
         </Typography>
         <SuccessDialog
@@ -270,8 +277,8 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
         message='Thank you! Your organization page has been updated successfully'
         />
         <form onSubmit={handleSubmit(onSubmit)} className={classes.formStyle}>
-          <>
-            <Typography className={classes.subtitleStyle}>
+          <Box>
+            <Typography className={classes.subtitleStyle} component={'div'}>
               Basic Information (Required):
             </Typography>
             <section className={classes.formStyle}>
@@ -391,7 +398,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                 <Alert severity='error'>This field is required.</Alert>
               )}
             </section>
-            <Typography className={classes.subtitleStyle}>
+            <Typography className={classes.subtitleStyle} component={'div'}>
               Detail Information (Optional):
             </Typography>
             <section className={classes.formStyle}>
@@ -419,7 +426,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
               <section className={classes.formStyle}>
                 {controlledFields.map((item, index) => {
                   return (
-                    <Box mb={1}>
+                    <Box mb={1} key={item.id}>
                       <Box
                         key={item.id}
                         display='flex'
@@ -545,7 +552,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                   Please fill in valid Youtube video URL
                 </Alert>
               )}
-              <Typography>
+              <Typography component={'div'}>
                 Video preview (If you don't see your video below please re-check
                 your video url)
               </Typography>
@@ -579,7 +586,7 @@ function OrganizationForm({ oId, preloadValues, preloadImg }) {
                 control={control}
               />
             </section>
-          </>
+          </Box>
           <Box display='flex' justifyContent='space-around' flexWrap='wrap'>
             <Button
               onClick={resetForm}

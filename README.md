@@ -1,4 +1,9 @@
-# User guide for COMP9323 Group13 Project WellbeingBridge 
+# User guide for COMP9323 Group13 Project WellbeingBridge
+
+## Enviroment requirement
+* Python 3.6+
+* Npm
+* Network connection (For third-party service purpose)
 
 
 # Database Server
@@ -52,6 +57,15 @@ activate
 pip3 install -r requirements.txt
 ```
 
+## Configuration specification (For database connection)
+The configuration of system in *./backend/config.py* and change following value as you need.
+* DB_ACCOUNT: The username of database
+* DB_PASSWORD: The password for database user
+* DB_NAME: The database name on the database server
+* DB_URL: The host name of database
+* DB_PORT: The running port of database
+ 
+
 ## Database initialization(First time and everytime you want to reset database)
 ```shell
 python3 initialize_database.py
@@ -66,6 +80,7 @@ python3 app.py
 * Server running on 127.0.0.1/8000
 * To specify running port, change port number in file **app.py** last line: `app.run(debug=True, port=XXXX)`, where `XXXX` is your prefer
 port number
+* open **127.0.0.1/8000** in the browser to check swagger document
 
 # Frontend (Inside frontend folder)
 
