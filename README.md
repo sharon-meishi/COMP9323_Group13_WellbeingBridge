@@ -66,7 +66,7 @@ The configuration of system in *./backend/config.py* and change following value 
 * DB_PORT: The running port of database
  
 
-## Database initialization(First time and everytime you want to reset database)
+## Database initialization(First time only)
 ```shell
 python3 initialize_database.py
 ```
