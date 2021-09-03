@@ -67,7 +67,7 @@ function EventMap({ eventList, center }) {
   return (
     <div style={{ height: '70vh', width: '100%' }}>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: 'AIzaSyCz4t6JLp6xmiyAKnWa4MJnv16tH3EpOxA' }}
+        bootstrapURLKeys={{ key: 'AIzaSyAjowcedzqCtSfAoARjiDN8n7Mx7zM5qcc' }}
         defaultCenter={defaultProps.center}
         defaultZoom={defaultProps.zoom}
         options={getMapOptions}

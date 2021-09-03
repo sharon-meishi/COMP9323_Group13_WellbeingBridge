@@ -1,19 +1,20 @@
 # create tables in database and add some data
 import pymysql
+from config import *
 
 
 def create_database():
-    conn = pymysql.connect(host='localhost',
-                           user='root',
-                           password='unsw1234')
+    conn = pymysql.connect(host=DB_URL,
+                           user=DB_ACCOUNT,
+                           password=DB_PASSWORD)
     conn.cursor().execute('''create database if not exists wellbeing''')
     conn.close()
     db = pymysql.connect(
-        host='localhost',
-        port=3306,
-        user='root',
-        password='unsw1234',
-        database='wellbeing',
+        host=DB_URL,
+        port=DB_PORT,
+        user=DB_ACCOUNT,
+        password=DB_PASSWORD,
+        database=DB_NAME,
         charset='utf8'
     )
     c = db.cursor()

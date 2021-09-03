@@ -11,7 +11,7 @@ from config import *
 def sql_command(command):
     db = pymysql.connect(
         host=DB_URL,
-        port=3306,
+        port=DB_PORT,
         user=DB_ACCOUNT,
         password=DB_PASSWORD,
         database=DB_NAME,
