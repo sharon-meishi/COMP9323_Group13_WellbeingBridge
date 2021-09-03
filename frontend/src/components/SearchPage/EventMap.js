@@ -7,6 +7,7 @@ import RoomIcon from '@material-ui/icons/Room';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
+import configData from '../../configData.json';
 import { makeStyles } from '@material-ui/core/styles';
 import { Popup } from 'semantic-ui-react';
 
@@ -67,7 +68,7 @@ function EventMap({ eventList, center }) {
   return (
     <div style={{ height: '70vh', width: '100%' }}>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: 'AIzaSyAjowcedzqCtSfAoARjiDN8n7Mx7zM5qcc' }}
+        bootstrapURLKeys={{ key: configData.GoogleCloudPlatform.apiKey }}
         defaultCenter={defaultProps.center}
         defaultZoom={defaultProps.zoom}
         options={getMapOptions}

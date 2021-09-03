@@ -58,12 +58,17 @@ pip3 install -r requirements.txt
 ```
 
 ## Configuration specification (For database connection)
-The configuration of system in *./backend/config.py* and change following value as you need.
+### Backend
+Go to the configuration of system in *./backend/config.py* and change following value as you need.
 * DB_ACCOUNT: The username of database
 * DB_PASSWORD: The password for database user
 * DB_NAME: The database name on the database server
 * DB_URL: The host name of database
 * DB_PORT: The running port of database
+### Frontend
+Go to the configuration file in *./frontend/src/configData.json* and change following values as you need.
+* Google Cloud Platform API key
+
  
 
 ## Database initialization(First time only)
