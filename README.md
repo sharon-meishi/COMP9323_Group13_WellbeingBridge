@@ -67,6 +67,7 @@ The configuration of system in *./backend/config.py* and change following value 
  
 
 ## Database initialization(First time only)
+Before you run, you need to change the database detail in **initialize_database.py** to be the same as you define in config.py)
 ```shell
 python3 initialize_database.py
 ```
